@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS "sessions" (
-	"uuid" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"key" text PRIMARY KEY NOT NULL,
 	"expires_at" timestamp with time zone NOT NULL,
 	"user_uuid" uuid NOT NULL
 );

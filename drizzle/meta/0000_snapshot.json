@@ -1,5 +1,5 @@
 {
-  "id": "2e2467af-a851-456f-bc2c-efc2e5c49ae7",
+  "id": "a1398cb4-c3f5-457a-a36f-c9b30ed42098",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,12 +8,11 @@
       "name": "sessions",
       "schema": "",
       "columns": {
-        "uuid": {
-          "name": "uuid",
-          "type": "uuid",
+        "key": {
+          "name": "key",
+          "type": "text",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
+          "notNull": true
         },
         "expires_at": {
           "name": "expires_at",
