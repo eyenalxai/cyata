@@ -8,3 +8,10 @@ export const signUp = (signUpData: z.infer<typeof AuthFormSchema>) => {
 		json: signUpData
 	})
 }
+
+export const signIn = (signInData: z.infer<typeof AuthFormSchema>) => {
+	return api("/api/auth/sign-in", {
+		method: "post",
+		json: signInData
+	})
+}

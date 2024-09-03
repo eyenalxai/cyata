@@ -3,14 +3,18 @@
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { signUp } from "@/lib/fetch/auth"
+import { signIn, signUp } from "@/lib/fetch/auth"
 import { cn } from "@/lib/utils"
 import { AuthFormSchema } from "@/lib/zod/form/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
 
-export function SignupForm() {
+type AuthFormProps = {
+	type: "sign-up" | "sign-in"
+}
+
+export function AuthForm({ type }: AuthFormProps) {
 	const form = useForm<z.infer<typeof AuthFormSchema>>({
 		resolver: zodResolver(AuthFormSchema),
 		defaultValues: {
@@ -20,9 +24,13 @@ export function SignupForm() {
 	})
 
 	function onSubmit(signUpData: z.infer<typeof AuthFormSchema>) {
-		signUp(signUpData).then((response) => {
-			console.log("success", response)
-		})
+		type === "sign-up"
+			? signUp(signUpData).then((response) => {
+					console.log("success", response)
+				})
+			: signIn(signUpData).then((response) => {
+					console.log("success", response)
+				})
 	}
 
 	return (

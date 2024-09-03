@@ -10,7 +10,12 @@ export const hashPassword = (password: string): Promise<string> =>
 		})
 	})
 
-export const verifyPassword = async (password: string, hash: string): Promise<boolean> =>
+type VerifyPasswordProps = {
+	password: string
+	hash: string
+}
+
+export const verifyPassword = async ({ password, hash }: VerifyPasswordProps) =>
 	new Promise((resolve, reject) => {
 		const [salt, key] = hash.split(":")
 		scrypt(password, salt, 64, (err, derivedKey) => {
