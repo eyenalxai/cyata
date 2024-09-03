@@ -16,7 +16,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 }))
 
 export const sessions = pgTable("sessions", {
-	key: text("text").primaryKey(),
+	key: text("key").primaryKey(),
 	expiresAt: timestamp("expires_at", { mode: "string", withTimezone: true }).notNull(),
 	userUuid: uuid("user_uuid")
 		.references(() => users.uuid, { onDelete: "cascade" })
