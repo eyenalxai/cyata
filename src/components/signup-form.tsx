@@ -5,21 +5,21 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Input } from "@/components/ui/input"
 import { signUp } from "@/lib/fetch/auth"
 import { cn } from "@/lib/utils"
-import { SignupFormSchema } from "@/lib/zod/form/sign-up"
+import { AuthFormSchema } from "@/lib/zod/form/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
 
 export function SignupForm() {
-	const form = useForm<z.infer<typeof SignupFormSchema>>({
-		resolver: zodResolver(SignupFormSchema),
+	const form = useForm<z.infer<typeof AuthFormSchema>>({
+		resolver: zodResolver(AuthFormSchema),
 		defaultValues: {
 			username: "",
 			password: ""
 		}
 	})
 
-	function onSubmit(signUpData: z.infer<typeof SignupFormSchema>) {
+	function onSubmit(signUpData: z.infer<typeof AuthFormSchema>) {
 		signUp(signUpData).then((response) => {
 			console.log("success", response)
 		})

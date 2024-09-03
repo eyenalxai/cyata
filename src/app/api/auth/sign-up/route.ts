@@ -3,13 +3,13 @@ import { secureRandomToken } from "@/lib/crypto/token"
 import { insertSession } from "@/lib/database/session"
 import { existsUserByUsername, insertUser } from "@/lib/database/user"
 import { env } from "@/lib/env.mjs"
-import { SignupFormSchema } from "@/lib/zod/form/sign-up"
+import { AuthFormSchema } from "@/lib/zod/form/auth"
 import { parseZodSchema } from "@/lib/zod/parse"
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 
 export const POST = async (request: Request) => {
-	const signUpDataResult = parseZodSchema(SignupFormSchema, await request.json())
+	const signUpDataResult = parseZodSchema(AuthFormSchema, await request.json())
 
 	if (signUpDataResult.isErr()) return new NextResponse(signUpDataResult.error, { status: 400 })
 
