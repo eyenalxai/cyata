@@ -23,14 +23,11 @@ export function AuthForm({ type }: AuthFormProps) {
 		}
 	})
 
-	function onSubmit(signUpData: z.infer<typeof AuthFormSchema>) {
-		type === "sign-up"
-			? signUp(signUpData).then((response) => {
-					console.log("success", response)
-				})
-			: signIn(signUpData).then((response) => {
-					console.log("success", response)
-				})
+	const onSubmit = (authData: z.infer<typeof AuthFormSchema>) => {
+		const action = type === "sign-up" ? signUp : signIn
+		action(authData).then((response) => {
+			console.log("success", response)
+		})
 	}
 
 	return (
