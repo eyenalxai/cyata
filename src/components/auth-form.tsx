@@ -1,13 +1,13 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { signIn, signUp } from "@/lib/fetch/auth"
 import { cn } from "@/lib/utils"
 import { AuthFormSchema } from "@/lib/zod/form/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { LogIn } from "lucide-react"
+import { ArrowRight, Lock, User } from "lucide-react"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
 
@@ -39,10 +39,12 @@ export function AuthForm({ type }: AuthFormProps) {
 					name="username"
 					render={({ field }) => (
 						<FormItem>
-							<FormControl>
-								<Input placeholder="username" {...field} />
-							</FormControl>
-							<FormMessage />
+							<div className={cn("relative")}>
+								<FormControl>
+									<Input className={cn("pr-8")} placeholder="Username" {...field} />
+								</FormControl>
+								<User className={cn("absolute", "right-2", "top-2.5", "text-slate-500", "size-[1rem]")} />
+							</div>
 						</FormItem>
 					)}
 				/>
@@ -51,15 +53,18 @@ export function AuthForm({ type }: AuthFormProps) {
 					name="password"
 					render={({ field }) => (
 						<FormItem>
-							<FormControl>
-								<Input type={"password"} placeholder="password" {...field} />
-							</FormControl>
-							<FormMessage />
+							<div className={cn("relative")}>
+								<FormControl>
+									<Input className={cn("pr-8")} type={"password"} placeholder="Password" {...field} />
+								</FormControl>
+								<Lock className={cn("absolute", "right-2", "top-2.5", "text-slate-500", "size-[1rem]")} />
+							</div>
 						</FormItem>
 					)}
 				/>
 				<Button className={cn("w-full")} type="submit">
-					<LogIn />
+					<span>Auth</span>
+					<ArrowRight className={cn("size-5", "ml-2")} />
 				</Button>
 			</form>
 		</Form>
