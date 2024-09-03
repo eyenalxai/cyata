@@ -1,7 +1,10 @@
+import { SignupForm } from "@/components/signup-form"
+import { cn } from "@/lib/utils"
+
 export default function Home() {
 	return (
-		<main>
-			<h1>Hello</h1>
-		</main>
+		<div className={cn("w-full", "flex", "justify-center", "mt-12")}>
+			<SignupForm />
+		</div>
 	)
 }
