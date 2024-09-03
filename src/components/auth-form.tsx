@@ -7,6 +7,7 @@ import { signIn, signUp } from "@/lib/fetch/auth"
 import { cn } from "@/lib/utils"
 import { AuthFormSchema } from "@/lib/zod/form/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { LogIn } from "lucide-react"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
 
@@ -32,7 +33,7 @@ export function AuthForm({ type }: AuthFormProps) {
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex", "flex-col", "gap-y-2", "w-96")}>
+			<form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-2", "w-full")}>
 				<FormField
 					control={form.control}
 					name="username"
@@ -51,13 +52,15 @@ export function AuthForm({ type }: AuthFormProps) {
 					render={({ field }) => (
 						<FormItem>
 							<FormControl>
-								<Input placeholder="password" {...field} />
+								<Input type={"password"} placeholder="password" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
-				<Button type="submit">Submit</Button>
+				<Button className={cn("w-full")} type="submit">
+					<LogIn />
+				</Button>
 			</form>
 		</Form>
 	)
