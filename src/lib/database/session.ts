@@ -1,4 +1,4 @@
-import type { db } from "@/lib/database/client"
+import { db } from "@/lib/database/client"
 import { env } from "@/lib/env.mjs"
 import { getErrorMessage } from "@/lib/error-message"
 import { type SessionInsert, sessions } from "@/lib/schema"
@@ -6,14 +6,14 @@ import { isSessionExpired } from "@/lib/session"
 import { eq } from "drizzle-orm"
 import { ResultAsync, errAsync, okAsync } from "neverthrow"
 
-export const insertSession = (trx: typeof db, session: SessionInsert) => {
-	return ResultAsync.fromPromise(trx.insert(sessions).values(session).returning(), (e) =>
+export const insertSession = (session: SessionInsert) => {
+	return ResultAsync.fromPromise(db.insert(sessions).values(session).returning(), (e) =>
 		getErrorMessage(e, "Failed to insert session")
 	).map(([insertedSession]) => insertedSession)
 }
 
-export const selectSessionByKey = (trx: typeof db, key: string) => {
-	return ResultAsync.fromPromise(trx.select().from(sessions).where(eq(sessions.key, key)), (e) =>
+export const selectSessionByKey = (key: string) => {
+	return ResultAsync.fromPromise(db.select().from(sessions).where(eq(sessions.key, key)), (e) =>
 		getErrorMessage(e, "Failed to get session by key")
 	)
 		.andThen((sessions) => (sessions.length > 0 ? okAsync(sessions[0]) : errAsync("Session not found")))
@@ -23,9 +23,9 @@ export const selectSessionByKey = (trx: typeof db, key: string) => {
 		})
 }
 
-export const updateSessionExpiration = (trx: typeof db, session: Omit<SessionInsert, "expiresAt">) => {
+export const updateSessionExpiration = (session: Omit<SessionInsert, "expiresAt">) => {
 	return ResultAsync.fromPromise(
-		trx
+		db
 			.update(sessions)
 			.set({
 				key: session.key,
