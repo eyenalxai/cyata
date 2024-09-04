@@ -1,7 +1,7 @@
 import { verifyPassword } from "@/lib/crypto/password"
 import { secureRandomToken } from "@/lib/crypto/token"
 import { insertSession } from "@/lib/database/session"
-import { getUserByUsername } from "@/lib/database/user"
+import { selectUserByUsername } from "@/lib/database/user"
 import { env } from "@/lib/env.mjs"
 import { AuthFormSchema } from "@/lib/zod/form/auth"
 import { parseZodSchema } from "@/lib/zod/parse"
@@ -13,7 +13,7 @@ export const POST = async (request: Request) => {
 
 	if (signInDataResult.isErr()) return new NextResponse(signInDataResult.error, { status: 400 })
 
-	const userResult = await getUserByUsername(signInDataResult.value.username)
+	const userResult = await selectUserByUsername(signInDataResult.value.username)
 
 	if (userResult.isErr()) return new NextResponse(userResult.error, { status: 500 })
 
@@ -26,7 +26,9 @@ export const POST = async (request: Request) => {
 
 	const insertSessionResult = await insertSession({
 		key: await secureRandomToken(),
-		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * env.COOKIES_EXPIRES_IN_DAYS - 1000 * 60 * 5).toISOString(), // 5 minutes before cookie expires
+		expiresAt: new Date(
+			Date.now() + 1000 * 60 * 60 * 24 * env.SESSION_COOKIES_EXPIRES_IN_DAYS - 1000 * 60 * 5
+		).toISOString(), // 5 minutes before cookie expires
 		userUuid: userResult.value.uuid
 	})
 
@@ -34,11 +36,11 @@ export const POST = async (request: Request) => {
 
 	const cookieStore = cookies()
 
-	cookieStore.set("session", insertSessionResult.value.key, {
+	cookieStore.set(env.SESSION_COOKIE_NAME, insertSessionResult.value.key, {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 		sameSite: "strict",
-		expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * env.COOKIES_EXPIRES_IN_DAYS)
+		expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * env.SESSION_COOKIES_EXPIRES_IN_DAYS)
 	})
 
 	return new NextResponse("User created", { status: 201 })

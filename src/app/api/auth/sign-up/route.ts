@@ -30,7 +30,9 @@ export const POST = async (request: Request) => {
 
 	const insertSessionResult = await insertSession({
 		key: await secureRandomToken(),
-		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * env.COOKIES_EXPIRES_IN_DAYS - 1000 * 60 * 5).toISOString(), // 5 minutes before cookie expires
+		expiresAt: new Date(
+			Date.now() + 1000 * 60 * 60 * 24 * env.SESSION_COOKIES_EXPIRES_IN_DAYS - 1000 * 60 * 5
+		).toISOString(), // 5 minutes before cookie expires
 		userUuid: insertUserResult.value.uuid
 	})
 
@@ -38,11 +40,11 @@ export const POST = async (request: Request) => {
 
 	const cookieStore = cookies()
 
-	cookieStore.set("session", insertSessionResult.value.key, {
+	cookieStore.set(env.SESSION_COOKIE_NAME, insertSessionResult.value.key, {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 		sameSite: "strict",
-		expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * env.COOKIES_EXPIRES_IN_DAYS)
+		expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * env.SESSION_COOKIES_EXPIRES_IN_DAYS)
 	})
 
 	return new NextResponse("User created", { status: 201 })
