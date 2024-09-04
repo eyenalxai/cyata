@@ -6,9 +6,19 @@ import { isSessionExpired } from "@/lib/session"
 import { eq } from "drizzle-orm"
 import { ResultAsync, errAsync, okAsync } from "neverthrow"
 
-export const insertSession = (session: SessionInsert) => {
-	return ResultAsync.fromPromise(db.insert(sessions).values(session).returning(), (e) =>
-		getErrorMessage(e, "Failed to insert session")
+export const insertSession = (session: Omit<SessionInsert, "expiresAt">) => {
+	return ResultAsync.fromPromise(
+		db
+			.insert(sessions)
+			.values({
+				key: session.key,
+				userUuid: session.userUuid,
+				expiresAt: new Date(
+					Date.now() + 1000 * 60 * 60 * 24 * env.SESSION_COOKIES_EXPIRES_IN_DAYS - 1000 * 60 * 5
+				).toISOString() // 5 minutes before cookie expires
+			})
+			.returning(),
+		(e) => getErrorMessage(e, "Failed to insert session")
 	).map(([insertedSession]) => insertedSession)
 }
 

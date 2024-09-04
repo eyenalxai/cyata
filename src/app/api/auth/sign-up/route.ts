@@ -3,7 +3,6 @@ import { hashPassword } from "@/lib/crypto/password"
 import { secureRandomToken } from "@/lib/crypto/token"
 import { insertSession } from "@/lib/database/session"
 import { existsUserByUsername, insertUser } from "@/lib/database/user"
-import { env } from "@/lib/env.mjs"
 import { AuthFormSchema } from "@/lib/zod/form/auth"
 import { parseZodSchema } from "@/lib/zod/parse"
 import { err, ok } from "neverthrow"
@@ -24,9 +23,6 @@ export const POST = async (request: Request) => {
 				.andThen((insertedUser) =>
 					insertSession({
 						key: secureRandomToken(),
-						expiresAt: new Date(
-							Date.now() + 1000 * 60 * 60 * 24 * env.SESSION_COOKIES_EXPIRES_IN_DAYS - 1000 * 60 * 5
-						).toISOString(), // 5 minutes before cookie expires
 						userUuid: insertedUser.uuid
 					})
 				)

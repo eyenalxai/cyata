@@ -1,10 +1,10 @@
 import { randomBytes, scrypt } from "node:crypto"
 import { getErrorMessage } from "@/lib/error-message"
-import { ResultAsync } from "neverthrow"
+import { ResultAsync, errAsync, okAsync } from "neverthrow"
 
-export const hashPassword = (password: string): ResultAsync<string, string> => {
+export const hashPassword = (password: string) => {
 	return ResultAsync.fromPromise(
-		new Promise((resolve, reject) => {
+		new Promise<string>((resolve, reject) => {
 			const salt = randomBytes(16).toString("hex")
 
 			scrypt(password, salt, 64, (err, derivedKey) => {
@@ -12,7 +12,7 @@ export const hashPassword = (password: string): ResultAsync<string, string> => {
 				resolve(`${salt}:${derivedKey.toString("hex")}`)
 			})
 		}),
-		(e) => getErrorMessage(e, "Failed to get session by key")
+		(e) => getErrorMessage(e, "Failed to hash password")
 	)
 }
 
@@ -21,11 +21,18 @@ type VerifyPasswordProps = {
 	hash: string
 }
 
-export const verifyPassword = async ({ password, hash }: VerifyPasswordProps) =>
-	new Promise((resolve, reject) => {
-		const [salt, key] = hash.split(":")
-		scrypt(password, salt, 64, (err, derivedKey) => {
-			if (err) reject(err)
-			resolve(key === derivedKey.toString("hex"))
-		})
+export const verifyPassword = ({ password, hash }: VerifyPasswordProps) => {
+	return ResultAsync.fromPromise(
+		new Promise<boolean>((resolve, reject) => {
+			const [salt, key] = hash.split(":")
+			scrypt(password, salt, 64, (err, derivedKey) => {
+				if (err) reject(err)
+				resolve(key === derivedKey.toString("hex"))
+			})
+		}),
+		(e) => getErrorMessage(e, "Failed to verify password")
+	).andThen((isPasswordCorrect) => {
+		if (!isPasswordCorrect) return errAsync("Password is incorrect")
+		return okAsync(isPasswordCorrect)
 	})
+}
