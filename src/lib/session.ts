@@ -2,6 +2,7 @@ import "server-only"
 import { getSessionKey } from "@/lib/cookie"
 import { selectSessionByKey, updateSessionExpiration } from "@/lib/database/session"
 import { selectUserByUuid } from "@/lib/database/user"
+import { env } from "@/lib/env.mjs"
 import type { Session } from "@/lib/schema"
 import { okAsync } from "neverthrow"
 
@@ -28,3 +29,6 @@ export const getSession = async () => {
 			.andThen((session) => selectUserByUuid(session.userUuid))
 	)
 }
+
+export const getSessionExpiryDate = () =>
+	new Date(Date.now() + 1000 * 60 * 60 * 24 * env.SESSION_COOKIES_EXPIRES_IN_DAYS - 1000 * 60 * 5).toISOString() // 5 minutes before cookie expires

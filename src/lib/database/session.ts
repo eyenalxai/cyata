@@ -1,8 +1,7 @@
 import { db } from "@/lib/database/client"
-import { env } from "@/lib/env.mjs"
 import { getErrorMessage } from "@/lib/error-message"
 import { type SessionInsert, sessions } from "@/lib/schema"
-import { isSessionExpired } from "@/lib/session"
+import { getSessionExpiryDate, isSessionExpired } from "@/lib/session"
 import { eq } from "drizzle-orm"
 import { ResultAsync, errAsync, okAsync } from "neverthrow"
 
@@ -13,9 +12,7 @@ export const insertSession = (session: Omit<SessionInsert, "expiresAt">) => {
 			.values({
 				key: session.key,
 				userUuid: session.userUuid,
-				expiresAt: new Date(
-					Date.now() + 1000 * 60 * 60 * 24 * env.SESSION_COOKIES_EXPIRES_IN_DAYS - 1000 * 60 * 5
-				).toISOString() // 5 minutes before cookie expires
+				expiresAt: getSessionExpiryDate()
 			})
 			.returning(),
 		(e) => getErrorMessage(e, "Failed to insert session")
@@ -40,9 +37,7 @@ export const updateSessionExpiration = (session: Omit<SessionInsert, "expiresAt"
 			.set({
 				key: session.key,
 				userUuid: session.userUuid,
-				expiresAt: new Date(
-					Date.now() + 1000 * 60 * 60 * 24 * env.SESSION_COOKIES_EXPIRES_IN_DAYS - 1000 * 60 * 5
-				).toISOString() // 5 minutes before cookie expires
+				expiresAt: getSessionExpiryDate()
 			})
 			.where(eq(sessions.key, session.key))
 			.returning(),
