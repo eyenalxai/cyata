@@ -1,4 +1,4 @@
-import { db } from "@/lib/database/client"
+import type { db } from "@/lib/database/client"
 import { env } from "@/lib/env.mjs"
 import { getErrorMessage } from "@/lib/error-message"
 import { type SessionInsert, sessions } from "@/lib/schema"
@@ -12,8 +12,8 @@ export const insertSession = (trx: typeof db, session: SessionInsert) => {
 	).map(([insertedSession]) => insertedSession)
 }
 
-export const selectSessionByKey = (key: string) => {
-	return ResultAsync.fromPromise(db.select().from(sessions).where(eq(sessions.key, key)), (e) =>
+export const selectSessionByKey = (trx: typeof db, key: string) => {
+	return ResultAsync.fromPromise(trx.select().from(sessions).where(eq(sessions.key, key)), (e) =>
 		getErrorMessage(e, "Failed to get session by key")
 	)
 		.andThen((sessions) => (sessions.length > 0 ? okAsync(sessions[0]) : errAsync("Session not found")))

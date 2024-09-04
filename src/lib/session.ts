@@ -14,12 +14,12 @@ export const isSessionExpiresSoon = (session: Session) => {
 }
 
 export const getSession = async () => {
-	return await db.transaction(async (tx) => {
+	return await db.transaction(async (trx) => {
 		return getSessionKey().asyncAndThen((sessionKey) =>
-			selectSessionByKey(sessionKey)
+			selectSessionByKey(trx, sessionKey)
 				.andThen((session) => {
 					if (isSessionExpiresSoon(session)) {
-						return updateSessionExpiration(tx, {
+						return updateSessionExpiration(trx, {
 							key: session.key,
 							userUuid: session.userUuid
 						})
@@ -27,7 +27,7 @@ export const getSession = async () => {
 
 					return okAsync(session)
 				})
-				.andThen((session) => selectUserByUuid(session.userUuid))
+				.andThen((session) => selectUserByUuid(trx, session.userUuid))
 		)
 	})
 }
