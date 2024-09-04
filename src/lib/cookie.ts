@@ -8,3 +8,13 @@ export const getSessionKey = () => {
 	if (!sessionKey) return err("No session cookie found")
 	return ok(sessionKey.value)
 }
+
+export const setSessionKey = (sessionKey: string) => {
+	const cookieStore = cookies()
+	cookieStore.set(env.SESSION_COOKIE_NAME, sessionKey, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		sameSite: "strict",
+		expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * env.SESSION_COOKIES_EXPIRES_IN_DAYS)
+	})
+}
