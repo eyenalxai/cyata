@@ -88,9 +88,9 @@ export default function Page() {
 										ease: "easeOut",
 										duration: 0.3
 									}}
-									initial={{ y: "-2.75rem", opacity: 100 }}
-									animate={{ y: 0, opacity: 100 }}
-									exit={{ y: "-2.75rem", opacity: 100 }}
+									initial={{ y: "-2.75rem" }}
+									animate={{ y: 0 }}
+									exit={{ y: "-2.75rem" }}
 								>
 									<FormField
 										control={form.control}
