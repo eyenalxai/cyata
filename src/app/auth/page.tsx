@@ -84,7 +84,6 @@ export default function Page() {
 						<AnimatePresence>
 							{authType === "sign-up" && (
 								<motion.div
-									key="confirmPassword"
 									transition={{
 										ease: "easeOut",
 										duration: 0.3
