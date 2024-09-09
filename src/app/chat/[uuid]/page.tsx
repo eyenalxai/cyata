@@ -1,4 +1,5 @@
 import { Chat } from "@/components/chat"
+import { selectChatWithMessages } from "@/lib/database/chat"
 import { getSession } from "@/lib/session"
 import { redirect } from "next/navigation"
 
@@ -19,5 +20,7 @@ export default async function Page({ params: { uuid } }: PageProps) {
 		redirect("/auth")
 	}
 
-	return <Chat uuid={uuid} />
+	const chat = await selectChatWithMessages(uuid)
+
+	return <Chat uuid={uuid} initialMessages={chat.isOk() ? chat.value.messages : []} />
 }

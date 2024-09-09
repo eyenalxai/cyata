@@ -51,7 +51,7 @@ export const chatsRelations = relations(chats, ({ one, many }) => ({
 		fields: [chats.userUuid],
 		references: [users.uuid]
 	}),
-	messages: many(messages)
+	messages: many(messages, { relationName: "chatMessages" })
 }))
 
 export const messages = pgTable("messages", {
@@ -70,6 +70,7 @@ export type MessageInsert = typeof messages.$inferInsert
 export const messagesRelations = relations(messages, ({ one }) => ({
 	chat: one(chats, {
 		fields: [messages.chatUuid],
-		references: [chats.uuid]
+		references: [chats.uuid],
+		relationName: "chatMessages"
 	})
 }))

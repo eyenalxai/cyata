@@ -1,13 +1,17 @@
 "use client"
 
+import { mapMessages } from "@/lib/ai-message"
+import type { Message } from "@/lib/schema"
 import { useChat } from "ai/react"
 
 type ChatProps = {
 	uuid: string
+	initialMessages: Message[]
 }
 
-export const Chat = ({ uuid }: ChatProps) => {
+export const Chat = ({ uuid, initialMessages }: ChatProps) => {
 	const { messages, input, handleInputChange, handleSubmit } = useChat({
+		initialMessages: mapMessages(initialMessages),
 		body: {
 			chatUuid: uuid
 		}
