@@ -9,11 +9,14 @@ import { cn } from "@/lib/utils"
 import { AuthFormSchema, AuthType } from "@/lib/zod/form/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowRight, Lock, User } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 import type { z } from "zod"
 
 export default function Page() {
+	const router = useRouter()
 	const [authType, setAuthType] = useState<z.infer<typeof AuthType>>("sign-in")
 
 	const form = useForm<z.infer<typeof AuthFormSchema>>({
@@ -26,16 +29,24 @@ export default function Page() {
 		}
 	})
 
-	const onSubmit = (authData: z.infer<typeof AuthFormSchema>) => {
+	const onSubmit = async (authData: z.infer<typeof AuthFormSchema>) => {
 		const action = authType === "sign-up" ? signUp : signIn
-		action(authData).then((response) => {
-			console.log("success", response)
-		})
+		await action(authData).match(
+			() => router.push("/chat"),
+			(e) => toast.error(e)
+		)
 	}
 
 	useEffect(() => {
 		form.setValue("authType", authType)
 	}, [form, authType])
+
+	useEffect(() => {
+		const errors = Object.values(form.formState.errors)
+		for (const error of errors) {
+			toast.error(error.message)
+		}
+	}, [form.formState.errors])
 
 	return (
 		<div className={cn("w-full", "mt-12", "flex", "flex-col", "items-center")}>
