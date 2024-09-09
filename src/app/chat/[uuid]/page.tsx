@@ -1,3 +1,4 @@
+import { Chat } from "@/components/chat"
 import { getSession } from "@/lib/session"
 import { redirect } from "next/navigation"
 
@@ -18,9 +19,5 @@ export default async function Page({ params: { uuid } }: PageProps) {
 		redirect("/auth")
 	}
 
-	return (
-		<div>
-			<div>Chat will be here</div>
-		</div>
-	)
+	return <Chat />
 }
