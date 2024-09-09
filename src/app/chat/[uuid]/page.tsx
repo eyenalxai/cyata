@@ -19,5 +19,5 @@ export default async function Page({ params: { uuid } }: PageProps) {
 		redirect("/auth")
 	}
 
-	return <Chat />
+	return <Chat uuid={uuid} />
 }

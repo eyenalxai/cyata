@@ -2,11 +2,20 @@
 
 import { useChat } from "ai/react"
 
-export const Chat = () => {
-	const { messages, input, handleInputChange, handleSubmit } = useChat({})
+type ChatProps = {
+	uuid: string
+}
+
+export const Chat = ({ uuid }: ChatProps) => {
+	const { messages, input, handleInputChange, handleSubmit } = useChat({
+		body: {
+			chatUuid: uuid
+		}
+	})
 
 	return (
 		<div className="stretch mx-auto flex w-full max-w-md flex-col py-24">
+			<span>{uuid}</span>
 			{messages.map((m) => (
 				<div key={m.id} className="whitespace-pre-wrap">
 					{m.role === "user" ? "User: " : "AI: "}

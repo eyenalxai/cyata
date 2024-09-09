@@ -8,6 +8,13 @@
       "when": 1725897586627,
       "tag": "0000_misty_the_order",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1725900685275,
+      "tag": "0001_opposite_green_goblin",
+      "breakpoints": true
     }
   ]
 }

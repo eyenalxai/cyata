@@ -1,5 +1,7 @@
+import type { AiMessageRole } from "@/lib/zod/ai-message"
 import { relations, sql } from "drizzle-orm"
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import type { z } from "zod"
 
 export const users = pgTable("users", {
 	uuid: uuid("uuid").default(sql`gen_random_uuid()`).primaryKey(),
@@ -27,8 +29,47 @@ export type Session = typeof sessions.$inferSelect
 export type SessionInsert = typeof sessions.$inferInsert
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
-	author: one(users, {
+	user: one(users, {
 		fields: [sessions.userUuid],
 		references: [users.uuid]
+	})
+}))
+
+export const chats = pgTable("chats", {
+	uuid: uuid("uuid").primaryKey(),
+	createdAt: timestamp("created_at").default(sql`now()`).notNull(),
+	userUuid: uuid("user_uuid")
+		.references(() => users.uuid, { onDelete: "cascade" })
+		.notNull()
+})
+
+export type Chat = typeof chats.$inferSelect
+export type ChatInsert = typeof chats.$inferInsert
+
+export const chatsRelations = relations(chats, ({ one, many }) => ({
+	user: one(users, {
+		fields: [chats.userUuid],
+		references: [users.uuid]
+	}),
+	messages: many(messages)
+}))
+
+export const messages = pgTable("messages", {
+	uuid: uuid("uuid").default(sql`gen_random_uuid()`).primaryKey(),
+	createdAt: timestamp("created_at").default(sql`now()`).notNull(),
+	role: text("role").$type<z.infer<typeof AiMessageRole>>().notNull(),
+	content: text("content").notNull(),
+	chatUuid: uuid("chat_uuid")
+		.references(() => chats.uuid, { onDelete: "cascade" })
+		.notNull()
+})
+
+export type Message = typeof messages.$inferSelect
+export type MessageInsert = typeof messages.$inferInsert
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+	chat: one(chats, {
+		fields: [messages.chatUuid],
+		references: [chats.uuid]
 	})
 }))

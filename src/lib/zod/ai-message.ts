@@ -1,7 +1,9 @@
 import { z } from "zod"
 
+export const AiMessageRole = z.enum(["system", "user", "assistant"])
+
 export const AiMessageSchema = z.object({
-	role: z.enum(["system", "user", "assistant"]),
+	role: AiMessageRole,
 	content: z.string()
 })
 
