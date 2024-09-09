@@ -32,7 +32,7 @@ export default function Page() {
 	const onSubmit = async (authData: z.infer<typeof AuthFormSchema>) => {
 		const action = authType === "sign-up" ? signUp : signIn
 		await action(authData).match(
-			() => router.push("/chat"),
+			() => router.push(`/chat/${window.crypto.randomUUID()}`),
 			(e) => toast.error(e)
 		)
 	}

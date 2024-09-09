@@ -8,5 +8,5 @@ export default async function Page() {
 		redirect("/auth")
 	}
 
-	redirect("/chat")
+	redirect(`/chat/${crypto.randomUUID()}`)
 }
