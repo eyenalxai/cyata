@@ -1,6 +1,6 @@
 import { db } from "@/lib/database/client"
 import { getErrorMessage } from "@/lib/error-message"
-import { type MessageInsert, chats, messages } from "@/lib/schema"
+import { type MessageInsert, messages } from "@/lib/schema"
 import { ResultAsync } from "neverthrow"
 
 export const insertMessage = (message: MessageInsert) => {
