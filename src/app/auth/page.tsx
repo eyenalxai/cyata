@@ -8,9 +8,8 @@ import { signIn, signUp } from "@/lib/fetch/auth"
 import { cn } from "@/lib/utils"
 import { AuthFormSchema, AuthType } from "@/lib/zod/form/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AnimatePresence, motion } from "framer-motion"
 import { ArrowRight, Lock, User } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
 
@@ -20,6 +19,7 @@ export default function Page() {
 	const form = useForm<z.infer<typeof AuthFormSchema>>({
 		resolver: zodResolver(AuthFormSchema),
 		defaultValues: {
+			authType: "sign-in",
 			username: "",
 			password: "",
 			confirmPassword: ""
@@ -32,6 +32,10 @@ export default function Page() {
 			console.log("success", response)
 		})
 	}
+
+	useEffect(() => {
+		form.setValue("authType", authType)
+	}, [form, authType])
 
 	return (
 		<div className={cn("w-full", "mt-12", "flex", "flex-col", "items-center")}>
@@ -70,6 +74,7 @@ export default function Page() {
 									<div className={cn("relative", "z-20")}>
 										<FormControl>
 											<Input
+												autoComplete={authType === "sign-up" ? "new-password" : "current-password"}
 												className={cn("pr-8", "bg-background")}
 												type={"password"}
 												placeholder="Password"
@@ -81,39 +86,28 @@ export default function Page() {
 								</FormItem>
 							)}
 						/>
-						<AnimatePresence>
-							{authType === "sign-up" && (
-								<motion.div
-									transition={{
-										ease: "easeOut",
-										duration: 0.3
-									}}
-									initial={{ y: "-2.75rem" }}
-									animate={{ y: 0 }}
-									exit={{ y: "-2.75rem" }}
-								>
-									<FormField
-										control={form.control}
-										name="confirmPassword"
-										render={({ field }) => (
-											<FormItem>
-												<div className={cn("relative", "z-10")}>
-													<FormControl>
-														<Input
-															className={cn("pr-8", "bg-background")}
-															type={"password"}
-															placeholder="Confirm password"
-															{...field}
-														/>
-													</FormControl>
-													<Lock className={cn("absolute", "right-2", "top-2.5", "text-slate-500", "size-4")} />
-												</div>
-											</FormItem>
-										)}
-									/>
-								</motion.div>
-							)}
-						</AnimatePresence>
+						{authType === "sign-up" && (
+							<FormField
+								control={form.control}
+								name="confirmPassword"
+								render={({ field }) => (
+									<FormItem>
+										<div className={cn("relative", "z-10")}>
+											<FormControl>
+												<Input
+													autoComplete={authType === "sign-up" ? "new-password" : "current-password"}
+													className={cn("pr-8", "bg-background")}
+													type={"password"}
+													placeholder="Confirm password"
+													{...field}
+												/>
+											</FormControl>
+											<Lock className={cn("absolute", "right-2", "top-2.5", "text-slate-500", "size-4")} />
+										</div>
+									</FormItem>
+								)}
+							/>
+						)}
 						<Button className={cn("w-full")} type="submit">
 							<span>Auth</span>
 							<ArrowRight className={cn("size-5", "ml-2")} />
