@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 		.match(
 			async ({ messages, chatUuid }) => {
 				const result = await streamText({
-					model: openai("gpt-4-turbo"),
+					model: openai("gpt-4o-mini"),
 					messages: convertToCoreMessages(messages),
 					onFinish: ({ text }) => {
 						addMessageToChat({
