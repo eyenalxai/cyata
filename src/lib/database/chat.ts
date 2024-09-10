@@ -19,10 +19,10 @@ export const selectChat = (uuid: string) => {
 	).andThen((chats) => (chats.length > 0 ? okAsync(chats[0]) : errAsync("CHAT_NOT_FOUND" as const)))
 }
 
-export const selectChatWithMessages = (uuid: string) => {
+export const selectChatWithMessages = (chatUuid: string) => {
 	return ResultAsync.fromPromise(
 		db.query.chats.findFirst({
-			where: eq(chats.uuid, uuid),
+			where: eq(chats.uuid, chatUuid),
 			with: {
 				messages: {
 					orderBy: (messages, { asc }) => [asc(messages.createdAt)]
@@ -31,6 +31,20 @@ export const selectChatWithMessages = (uuid: string) => {
 		}),
 		(e) => getErrorMessage(e, "Failed to get session by key")
 	).andThen((chat) => (chat !== undefined ? okAsync(chat) : errAsync("CHAT_NOT_FOUND" as const)))
+}
+
+export const selectChatsWithMessages = (userUuid: string) => {
+	return ResultAsync.fromPromise(
+		db.query.chats.findMany({
+			where: eq(chats.userUuid, userUuid),
+			with: {
+				messages: {
+					orderBy: (messages, { asc }) => [asc(messages.createdAt)]
+				}
+			}
+		}),
+		(e) => getErrorMessage(e, "Failed to get session by key")
+	)
 }
 
 type AddMessageToChat = {
