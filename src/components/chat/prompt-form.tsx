@@ -53,7 +53,16 @@ export const PromptForm = ({ onSubmit, input, setInput, isLoading }: PromptProps
 					onChange={(e) => setInput(e.target.value)}
 					placeholder="Send a message."
 					spellCheck={false}
-					className={cn("w-full", "bg-transparent", "p-4", "pl-8", "pr-20", "focus-within:outline-none", "sm:text-sm")}
+					className={cn(
+						"w-full",
+						"bg-transparent",
+						"p-4",
+						"pl-8",
+						"pr-20",
+						"focus-within:outline-none",
+						"sm:text-sm",
+						"resize-none"
+					)}
 				/>
 				<div className={cn("absolute", "right-0", "top-4", "sm:right-4")}>
 					<Button
