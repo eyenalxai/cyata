@@ -1,8 +1,11 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { mapMessages } from "@/lib/ai-message"
+import { savePartial } from "@/lib/fetch/chat"
 import type { Message } from "@/lib/schema"
 import { useChat } from "ai/react"
+import { toast } from "sonner"
 
 type ChatProps = {
 	uuid: string
@@ -10,7 +13,7 @@ type ChatProps = {
 }
 
 export const Chat = ({ uuid, initialMessages }: ChatProps) => {
-	const { messages, input, handleInputChange, handleSubmit } = useChat({
+	const { messages, input, handleInputChange, handleSubmit, stop } = useChat({
 		initialMessages: mapMessages(initialMessages),
 		body: {
 			chatUuid: uuid
@@ -34,6 +37,16 @@ export const Chat = ({ uuid, initialMessages }: ChatProps) => {
 					placeholder="Say something..."
 					onChange={handleInputChange}
 				/>
+				<Button
+					className="fixed bottom-0 right-24 mb-8 w-fit rounded border border-gray-300 p-2 shadow-xl"
+					type={"button"}
+					onClick={() => {
+						stop()
+						savePartial({ messages, chatUuid: uuid }).mapErr((e) => toast.error(e))
+					}}
+				>
+					stop
+				</Button>
 			</form>
 		</div>
 	)
