@@ -1,50 +1,39 @@
 "use client"
 
-import { MarkdownDisplay } from "@/components/markdown"
-import { Button } from "@/components/ui/button"
+import { ChatList } from "@/components/chat/chat-list"
+import { ChatPanel } from "@/components/chat/chat-panel"
+import { ChatScrollAnchor } from "@/components/chat/chat-scroll-anchor"
 import { mapMessages } from "@/lib/ai-message"
-import { savePartial } from "@/lib/fetch/chat"
 import type { Message } from "@/lib/schema"
+import { cn } from "@/lib/utils"
 import { useChat } from "ai/react"
-import { toast } from "sonner"
 
 type ChatProps = {
-	uuid: string
+	chatUuid: string
 	initialMessages: Message[]
 }
 
-export const Chat = ({ uuid, initialMessages }: ChatProps) => {
-	const { messages, input, handleInputChange, handleSubmit, stop } = useChat({
+export const Chat = ({ chatUuid, initialMessages }: ChatProps) => {
+	const { messages, append, stop, isLoading, input, setInput } = useChat({
 		initialMessages: mapMessages(initialMessages),
 		body: {
-			chatUuid: uuid
+			chatUuid: chatUuid
 		}
 	})
 
 	return (
-		<div className="stretch mx-auto flex w-full max-w-md flex-col py-24">
-			<span>{uuid}</span>
-			{messages.map((m) => (
-				<MarkdownDisplay key={m.id} markdown={m.content} />
-			))}
-			<form onSubmit={handleSubmit}>
-				<input
-					className="fixed bottom-0 mb-8 w-full max-w-md rounded border border-gray-300 p-2 shadow-xl"
-					value={input}
-					placeholder="Say something..."
-					onChange={handleInputChange}
-				/>
-				<Button
-					className="fixed bottom-0 right-24 mb-8 w-fit rounded border border-gray-300 p-2 shadow-xl"
-					type={"button"}
-					onClick={() => {
-						stop()
-						savePartial({ messages, chatUuid: uuid }).mapErr((e) => toast.error(e))
-					}}
-				>
-					stop
-				</Button>
-			</form>
+		<div className={cn("flex", "flex-col", "items-center")}>
+			<ChatList messages={messages} />
+			<ChatScrollAnchor trackVisibility={isLoading} />
+			<ChatPanel
+				messages={messages}
+				chatUuid={chatUuid}
+				isLoading={isLoading}
+				stop={stop}
+				append={append}
+				input={input}
+				setInput={setInput}
+			/>
 		</div>
 	)
 }

@@ -13,7 +13,16 @@ type MarkdownDisplayProps = {
 }
 
 export const MarkdownDisplay = ({ markdown }: MarkdownDisplayProps) => (
-	<article className={cn("prose", "prose-slate", "dark:prose-invert", "max-w-max")}>
+	<article
+		className={cn(
+			"prose",
+			"prose-slate",
+			"dark:prose-invert",
+			"prose-p:leading-relaxed",
+			"prose-pre:p-0",
+			"break-words"
+		)}
+	>
 		<Markdown
 			remarkPlugins={[remarkParse, remarkMath, remarkRehype]}
 			rehypePlugins={[rehypeSanitize, rehypeKatex, [rehypeHighlight, { languages: all }]]}

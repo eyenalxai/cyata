@@ -26,5 +26,5 @@ export default async function Page({ params: { uuid } }: PageProps) {
 		redirect(`/chat/${crypto.randomUUID()}`)
 	}
 
-	return <Chat uuid={uuid} initialMessages={chat.isOk() ? chat.value.messages : []} />
+	return <Chat chatUuid={uuid} initialMessages={chat.isOk() ? chat.value.messages : []} />
 }
