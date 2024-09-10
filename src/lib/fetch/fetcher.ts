@@ -1,13 +1,29 @@
 "use client"
 
-import ky, { HTTPError, type Input as KyInput, type Options as KyOption } from "ky"
+import ky, { HTTPError, type Input as KyInput, type Options as KyOptions } from "ky"
 
-export const api = async (url: KyInput, options?: KyOption) => {
+type NonDefaultType<T> = unknown extends T ? never : T
+
+interface ExtendedOptions extends KyOptions {
+	shouldParseJson?: boolean
+}
+
+export async function api<T>(
+	url: KyInput,
+	options: ExtendedOptions & { shouldParseJson: true }
+): Promise<NonDefaultType<T>>
+export async function api(url: KyInput, options: ExtendedOptions): Promise<Response>
+
+export async function api<T = unknown>(url: KyInput, options: ExtendedOptions): Promise<T | Response> {
 	try {
-		return await ky(url, {
+		const response = await ky(url, {
 			...options,
 			credentials: "include"
 		})
+
+		if (options.shouldParseJson) return (await response.json()) as Promise<T>
+
+		return response
 	} catch (e) {
 		if (e instanceof HTTPError) throw new Error(await e.response.text())
 		throw e

@@ -1,6 +1,6 @@
 import { getErrorMessage } from "@/lib/error-message"
 import { api } from "@/lib/fetch/fetcher"
-import type { CompletionRequest } from "@/lib/zod/api"
+import type { ChatsResponse, CompletionRequest } from "@/lib/zod/api"
 import { ResultAsync } from "neverthrow"
 import type { z } from "zod"
 
@@ -13,3 +13,9 @@ export const savePartial = (data: z.infer<typeof CompletionRequest>) => {
 		(e) => getErrorMessage(e, "Failed to save partial completion")
 	)
 }
+
+export const fetchChats = () =>
+	api<z.infer<typeof ChatsResponse>>("/api/chats", {
+		method: "get",
+		shouldParseJson: true
+	})

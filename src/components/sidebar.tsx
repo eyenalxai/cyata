@@ -1,3 +1,4 @@
+import { ChatList } from "@/components/chat-list"
 import { Button } from "@/components/ui/button"
 import {
 	Drawer,
@@ -23,6 +24,7 @@ export const Sidebar = () => {
 					<DrawerTitle>Are you absolutely sure?</DrawerTitle>
 					<DrawerDescription>This action cannot be undone.</DrawerDescription>
 				</DrawerHeader>
+				<ChatList />
 				<DrawerFooter>
 					<Button autoFocus>Submit</Button>
 					<DrawerClose>
