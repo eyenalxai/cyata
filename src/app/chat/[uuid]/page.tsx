@@ -22,5 +22,9 @@ export default async function Page({ params: { uuid } }: PageProps) {
 
 	const chat = await selectChatWithMessages(uuid)
 
+	if (chat.isErr() && chat.error !== "CHAT_NOT_FOUND") {
+		redirect(`/chat/${crypto.randomUUID()}`)
+	}
+
 	return <Chat uuid={uuid} initialMessages={chat.isOk() ? chat.value.messages : []} />
 }
