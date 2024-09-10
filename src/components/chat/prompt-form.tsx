@@ -27,15 +27,15 @@ export const PromptForm = ({ onSubmit, input, setInput, isLoading }: PromptProps
 		<form
 			onSubmit={async (e) => {
 				e.preventDefault()
-				if (!input?.trim()) {
-					return
-				}
+
+				if (!input?.trim()) return
+
 				setInput("")
 				inputRef.current?.blur()
-				if (inputRef.current) {
-					inputRef.current.style.height = "auto"
-				}
+
+				if (inputRef.current) inputRef.current.style.height = "auto"
 				window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" })
+
 				await onSubmit(input)
 			}}
 			ref={formRef}
