@@ -10,7 +10,7 @@ export const signUp = (signUpData: z.infer<typeof AuthFormSchema>) => {
 			method: "post",
 			json: signUpData
 		}),
-		(e) => getErrorMessage(e, "Failed to insert user")
+		(e) => getErrorMessage(e, "Failed to sign up")
 	)
 }
 
@@ -20,6 +20,6 @@ export const signIn = (signInData: z.infer<typeof AuthFormSchema>) => {
 			method: "post",
 			json: signInData
 		}),
-		(e) => getErrorMessage(e, "Failed to insert user")
+		(e) => getErrorMessage(e, "Failed to sign in")
 	)
 }
