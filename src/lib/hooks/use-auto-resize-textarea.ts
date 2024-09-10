@@ -17,11 +17,6 @@ export const useAutoResizeTextarea = (ref: ForwardedRef<HTMLTextAreaElement>, au
 			if (ref && autoResize) {
 				ref.style.height = "auto"
 				ref.style.height = `${ref.scrollHeight + 2}px`
-
-				window.scrollTo({
-					top: ref.scrollHeight + 50,
-					left: 0
-				})
 			}
 		}
 

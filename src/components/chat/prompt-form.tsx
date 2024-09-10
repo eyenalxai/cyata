@@ -32,45 +32,28 @@ export const PromptForm = ({ onSubmit, input, setInput, isLoading }: PromptProps
 				}
 				setInput("")
 				inputRef.current?.blur()
+				if (inputRef.current) {
+					inputRef.current.style.height = "auto"
+				}
+				window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" })
 				await onSubmit(input)
 			}}
 			ref={formRef}
 		>
 			<div
-				className={cn(
-					"relative",
-					"flex",
-					"max-h-60",
-					"w-full",
-					"grow",
-					"flex-col",
-					"overflow-hidden",
-					"bg-background",
-					"sm:rounded-md",
-					"sm:border"
-				)}
+				className={cn("relative", "flex", "w-full", "grow", "flex-col", "bg-background", "sm:rounded-md", "sm:border")}
 			>
 				<Textarea
 					disabled={isLoading}
+					autoResize
 					ref={inputRef}
 					tabIndex={0}
 					onKeyDown={onKeyDown}
-					rows={1}
 					value={input}
 					onChange={(e) => setInput(e.target.value)}
 					placeholder="Send a message."
 					spellCheck={false}
-					className={cn(
-						"min-h-[4.5rem]",
-						"w-full",
-						"resize-none",
-						"bg-transparent",
-						"p-4",
-						"pl-8",
-						"pr-20",
-						"focus-within:outline-none",
-						"sm:text-sm"
-					)}
+					className={cn("w-full", "bg-transparent", "p-4", "pl-8", "pr-20", "focus-within:outline-none", "sm:text-sm")}
 				/>
 				<div className={cn("absolute", "right-0", "top-4", "sm:right-4")}>
 					<Button
