@@ -24,7 +24,9 @@ export const selectChatWithMessages = (uuid: string) => {
 		db.query.chats.findFirst({
 			where: eq(chats.uuid, uuid),
 			with: {
-				messages: true
+				messages: {
+					orderBy: (messages, { asc }) => [asc(messages.createdAt)]
+				}
 			}
 		}),
 		(e) => getErrorMessage(e, "Failed to get session by key")
