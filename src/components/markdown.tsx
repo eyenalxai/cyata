@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils"
 import { all } from "lowlight"
+import { memo } from "react"
 import Markdown from "react-markdown"
 import rehypeHighlight from "rehype-highlight"
 import rehypeKatex from "rehype-katex"
@@ -12,7 +13,7 @@ type MarkdownDisplayProps = {
 	markdown: string
 }
 
-export const MarkdownDisplay = ({ markdown }: MarkdownDisplayProps) => (
+const MarkdownDisplay = ({ markdown }: MarkdownDisplayProps) => (
 	<article
 		className={cn(
 			"prose",
@@ -31,3 +32,5 @@ export const MarkdownDisplay = ({ markdown }: MarkdownDisplayProps) => (
 		</Markdown>
 	</article>
 )
+
+export const MemoizedMarkdownDisplay = memo(MarkdownDisplay)

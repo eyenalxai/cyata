@@ -1,4 +1,4 @@
-import { MarkdownDisplay } from "@/components/markdown"
+import { MemoizedMarkdownDisplay } from "@/components/markdown"
 import type { Message } from "ai"
 
 type ChatMessageContentProps = {
@@ -6,5 +6,5 @@ type ChatMessageContentProps = {
 }
 
 export const ChatMessageContent = ({ message }: ChatMessageContentProps) => (
-	<MarkdownDisplay markdown={message.content} />
+	<MemoizedMarkdownDisplay markdown={message.content} />
 )
