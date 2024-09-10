@@ -1,6 +1,6 @@
 "use client"
 
-import { ChatList } from "@/components/chat/chat-list"
+import { ChatMessages } from "@/components/chat/chat-messages"
 import { ChatPanel } from "@/components/chat/chat-panel"
 import { ChatScrollAnchor } from "@/components/chat/chat-scroll-anchor"
 import { mapMessages } from "@/lib/ai-message"
@@ -23,7 +23,7 @@ export const Chat = ({ chatUuid, initialMessages }: ChatProps) => {
 
 	return (
 		<div className={cn("flex", "flex-col", "items-center")}>
-			<ChatList messages={messages} />
+			<ChatMessages messages={messages} />
 			<ChatScrollAnchor trackVisibility={isLoading} />
 			<ChatPanel
 				messages={messages}

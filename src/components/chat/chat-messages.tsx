@@ -7,7 +7,7 @@ type ChatList = {
 	messages: Message[]
 }
 
-export const ChatList = ({ messages }: ChatList) => {
+export const ChatMessages = ({ messages }: ChatList) => {
 	if (!messages.length || messages.length === 0) {
 		return null
 	}
