@@ -1,6 +1,7 @@
 "use client"
 
 import { useAtBottom } from "@/lib/hooks/use-at-bottom"
+import { cn } from "@/lib/utils"
 import { useEffect } from "react"
 import { useInView } from "react-intersection-observer"
 
@@ -24,5 +25,5 @@ export function ChatScrollAnchor({ trackVisibility }: ChatScrollAnchorProps) {
 		}
 	}, [inView, entry, isAtBottom, trackVisibility])
 
-	return <div ref={ref} className="h-px w-full" />
+	return <div ref={ref} className={cn("h-px", "w-full")} />
 }
