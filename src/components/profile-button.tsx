@@ -51,12 +51,4 @@ export const ProfileButton = ({ username }: ProfileButtonProps) => {
 			</DropdownMenuContent>
 		</DropdownMenu>
 	)
-
-	return (
-		<Button variant={"ghost"} asChild className={cn("w-fit")}>
-			<Link href={"/profile"}>
-				<User />
-			</Link>
-		</Button>
-	)
 }
