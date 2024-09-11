@@ -49,7 +49,7 @@ export default function Page() {
 	}, [form.formState.errors])
 
 	return (
-		<div className={cn("w-full", "mt-12", "flex", "flex-col", "items-center")}>
+		<div className={cn("w-full", "mt-12", "flex", "flex-col", "items-center", "px-4")}>
 			<div className={cn("w-full", "max-w-md", "flex", "flex-col", "items-center", "gap-y-2")}>
 				<Tabs className={cn("w-full")} value={authType} onValueChange={(tab) => setAuthType(AuthType.parse(tab))}>
 					<TabsList className={cn("w-full")}>
