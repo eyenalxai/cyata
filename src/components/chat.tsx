@@ -3,12 +3,12 @@
 import { ChatMessages } from "@/components/chat/chat-messages"
 import { ChatPanel } from "@/components/chat/chat-panel"
 import { ChatScrollAnchor } from "@/components/chat/chat-scroll-anchor"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { SelectModel } from "@/components/chat/select-model"
 import { mapMessages } from "@/lib/ai-message"
 import { CHATS_QUERY_KEY } from "@/lib/hooks/fetch/query-keys"
 import type { Message } from "@/lib/schema"
 import { cn } from "@/lib/utils"
-import { type OpenAIModel, selectOpenAiModelOptions } from "@/lib/zod/model"
+import type { OpenAIModel } from "@/lib/zod/model"
 import { useQueryClient } from "@tanstack/react-query"
 import { useChat } from "ai/react"
 import { useEffect, useState } from "react"
@@ -41,20 +41,7 @@ export const Chat = ({ chatUuid, initialMessages }: ChatProps) => {
 
 	return (
 		<div className={cn("flex", "flex-col", "items-center")}>
-			<Select onValueChange={(model) => setModel(model as z.infer<typeof OpenAIModel>)} value={model}>
-				<SelectTrigger className={cn("w-32")}>
-					<SelectValue>{selectOpenAiModelOptions[model as keyof typeof selectOpenAiModelOptions]}</SelectValue>
-				</SelectTrigger>
-				<SelectContent>
-					{Object.entries(selectOpenAiModelOptions).map(([key, value]) => {
-						return (
-							<SelectItem key={key} value={key}>
-								{value}
-							</SelectItem>
-						)
-					})}
-				</SelectContent>
-			</Select>
+			<SelectModel model={model} setModel={setModel} />
 			<ChatMessages messages={messages} />
 			<ChatScrollAnchor trackVisibility={isLoading} />
 			<ChatPanel
