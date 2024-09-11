@@ -9,7 +9,7 @@ import { savePartial } from "@/lib/fetch/chat"
 import { cn } from "@/lib/utils"
 import type { OpenAIModel } from "@/lib/zod/model"
 import type { Message } from "ai"
-import { User } from "lucide-react"
+import { CircleStop, Pause, User } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 import type { z } from "zod"
@@ -27,14 +27,14 @@ export const ChatPanel = ({ messages, isLoading, stop, append, input, setInput, 
 		<div className={cn("fixed", "inset-x-0", "bottom-0")}>
 			<ButtonScrollToBottom />
 			<div className={cn("mx-auto", "sm:max-w-2xl", "sm:px-4")}>
-				<div className={cn('flex", "h-10", "items-center", "justify-center')}>
+				<div className={cn("flex", "h-10", "items-center", "justify-center")}>
 					{isLoading && (
 						<Button
 							variant="outline"
-							onClick={() => {
+							onClick={async () => {
 								setSavingPartial(true)
 								stop()
-								savePartial({ messages, chatUuid, model }).match(
+								await savePartial({ messages, chatUuid, model }).match(
 									() => setSavingPartial(false),
 									(e) => {
 										setSavingPartial(false)
@@ -44,7 +44,7 @@ export const ChatPanel = ({ messages, isLoading, stop, append, input, setInput, 
 							}}
 							className={cn("bg-background", "mb-6")}
 						>
-							<User className={cn("mr-2")} />
+							<CircleStop className={cn("mr-2", "size-5")} />
 							Stop generating
 						</Button>
 					)}
