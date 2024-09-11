@@ -14,3 +14,12 @@ export const ChatInfo = z.object({
 })
 
 export const ChatsResponse = z.array(ChatInfo)
+
+export const PreferencesResponse = z.object({
+	userUuid: z.string().uuid(),
+	defaultModel: OpenAIModel
+})
+
+export const UpdateDefaultModelRequest = z.object({
+	defaultModel: OpenAIModel
+})

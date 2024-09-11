@@ -14,7 +14,7 @@ type UpdateDefaultModelProps = {
 export const selectUserPreferences = (userUuid: string) => {
 	return ResultAsync.fromPromise(db.select().from(userPreferences).where(eq(userPreferences.userUuid, userUuid)), (e) =>
 		getErrorMessage(e, "Failed to get user by username")
-	).andThen((users) => (users.length > 0 ? okAsync(users[0]) : errAsync("User not found")))
+	).andThen((preferences) => (preferences.length > 0 ? okAsync(preferences[0]) : errAsync("User not found")))
 }
 
 export const insertUserPreferences = ({ userUuid, defaultModel }: UpdateDefaultModelProps) => {
@@ -27,7 +27,7 @@ export const updateDefaultModel = ({ userUuid, defaultModel }: UpdateDefaultMode
 	return ResultAsync.fromPromise(
 		db.update(userPreferences).set({ defaultModel }).where(eq(userPreferences.userUuid, userUuid)),
 		(e) => getErrorMessage(e, "Failed to update user default model")
-	)
+	).map(([preferences]) => preferences)
 }
 
 export const setDefaultModel = ({ userUuid, defaultModel }: UpdateDefaultModelProps) => {
