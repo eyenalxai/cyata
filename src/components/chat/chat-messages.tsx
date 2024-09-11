@@ -13,7 +13,7 @@ export const ChatMessages = ({ messages }: ChatList) => {
 	}
 
 	return (
-		<div className={cn("w-full", "pb-[200px]", "pt-4", "md:pt-10")}>
+		<div className={cn("w-full", "pb-48", "pt-4")}>
 			{messages.map((message, index) => (
 				<div key={message.id}>
 					<ChatMessage message={message} />
