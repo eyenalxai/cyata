@@ -17,14 +17,15 @@ import type { z } from "zod"
 
 type ChatProps = {
 	chatUuid: string
-	initialMessages: Message[]
+	initialMessages?: Message[]
+	initialModel: z.infer<typeof OpenAIModel>
 }
 
-export const Chat = ({ chatUuid, initialMessages }: ChatProps) => {
+export const Chat = ({ chatUuid, initialMessages, initialModel }: ChatProps) => {
 	const queryClient = useQueryClient()
-	const [model, setModel] = useState<z.infer<typeof OpenAIModel>>("gpt-4o-mini")
+	const [model, setModel] = useState<z.infer<typeof OpenAIModel>>(initialModel)
 	const { messages, append, stop, isLoading, input, setInput, error } = useChat({
-		initialMessages: mapMessages(initialMessages),
+		initialMessages: mapMessages(initialMessages || []),
 		body: {
 			chatUuid: chatUuid,
 			model: model
