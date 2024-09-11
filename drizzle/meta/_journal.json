@@ -15,6 +15,13 @@
       "when": 1725900685275,
       "tag": "0001_opposite_green_goblin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1726062594533,
+      "tag": "0002_dashing_warbound",
+      "breakpoints": true
     }
   ]
 }

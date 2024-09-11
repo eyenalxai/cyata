@@ -14,22 +14,24 @@ export async function POST(req: Request) {
 	}
 
 	return parseZodSchema(CompletionRequest, await req.json())
-		.asyncAndThen(({ messages, chatUuid }) =>
+		.asyncAndThen(({ messages, chatUuid, model }) =>
 			addMessageToChat({
 				userUuid: session.value.uuid,
 				chatUuid: chatUuid,
+				model,
 				message: messages[messages.length - 1]
-			}).map(() => ({ messages, chatUuid }))
+			}).map(() => ({ messages, chatUuid, model }))
 		)
 		.match(
-			async ({ messages, chatUuid }) => {
+			async ({ messages, chatUuid, model }) => {
 				const result = await streamText({
-					model: openai("gpt-4o-mini"),
+					model: openai(model),
 					messages: convertToCoreMessages(messages),
 					onFinish: ({ text }) => {
 						addMessageToChat({
 							userUuid: session.value.uuid,
 							chatUuid: chatUuid,
+							model,
 							message: {
 								role: "assistant",
 								content: text

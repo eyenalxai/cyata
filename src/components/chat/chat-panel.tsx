@@ -7,17 +7,20 @@ import { PromptForm } from "@/components/chat/prompt-form"
 import { Button } from "@/components/ui/button"
 import { savePartial } from "@/lib/fetch/chat"
 import { cn } from "@/lib/utils"
+import type { OpenAIModel } from "@/lib/zod/model"
 import type { Message } from "ai"
 import { User } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
+import type { z } from "zod"
 
 export interface ChatPanelProps extends Pick<UseChatHelpers, "append" | "isLoading" | "stop" | "input" | "setInput"> {
 	messages: Message[]
 	chatUuid: string
+	model: z.infer<typeof OpenAIModel>
 }
 
-export const ChatPanel = ({ messages, isLoading, stop, append, input, setInput, chatUuid }: ChatPanelProps) => {
+export const ChatPanel = ({ messages, isLoading, stop, append, input, setInput, chatUuid, model }: ChatPanelProps) => {
 	const [savingPartial, setSavingPartial] = useState(false)
 
 	return (
@@ -31,7 +34,7 @@ export const ChatPanel = ({ messages, isLoading, stop, append, input, setInput, 
 							onClick={() => {
 								setSavingPartial(true)
 								stop()
-								savePartial({ messages, chatUuid }).match(
+								savePartial({ messages, chatUuid, model }).match(
 									() => setSavingPartial(false),
 									(e) => {
 										setSavingPartial(false)

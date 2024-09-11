@@ -1,8 +1,10 @@
 import { AiMessagesSchema } from "@/lib/zod/ai-message"
+import { OpenAIModel } from "@/lib/zod/model"
 import { z } from "zod"
 
 export const CompletionRequest = z.object({
 	messages: AiMessagesSchema,
+	model: OpenAIModel,
 	chatUuid: z.string().uuid()
 })
 

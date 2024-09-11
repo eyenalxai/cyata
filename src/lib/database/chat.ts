@@ -3,6 +3,7 @@ import { insertMessage } from "@/lib/database/message"
 import { getErrorMessage } from "@/lib/error-message"
 import { type ChatInsert, chats } from "@/lib/schema"
 import type { AiMessageSchema } from "@/lib/zod/ai-message"
+import type { OpenAIModel } from "@/lib/zod/model"
 import { eq } from "drizzle-orm"
 import { ResultAsync, errAsync, okAsync } from "neverthrow"
 import type { z } from "zod"
@@ -17,6 +18,17 @@ export const selectChat = (uuid: string) => {
 	return ResultAsync.fromPromise(db.select().from(chats).where(eq(chats.uuid, uuid)), (e) =>
 		getErrorMessage(e, "Failed to get session by key")
 	).andThen((chats) => (chats.length > 0 ? okAsync(chats[0]) : errAsync("CHAT_NOT_FOUND" as const)))
+}
+
+type UpdateChatModelProps = {
+	uuid: string
+	model: z.infer<typeof OpenAIModel>
+}
+
+export const updateChatModel = ({ uuid, model }: UpdateChatModelProps) => {
+	return ResultAsync.fromPromise(db.update(chats).set({ model }).where(eq(chats.uuid, uuid)).returning(), (e) =>
+		getErrorMessage(e, "Failed to update chat model")
+	).map(([updatedChat]) => updatedChat)
 }
 
 export const selectChatWithMessages = (chatUuid: string) => {
@@ -52,10 +64,12 @@ type AddMessageToChat = {
 	userUuid: string
 	chatUuid: string
 	message: z.infer<typeof AiMessageSchema>
+	model: z.infer<typeof OpenAIModel>
 }
 
-export const addMessageToChat = ({ userUuid, chatUuid, message }: AddMessageToChat) => {
+export const addMessageToChat = ({ userUuid, chatUuid, message, model }: AddMessageToChat) => {
 	return selectChat(chatUuid)
+		.andThen((chat) => updateChatModel({ uuid: chat.uuid, model }))
 		.andThen((chat) =>
 			insertMessage({
 				...message,
@@ -64,7 +78,7 @@ export const addMessageToChat = ({ userUuid, chatUuid, message }: AddMessageToCh
 		)
 		.orElse((e) => {
 			if (e === "CHAT_NOT_FOUND")
-				return insertChat({ uuid: chatUuid, userUuid }).andThen((chat) =>
+				return insertChat({ uuid: chatUuid, userUuid, model }).andThen((chat) =>
 					insertMessage({
 						...message,
 						chatUuid: chat.uuid

@@ -13,10 +13,11 @@ export async function POST(req: Request) {
 	}
 
 	return parseZodSchema(CompletionRequest, await req.json())
-		.asyncAndThen(({ messages, chatUuid }) =>
+		.asyncAndThen(({ messages, chatUuid, model }) =>
 			addMessageToChat({
 				userUuid: session.value.uuid,
 				chatUuid: chatUuid,
+				model,
 				message: messages[messages.length - 1]
 			})
 		)
