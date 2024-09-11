@@ -1,7 +1,9 @@
 import { Chat } from "@/components/chat"
 import { CustomAlert } from "@/components/custom-alert"
 import { selectChatWithMessages } from "@/lib/database/chat"
+import { selectUserPreferences } from "@/lib/database/user-preferences"
 import { getSession } from "@/lib/session"
+import { defaultModel } from "@/lib/zod/model"
 import { redirect } from "next/navigation"
 
 export type PageProps = {
@@ -25,11 +27,15 @@ export default async function Page({ params: { uuid } }: PageProps) {
 
 	if (chat.isErr() && chat.error !== "CHAT_NOT_FOUND") return <CustomAlert>{chat.error}</CustomAlert>
 
+	const userPreferences = await selectUserPreferences(session.value.uuid)
+
 	return (
 		<Chat
 			chatUuid={uuid}
 			initialMessages={chat.isOk() ? chat.value.messages : []}
-			initialModel={chat.isOk() ? chat.value.model : "gpt-4o-mini"}
+			initialModel={
+				chat.isOk() ? chat.value.model : userPreferences.isOk() ? userPreferences.value.defaultModel : defaultModel
+			}
 		/>
 	)
 }

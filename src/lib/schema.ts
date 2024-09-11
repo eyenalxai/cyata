@@ -76,3 +76,20 @@ export const messagesRelations = relations(messages, ({ one }) => ({
 		relationName: "chatMessages"
 	})
 }))
+
+export const userPreferences = pgTable("user_preferences", {
+	userUuid: uuid("user_uuid")
+		.references(() => users.uuid, { onDelete: "cascade" })
+		.primaryKey(),
+	defaultModel: text("default_model").$type<z.infer<typeof OpenAIModel>>().notNull()
+})
+
+export type UserPreferences = typeof userPreferences.$inferSelect
+export type UserPreferencesInsert = typeof userPreferences.$inferInsert
+
+export const userPreferencesRelations = relations(userPreferences, ({ one }) => ({
+	user: one(users, {
+		fields: [userPreferences.userUuid],
+		references: [users.uuid]
+	})
+}))
