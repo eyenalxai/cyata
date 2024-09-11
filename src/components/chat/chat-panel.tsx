@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 import type { OpenAIModel } from "@/lib/zod/model"
 import type { Message } from "ai"
 import { CircleStop, Pause, User } from "lucide-react"
-import { useState } from "react"
+import { type RefObject, useState } from "react"
 import { toast } from "sonner"
 import type { z } from "zod"
 
@@ -18,9 +18,20 @@ export interface ChatPanelProps extends Pick<UseChatHelpers, "append" | "isLoadi
 	messages: Message[]
 	chatUuid: string
 	model: z.infer<typeof OpenAIModel>
+	inputRef: RefObject<HTMLTextAreaElement>
 }
 
-export const ChatPanel = ({ messages, isLoading, stop, append, input, setInput, chatUuid, model }: ChatPanelProps) => {
+export const ChatPanel = ({
+	isLoading,
+	stop,
+	append,
+	input,
+	setInput,
+	messages,
+	chatUuid,
+	model,
+	inputRef
+}: ChatPanelProps) => {
 	const [savingPartial, setSavingPartial] = useState(false)
 
 	return (
@@ -71,6 +82,7 @@ export const ChatPanel = ({ messages, isLoading, stop, append, input, setInput, 
 						}}
 						input={input}
 						setInput={setInput}
+						inputRef={inputRef}
 						isLoading={isLoading || savingPartial}
 					/>
 				</div>

@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
 import type { OpenAIModel } from "@/lib/zod/model"
 import { useQueryClient } from "@tanstack/react-query"
 import { useChat } from "ai/react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import type { z } from "zod"
 
@@ -23,6 +23,7 @@ type ChatProps = {
 
 export const Chat = ({ chatUuid, initialMessages, initialModel }: ChatProps) => {
 	const queryClient = useQueryClient()
+	const [currentInput, setCurrentInput] = useState<string>("")
 	const [model, setModel] = useState<z.infer<typeof OpenAIModel>>(initialModel)
 	const { messages, append, stop, isLoading, input, setInput, error } = useChat({
 		initialMessages: mapMessages(initialMessages || []),
@@ -36,9 +37,21 @@ export const Chat = ({ chatUuid, initialMessages, initialModel }: ChatProps) => 
 		}
 	})
 
+	const inputRef = useRef<HTMLTextAreaElement>(null)
+
 	useEffect(() => {
-		if (error) toast.error(error.message)
-	}, [error])
+		if (error) {
+			toast.error(error.message)
+			setInput(currentInput)
+			inputRef.current?.focus()
+		}
+	}, [error, currentInput, setInput])
+
+	useEffect(() => {
+		if (input && input !== "") {
+			setCurrentInput(input)
+		}
+	}, [input])
 
 	return (
 		<div className={cn("flex", "flex-col", "items-center")}>
@@ -46,14 +59,15 @@ export const Chat = ({ chatUuid, initialMessages, initialModel }: ChatProps) => 
 			<ChatMessages messages={messages} />
 			<ChatScrollAnchor trackVisibility={isLoading} />
 			<ChatPanel
-				messages={messages}
-				chatUuid={chatUuid}
-				model={model}
 				isLoading={isLoading}
 				stop={stop}
 				append={append}
 				input={input}
 				setInput={setInput}
+				messages={messages}
+				chatUuid={chatUuid}
+				model={model}
+				inputRef={inputRef}
 			/>
 		</div>
 	)

@@ -1,6 +1,6 @@
 import type { UseChatHelpers } from "ai/react"
 import * as React from "react"
-import { useEffect, useRef } from "react"
+import { type RefObject, useEffect, useRef } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -11,17 +11,17 @@ import { SendHorizontal } from "lucide-react"
 interface PromptProps extends Pick<UseChatHelpers, "input" | "setInput"> {
 	onSubmit: (value: string) => Promise<void>
 	isLoading: boolean
+	inputRef: RefObject<HTMLTextAreaElement>
 }
 
-export const PromptForm = ({ onSubmit, input, setInput, isLoading }: PromptProps) => {
+export const PromptForm = ({ onSubmit, input, setInput, isLoading, inputRef }: PromptProps) => {
 	const { formRef, onKeyDown } = useEnterSubmit()
-	const inputRef = useRef<HTMLTextAreaElement>(null)
 
 	useEffect(() => {
 		if (inputRef.current) {
 			inputRef.current.focus()
 		}
-	}, [])
+	}, [inputRef])
 
 	return (
 		<form
