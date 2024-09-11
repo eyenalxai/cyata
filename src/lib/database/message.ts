@@ -6,5 +6,5 @@ import { ResultAsync } from "neverthrow"
 export const insertMessage = (message: MessageInsert) => {
 	return ResultAsync.fromPromise(db.insert(messages).values(message).returning(), (e) =>
 		getErrorMessage(e, "Failed to insert message")
-	).map(([insertedChat]) => insertedChat)
+	).map(([insertedMessage]) => insertedMessage)
 }
