@@ -11,7 +11,7 @@ type ChatListProps = {
 }
 
 export const ChatList = ({ className }: ChatListProps) => {
-	const { chatsResult, isLoading } = useChats()
+	const { chatsResult, isLoading, deleteChat, isDeletingChat } = useChats()
 
 	if (isLoading) return <Loading />
 
@@ -22,7 +22,7 @@ export const ChatList = ({ className }: ChatListProps) => {
 	return (
 		<div className={cn("w-full", "flex", "flex-col", "justify-center", "items-center", "gap-y-2", className)}>
 			{chatsResult.value.map((chatInfo) => (
-				<ChatLink key={chatInfo.chatUuid} chatInfo={chatInfo} />
+				<ChatLink key={chatInfo.chatUuid} chatInfo={chatInfo} deleteChat={deleteChat} isDeletingChat={isDeletingChat} />
 			))}
 		</div>
 	)

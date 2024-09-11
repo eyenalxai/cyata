@@ -14,6 +14,12 @@ export const insertChat = (chat: ChatInsert) => {
 	).map(([insertedChat]) => insertedChat)
 }
 
+export const deleteChat = (uuid: string) => {
+	return ResultAsync.fromPromise(db.delete(chats).where(eq(chats.uuid, uuid)), (e) =>
+		getErrorMessage(e, "Failed to delete chat")
+	).map(() => undefined)
+}
+
 export const selectChat = (uuid: string) => {
 	return ResultAsync.fromPromise(db.select().from(chats).where(eq(chats.uuid, uuid)), (e) =>
 		getErrorMessage(e, "Failed to get session by key")
