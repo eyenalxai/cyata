@@ -2,17 +2,20 @@
 
 import { deleteChat, fetchChats } from "@/lib/fetch/chat"
 import { CHATS_QUERY_KEY } from "@/lib/hooks/fetch/query-keys"
-import { revalidatePage } from "@/lib/revalidate"
 import type { ChatsResponse } from "@/lib/zod/api"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { err, ok } from "neverthrow"
-import { revalidatePath } from "next/cache"
+import { usePathname, useRouter } from "next/navigation"
 import { toast } from "sonner"
 import type { z } from "zod"
 
 export const useChats = () => {
 	const chatsQueryKey = [CHATS_QUERY_KEY]
+
+	const pathname = usePathname()
+	const router = useRouter()
 	const queryClient = useQueryClient()
+
 	const { data: chats, error } = useQuery({ queryKey: chatsQueryKey, queryFn: fetchChats })
 
 	const cancelQueries = async () => {
@@ -38,13 +41,12 @@ export const useChats = () => {
 			return { oldChats, chatUuid }
 		},
 		onError: (_error, _variables, _context) => {
-			console.log("error", _error)
-			console.log("variables", _variables)
-			console.log("context", _context)
 			toast.error("Failed to delete chat")
 		},
 		onSuccess: async (_data, _variables, context) => {
-			await revalidatePage("/chat/[uuid]")
+			if (pathname === `/chat/${context.chatUuid}`) {
+				router.push(`/chat/${crypto.randomUUID()}`)
+			}
 		},
 		onSettled: async (_error, _variables, _context) => {
 			await invalidatesQueries()
