@@ -37,6 +37,7 @@ export const selectChatsWithMessages = (userUuid: string) => {
 	return ResultAsync.fromPromise(
 		db.query.chats.findMany({
 			where: eq(chats.userUuid, userUuid),
+			orderBy: (chats, { desc }) => [desc(chats.createdAt)],
 			with: {
 				messages: {
 					orderBy: (messages, { asc }) => [asc(messages.createdAt)]

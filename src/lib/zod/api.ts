@@ -6,9 +6,9 @@ export const CompletionRequest = z.object({
 	chatUuid: z.string().uuid()
 })
 
-const ChatResponse = z.object({
+export const ChatInfo = z.object({
 	title: z.string(),
 	chatUuid: z.string().uuid()
 })
 
-export const ChatsResponse = z.array(ChatResponse)
+export const ChatsResponse = z.array(ChatInfo)

@@ -1,36 +1,30 @@
-import { ChatList } from "@/components/chat-list"
+"use client"
+
+import { ChatList } from "@/components/chat-list/chat-list"
 import { Button } from "@/components/ui/button"
-import {
-	Drawer,
-	DrawerClose,
-	DrawerContent,
-	DrawerDescription,
-	DrawerFooter,
-	DrawerHeader,
-	DrawerTitle,
-	DrawerTrigger
-} from "@/components/ui/drawer"
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
 import { cn } from "@/lib/utils"
 import { PanelLeft } from "lucide-react"
+import Link from "next/link"
+import { useState } from "react"
 
 export const Sidebar = () => {
+	const [open, setOpen] = useState(false)
+
 	return (
-		<Drawer direction={"left"}>
+		<Drawer open={open} onOpenChange={(state) => setOpen(state)} direction={"left"}>
 			<DrawerTrigger asChild>
-				<PanelLeft className={cn("cursor-pointer")} />
+				<Button variant={"ghost"}>
+					<PanelLeft />
+				</Button>
 			</DrawerTrigger>
-			<DrawerContent className={cn("w-full", "sm:w-96", "h-screen")}>
-				<DrawerHeader>
-					<DrawerTitle>Are you absolutely sure?</DrawerTitle>
-					<DrawerDescription>This action cannot be undone.</DrawerDescription>
-				</DrawerHeader>
-				<ChatList />
-				<DrawerFooter>
-					<Button autoFocus>Submit</Button>
-					<DrawerClose>
-						<Button variant="outline">Cancel</Button>
-					</DrawerClose>
-				</DrawerFooter>
+			<DrawerContent className={cn("w-full", "sm:w-96", "h-screen", "px-2")}>
+				<div className={cn("w-full", "my-2", "flex", "flex-col", "justify-center", "items-center", "gap-y-2")}>
+					<Button asChild className={cn("w-full")} onClick={() => setOpen(false)}>
+						<Link href={`/chat/${crypto.randomUUID()}`}>New Chat</Link>
+					</Button>
+					<ChatList className={cn("mt-4")} />
+				</div>
 			</DrawerContent>
 		</Drawer>
 	)

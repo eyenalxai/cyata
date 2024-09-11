@@ -13,8 +13,7 @@ export const Header = async () => {
 	return (
 		<header
 			className={cn(
-				"pl-6",
-				"py-2",
+				"p-2",
 				"sticky",
 				"top-0",
 				"z-50",
