@@ -1,3 +1,4 @@
+import { ProfileButton } from "@/components/profile-button"
 import { Sidebar } from "@/components/sidebar"
 import { getSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
@@ -29,6 +30,7 @@ export const Header = async () => {
 			)}
 		>
 			<Sidebar />
+			<ProfileButton username={session.value.username} />
 		</header>
 	)
 }

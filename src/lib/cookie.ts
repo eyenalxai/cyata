@@ -18,3 +18,8 @@ export const setSessionKey = (sessionKey: string) => {
 		expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * env.SESSION_COOKIES_EXPIRES_IN_DAYS)
 	})
 }
+
+export const clearSessionKey = () => {
+	const cookieStore = cookies()
+	cookieStore.delete(env.SESSION_COOKIE_NAME)
+}
