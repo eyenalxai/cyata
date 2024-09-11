@@ -6,14 +6,14 @@ import { openai } from "@ai-sdk/openai"
 import { convertToCoreMessages, streamText } from "ai"
 import { NextResponse } from "next/server"
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
 	const session = await getSession()
 
 	if (session.isErr()) {
 		return new NextResponse("Unauthorized", { status: 403 })
 	}
 
-	return parseZodSchema(CompletionRequest, await req.json())
+	return parseZodSchema(CompletionRequest, await request.json())
 		.asyncAndThen(({ messages, chatUuid, model }) =>
 			addMessageToChat({
 				userUuid: session.value.uuid,

@@ -9,7 +9,7 @@ export type DeleteChatProps = {
 	}
 }
 
-export async function DELETE(_req: Request, { params: { uuid } }: DeleteChatProps) {
+export async function DELETE(_request: Request, { params: { uuid } }: DeleteChatProps) {
 	const session = await getSession()
 
 	if (session.isErr()) {
