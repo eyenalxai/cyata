@@ -25,9 +25,8 @@ export const PreferencesResponse = z.object({
 
 export const AllowedUsername = z.object({
 	username: z.string(),
-	createdAt: z.string().date(),
 	note: z.string(),
-	telegram_username: z.string().nullable()
+	telegram_username: z.string().nullable().optional()
 })
 
 export const AllowedUsernames = z.array(AllowedUsername)
