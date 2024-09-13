@@ -42,3 +42,9 @@ export const selectAllUsers = () => {
 		(users) => users
 	)
 }
+
+export const updateUserIsRestricted = (uuid: string, isRestricted: boolean) => {
+	return ResultAsync.fromPromise(db.update(users).set({ isRestricted }).where(eq(users.uuid, uuid)).returning(), (e) =>
+		getErrorMessage(e, "Failed to restrict user")
+	).map(([updatedUser]) => updatedUser)
+}

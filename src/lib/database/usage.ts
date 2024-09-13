@@ -84,7 +84,11 @@ export const selectUsagesForAllUsers = () => {
 		.map((userUsages) => {
 			return userUsages.map((userUsage) => {
 				return {
-					user: { username: userUsage.user.username, isRestricted: userUsage.user.isRestricted },
+					user: {
+						uuid: userUsage.user.uuid,
+						username: userUsage.user.username,
+						isRestricted: userUsage.user.isRestricted
+					},
 					usage: {
 						usageCurrentMonth: userUsage.usages.usageCurrentMonth,
 						usagePreviousMonth: userUsage.usages.usagePreviousMonth,

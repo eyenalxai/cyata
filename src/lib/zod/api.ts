@@ -38,6 +38,7 @@ export const Usage = z.object({
 })
 
 export const User = z.object({
+	uuid: z.string().uuid(),
 	username: z.string(),
 	isRestricted: z.boolean()
 })
@@ -48,3 +49,8 @@ export const UsersUsage = z.object({
 })
 
 export const AllUsersUsage = z.array(UsersUsage)
+
+export const RestrictRequest = z.object({
+	userUuid: z.string().uuid(),
+	isRestricted: z.boolean()
+})

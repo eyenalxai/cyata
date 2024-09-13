@@ -24,7 +24,7 @@ type UsageTableProps = {
 }
 
 export const UsageTable = ({ initialAllUsage }: UsageTableProps) => {
-	const { allUsageResult, isLoading } = useAllUsage({ initialAllUsage })
+	const { allUsageResult, isLoading, toggleIsRestricted, isTogglingIsRestricted } = useAllUsage({ initialAllUsage })
 
 	if (isLoading) return <Loading />
 
@@ -55,7 +55,17 @@ export const UsageTable = ({ initialAllUsage }: UsageTableProps) => {
 							<TableCell>${userUsage.usage.usagePreviousMonth}</TableCell>
 							<TableCell className={cn("font-semibold")}>${userUsage.usage.usageTotal}</TableCell>
 							<TableCell className={cn("p-1", "w-full", "flex", "justify-center", "items-center")}>
-								<Button variant={"outline"} size={"icon"}>
+								<Button
+									disabled={isTogglingIsRestricted}
+									onClick={() =>
+										toggleIsRestricted({
+											isRestricted: !userUsage.user.isRestricted,
+											userUuid: userUsage.user.uuid
+										})
+									}
+									variant={"outline"}
+									size={"icon"}
+								>
 									{userUsage.user.isRestricted ? (
 										<SmilePlus className={cn("size-4")} />
 									) : (
