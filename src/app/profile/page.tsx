@@ -1,6 +1,7 @@
-import { Profile } from "@/components/profile"
+import { UserSettings } from "@/components/user-settings"
 import { selectUserPreferences } from "@/lib/database/user-preferences"
 import { getSession } from "@/lib/session"
+import { cn } from "@/lib/utils"
 import { redirect } from "next/navigation"
 
 export default async function Page() {
@@ -12,5 +13,9 @@ export default async function Page() {
 
 	const userPreferences = await selectUserPreferences(session.value.uuid)
 
-	return <Profile initialData={userPreferences.isOk() ? userPreferences.value : undefined} />
+	return (
+		<div className={cn("max-w-screen-sm")}>
+			<UserSettings initialData={userPreferences.isOk() ? userPreferences.value : undefined} />
+		</div>
+	)
 }
