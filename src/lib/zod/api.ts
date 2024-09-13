@@ -37,8 +37,13 @@ export const Usage = z.object({
 	usageTotal: z.number()
 })
 
-export const UsersUsage = z.object({
+export const User = z.object({
 	username: z.string(),
+	isRestricted: z.boolean()
+})
+
+export const UsersUsage = z.object({
+	user: User,
 	usage: Usage
 })
 

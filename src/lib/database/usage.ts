@@ -2,7 +2,6 @@ import { db } from "@/lib/database/client"
 import { selectAllUsers } from "@/lib/database/user"
 import { getErrorMessage } from "@/lib/error-message"
 import { type UsageInsert, usages } from "@/lib/schema"
-import type { AsyncOk } from "@/lib/type-utils"
 import { AllUsersUsage, type UsersUsage } from "@/lib/zod/api"
 import { parseZodSchema } from "@/lib/zod/parse"
 import { and, eq, gte, lte } from "drizzle-orm"
@@ -85,7 +84,7 @@ export const selectUsagesForAllUsers = () => {
 		.map((userUsages) => {
 			return userUsages.map((userUsage) => {
 				return {
-					username: userUsage.user.username,
+					user: { username: userUsage.user.username, isRestricted: userUsage.user.isRestricted },
 					usage: {
 						usageCurrentMonth: userUsage.usages.usageCurrentMonth,
 						usagePreviousMonth: userUsage.usages.usagePreviousMonth,

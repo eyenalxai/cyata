@@ -2,6 +2,7 @@
 
 import { CustomAlert } from "@/components/custom-alert"
 import { Loading } from "@/components/loading"
+import { Button } from "@/components/ui/button"
 import {
 	Table,
 	TableBody,
@@ -15,6 +16,7 @@ import {
 import { useAllUsage } from "@/lib/hooks/fetch/use-all-usage"
 import { cn } from "@/lib/utils"
 import type { AllUsersUsage } from "@/lib/zod/api"
+import { Ban, SmilePlus } from "lucide-react"
 import type { z } from "zod"
 
 type UsageTableProps = {
@@ -40,25 +42,34 @@ export const UsageTable = ({ initialAllUsage }: UsageTableProps) => {
 					<TableHead>Username</TableHead>
 					<TableHead>Current Month</TableHead>
 					<TableHead>Previous Month</TableHead>
-					<TableHead className={cn("text-right")}>Total</TableHead>
+					<TableHead className={cn("font-semibold")}>Total</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
 				{allUsageResult.value
 					.sort((a, b) => b.usage.usageTotal - a.usage.usageTotal)
 					.map((userUsage) => (
-						<TableRow key={userUsage.username}>
-							<TableCell>{userUsage.username}</TableCell>
+						<TableRow key={userUsage.user.username}>
+							<TableCell>{userUsage.user.username}</TableCell>
 							<TableCell>${userUsage.usage.usageCurrentMonth}</TableCell>
 							<TableCell>${userUsage.usage.usagePreviousMonth}</TableCell>
-							<TableCell className={cn("text-right")}>${userUsage.usage.usageTotal}</TableCell>
+							<TableCell className={cn("font-semibold")}>${userUsage.usage.usageTotal}</TableCell>
+							<div className={cn("p-2", "w-full", "flex", "justify-center", "items-center")}>
+								<Button variant={"outline"} size={"icon"}>
+									{userUsage.user.isRestricted ? (
+										<SmilePlus className={cn("size-4")} />
+									) : (
+										<Ban className={cn("size-4")} />
+									)}
+								</Button>
+							</div>
 						</TableRow>
 					))}
 			</TableBody>
-			<TableFooter>
+			<TableFooter className={cn("bg-background")}>
 				<TableRow>
 					<TableCell colSpan={3}>Total</TableCell>
-					<TableCell className="text-right">${totalAcrossAllUsers}</TableCell>
+					<TableCell>${totalAcrossAllUsers}</TableCell>
 				</TableRow>
 			</TableFooter>
 		</Table>
