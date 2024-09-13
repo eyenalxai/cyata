@@ -77,7 +77,7 @@ export const usePreferences = ({ initialData }: UsePreferencesProps) => {
 		}
 	})
 
-	const debouncedUpdateSystemPrompt = useDebouncedCallback((value: string) => updateSystemPrompt(value), 300)
+	const debouncedUpdateSystemPrompt = useDebouncedCallback((value: string) => updateSystemPromptMutation(value), 300)
 
 	if (error)
 		return {
