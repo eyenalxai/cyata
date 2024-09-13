@@ -1,11 +1,15 @@
 import { addMessageToChat } from "@/lib/database/chat"
+import { insertUsage } from "@/lib/database/usage"
 import { selectUserPreferences } from "@/lib/database/user-preferences"
+import { priceMessage, priceMessages } from "@/lib/pricing"
 import { getSession } from "@/lib/session"
+import type { AiMessageSchema } from "@/lib/zod/ai-message"
 import { CompletionRequest } from "@/lib/zod/api"
 import { parseZodSchema } from "@/lib/zod/parse"
 import { openai } from "@ai-sdk/openai"
 import { type CoreMessage, convertToCoreMessages, streamText } from "ai"
 import { NextResponse } from "next/server"
+import type { z } from "zod"
 
 export async function POST(request: Request) {
 	const session = await getSession()
@@ -30,7 +34,7 @@ export async function POST(request: Request) {
 		.match(
 			async ({ messages, chatUuid, model, preferences }) => {
 				const result = await streamText({
-					model: openai("gpt-4o"),
+					model: openai(model),
 					messages: convertToCoreMessages([
 						{
 							role: "system",
@@ -39,15 +43,42 @@ export async function POST(request: Request) {
 						...messages
 					]),
 					onFinish: ({ text }) => {
+						const assistantMessage = {
+							role: "assistant",
+							content: text
+						} satisfies z.infer<typeof AiMessageSchema>
+
+						const inputPrice = priceMessages({
+							messages: [
+								{
+									role: "system",
+									content: preferences.systemPrompt
+								},
+								...messages
+							],
+							model,
+							type: "input"
+						})
+
+						const outputPrice = priceMessage({
+							message: assistantMessage,
+							model,
+							type: "output"
+						})
+
 						addMessageToChat({
 							userUuid: session.value.uuid,
 							chatUuid: chatUuid,
 							model,
-							message: {
-								role: "assistant",
-								content: text
-							}
-						}).mapErr((e) => new NextResponse(e, { status: 400 }))
+							message: assistantMessage
+						})
+							.andThen(() =>
+								insertUsage({
+									userUuid: session.value.uuid,
+									usage: inputPrice + outputPrice
+								})
+							)
+							.mapErr((e) => new NextResponse(e, { status: 400 }))
 					}
 				})
 
