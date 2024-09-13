@@ -16,10 +16,7 @@ export async function PATCH(request: Request) {
 		return new NextResponse("Unauthorized", { status: 403 })
 	}
 
-	const oof = await request.json()
-	console.log(oof)
-
-	return parseZodSchema(RestrictRequest, oof)
+	return parseZodSchema(RestrictRequest, request.json())
 		.asyncAndThen(({ userUuid, isRestricted }) =>
 			updateUserIsRestricted(userUuid, isRestricted).map(() => isRestricted)
 		)
