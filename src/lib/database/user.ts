@@ -18,13 +18,23 @@ export const existsUserByUsername = (username: string) =>
 export const selectUserByUsername = (username: string) => {
 	return ResultAsync.fromPromise(db.select().from(users).where(eq(users.username, username)), (e) =>
 		getErrorMessage(e, "Failed to select user by username")
-	).andThen((users) => (users.length > 0 ? okAsync(users[0]) : errAsync("User not found")))
+	)
+		.andThen((users) => (users.length > 0 ? okAsync(users[0]) : errAsync("User not found")))
+		.andThen((user) => {
+			if (user.isRestricted) return errAsync("You're restricted")
+			return okAsync(user)
+		})
 }
 
 export const selectUserByUuid = (uuid: string) => {
 	return ResultAsync.fromPromise(db.select().from(users).where(eq(users.uuid, uuid)), (e) =>
 		getErrorMessage(e, "Failed to select user by uuid")
-	).andThen((users) => (users.length > 0 ? okAsync(users[0]) : errAsync("User not found")))
+	)
+		.andThen((users) => (users.length > 0 ? okAsync(users[0]) : errAsync("User not found")))
+		.andThen((user) => {
+			if (user.isRestricted) return errAsync("You're restricted")
+			return okAsync(user)
+		})
 }
 
 export const selectAllUsers = () => {

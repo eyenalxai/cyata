@@ -4,7 +4,7 @@ import { selectSessionByKey, updateSessionExpiration } from "@/lib/database/sess
 import { selectUserByUuid } from "@/lib/database/user"
 import { env } from "@/lib/env.mjs"
 import type { Session } from "@/lib/schema"
-import { errAsync, okAsync } from "neverthrow"
+import { okAsync } from "neverthrow"
 
 export const isSessionExpired = (session: Session) => new Date(session.expiresAt) < new Date()
 
@@ -27,10 +27,6 @@ export const getSession = async () => {
 				return okAsync(session)
 			})
 			.andThen((session) => selectUserByUuid(session.userUuid))
-			.andThen((user) => {
-				if (user.isRestricted) return errAsync("You're restricted")
-				return okAsync(user)
-			})
 	)
 }
 
