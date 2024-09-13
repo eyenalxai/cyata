@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1725897586627,
-      "tag": "0000_misty_the_order",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1725900685275,
-      "tag": "0001_opposite_green_goblin",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1726062594533,
-      "tag": "0002_dashing_warbound",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1726077504957,
-      "tag": "0003_harsh_bastion",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1726217173766,
-      "tag": "0004_old_random",
+      "when": 1726223281660,
+      "tag": "0000_third_bishop",
       "breakpoints": true
     }
   ]

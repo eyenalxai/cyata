@@ -1,7 +1,7 @@
 import type { AiMessageRole } from "@/lib/zod/ai-message"
 import type { OpenAIModel } from "@/lib/zod/model"
 import { relations, sql } from "drizzle-orm"
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import { pgTable, real, serial, text, timestamp, uuid } from "drizzle-orm/pg-core"
 import type { z } from "zod"
 
 export const users = pgTable("users", {
@@ -53,7 +53,8 @@ export const chatsRelations = relations(chats, ({ one, many }) => ({
 		fields: [chats.userUuid],
 		references: [users.uuid]
 	}),
-	messages: many(messages, { relationName: "chatMessages" })
+	messages: many(messages, { relationName: "chatMessages" }),
+	usages: many(usages, { relationName: "chatUsages" })
 }))
 
 export const messages = pgTable("messages", {
@@ -92,5 +93,22 @@ export const userPreferencesRelations = relations(userPreferences, ({ one }) => 
 	user: one(users, {
 		fields: [userPreferences.userUuid],
 		references: [users.uuid]
+	})
+}))
+
+export const usages = pgTable("usages", {
+	id: serial("id").primaryKey(),
+	userUuid: uuid("user_uuid").references(() => users.uuid, { onDelete: "cascade" }),
+	usage: real("usage").notNull()
+})
+
+export type Usage = typeof usages.$inferSelect
+export type UsageInsert = typeof usages.$inferInsert
+
+export const usagesRelations = relations(usages, ({ one }) => ({
+	user: one(users, {
+		fields: [usages.userUuid],
+		references: [users.uuid],
+		relationName: "chatUsages"
 	})
 }))
