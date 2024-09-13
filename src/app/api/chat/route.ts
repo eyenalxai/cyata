@@ -1,9 +1,10 @@
 import { addMessageToChat } from "@/lib/database/chat"
+import { selectUserPreferences } from "@/lib/database/user-preferences"
 import { getSession } from "@/lib/session"
 import { CompletionRequest } from "@/lib/zod/api"
 import { parseZodSchema } from "@/lib/zod/parse"
 import { openai } from "@ai-sdk/openai"
-import { convertToCoreMessages, streamText } from "ai"
+import { type CoreMessage, convertToCoreMessages, streamText } from "ai"
 import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
@@ -20,13 +21,23 @@ export async function POST(request: Request) {
 				chatUuid: chatUuid,
 				model,
 				message: messages[messages.length - 1]
-			}).map(() => ({ messages, chatUuid, model }))
+			})
+				.map(() => ({ messages, chatUuid, model }))
+				.andThen(({ messages, chatUuid, model }) =>
+					selectUserPreferences(session.value.uuid).map((preferences) => ({ messages, chatUuid, model, preferences }))
+				)
 		)
 		.match(
-			async ({ messages, chatUuid, model }) => {
+			async ({ messages, chatUuid, model, preferences }) => {
 				const result = await streamText({
 					model: openai("gpt-4o"),
-					messages: convertToCoreMessages(messages),
+					messages: convertToCoreMessages([
+						{
+							role: "system",
+							content: preferences.systemPrompt
+						} satisfies CoreMessage,
+						...messages
+					]),
 					onFinish: ({ text }) => {
 						addMessageToChat({
 							userUuid: session.value.uuid,
