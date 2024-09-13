@@ -23,6 +23,15 @@ export const PreferencesResponse = z.object({
 	systemPrompt: SystemPrompt
 })
 
+export const AllowedUsername = z.object({
+	username: z.string(),
+	createdAt: z.string().date(),
+	note: z.string(),
+	telegram_username: z.string().nullable()
+})
+
+export const AllowedUsernames = z.array(AllowedUsername)
+
 export const UpdateDefaultModelRequest = z.object({
 	defaultModel: OpenAIModel
 })

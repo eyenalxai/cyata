@@ -1,3 +1,4 @@
+import { AllowedUsernamesServer } from "@/components/allowed-usernames/allowed-usernames-server"
 import { CustomAlert } from "@/components/custom-alert"
 import { UsageServer } from "@/components/usage/usage-server"
 import { UserSettings } from "@/components/user-settings"
@@ -21,6 +22,7 @@ export default async function Page() {
 		<div className={cn("max-w-screen-sm", "flex", "flex-col", "justify-center", "items-start", "gap-y-4")}>
 			<UserSettings initialUserPreferences={userPreferences.value} />
 			{session.value.isAdmin && <UsageServer />}
+			{session.value.isAdmin && <AllowedUsernamesServer />}
 		</div>
 	)
 }
