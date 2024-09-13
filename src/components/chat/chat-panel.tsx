@@ -39,7 +39,7 @@ export const ChatPanel = ({
 			<ButtonScrollToBottom />
 			<div className={cn("mx-auto", "sm:max-w-2xl", "sm:px-4")}>
 				<div className={cn("flex", "h-10", "items-center", "justify-center")}>
-					{isLoading && (
+					{isLoading && messages[messages.length - 1].role !== "user" && (
 						<Button
 							variant="outline"
 							onClick={async () => {
