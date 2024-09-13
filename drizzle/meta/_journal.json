@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1726223281660,
-      "tag": "0000_third_bishop",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1726228444373,
-      "tag": "0001_stormy_tomas",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1726228735240,
-      "tag": "0002_cooing_darkhawk",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1726232874957,
-      "tag": "0003_keen_starbolt",
+      "when": 1726233292441,
+      "tag": "0000_clever_misty_knight",
       "breakpoints": true
     }
   ]

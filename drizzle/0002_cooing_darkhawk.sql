@@ -1,1 +1,0 @@
-ALTER TABLE "usages" ALTER COLUMN "created_at" SET DATA TYPE timestamp with time zone;

@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS "sessions" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "usages" (
 	"id" serial PRIMARY KEY NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"user_uuid" uuid,
 	"usage" real NOT NULL
 );
@@ -28,14 +29,16 @@ CREATE TABLE IF NOT EXISTS "usages" (
 CREATE TABLE IF NOT EXISTS "user_preferences" (
 	"user_uuid" uuid PRIMARY KEY NOT NULL,
 	"default_model" text NOT NULL,
-	"system_prompt" text DEFAULT 'You''re a helpful assistant' NOT NULL
+	"system_prompt" text DEFAULT 'You are a helpful assistant' NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
 	"uuid" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"username" text NOT NULL,
-	"password_hash" text NOT NULL
+	"password_hash" text NOT NULL,
+	"is_admin" boolean DEFAULT false NOT NULL,
+	"is_restricted" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint
 DO $$ BEGIN

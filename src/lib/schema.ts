@@ -8,7 +8,9 @@ export const users = pgTable("users", {
 	uuid: uuid("uuid").default(sql`gen_random_uuid()`).primaryKey(),
 	createdAt: timestamp("created_at").default(sql`now()`).notNull(),
 	username: text("username").notNull(),
-	passwordHash: text("password_hash").notNull()
+	passwordHash: text("password_hash").notNull(),
+	isAdmin: boolean("is_admin").default(false).notNull(),
+	isRestricted: boolean("is_restricted").default(false).notNull()
 })
 
 export type User = typeof users.$inferSelect
@@ -83,8 +85,7 @@ export const userPreferences = pgTable("user_preferences", {
 		.references(() => users.uuid, { onDelete: "cascade" })
 		.primaryKey(),
 	defaultModel: text("default_model").$type<z.infer<typeof OpenAIModel>>().notNull(),
-	systemPrompt: text("system_prompt").default("You're a helpful assistant").notNull(),
-	isAdmin: boolean("is_admin").default(false).notNull()
+	systemPrompt: text("system_prompt").default("You are a helpful assistant").notNull()
 })
 
 export type UserPreferences = typeof userPreferences.$inferSelect

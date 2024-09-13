@@ -1,5 +1,5 @@
 {
-  "id": "17e13a47-57a9-4cd8-8d6c-0a5208bbc45a",
+  "id": "499b7d82-e1fd-45dd-8f5f-6feff2560707",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -161,6 +161,13 @@
           "primaryKey": true,
           "notNull": true
         },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
         "user_uuid": {
           "name": "user_uuid",
           "type": "uuid",
@@ -214,7 +221,7 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "default": "'You're a helpful assistant'"
+          "default": "'You are a helpful assistant'"
         }
       },
       "indexes": {},
@@ -265,6 +272,20 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "is_admin": {
+          "name": "is_admin",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "is_restricted": {
+          "name": "is_restricted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
