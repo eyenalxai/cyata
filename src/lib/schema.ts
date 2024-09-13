@@ -98,6 +98,7 @@ export const userPreferencesRelations = relations(userPreferences, ({ one }) => 
 
 export const usages = pgTable("usages", {
 	id: serial("id").primaryKey(),
+	createdAt: timestamp("created_at").default(sql`now()`).notNull(),
 	userUuid: uuid("user_uuid").references(() => users.uuid, { onDelete: "cascade" }),
 	usage: real("usage").notNull()
 })
