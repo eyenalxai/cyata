@@ -18,8 +18,8 @@ export const Sidebar = () => {
 					<PanelLeft />
 				</Button>
 			</DrawerTrigger>
-			<DrawerContent className={cn("w-full", "sm:w-96", "h-screen", "px-2")}>
-				<div className={cn("w-full", "my-2", "flex", "flex-col", "justify-center", "items-center", "gap-y-2")}>
+			<DrawerContent className={cn("w-full", "sm:w-96", "h-screen", "p-4")}>
+				<div className={cn("w-full", "flex", "flex-col", "justify-center", "items-center", "gap-y-2")}>
 					<Button asChild className={cn("w-full")} onClick={() => setOpen(false)}>
 						<Link href={`/chat/${crypto.randomUUID()}`}>New Chat</Link>
 					</Button>
