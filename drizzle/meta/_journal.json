@@ -8,6 +8,13 @@
       "when": 1726233292441,
       "tag": "0000_clever_misty_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1726236717816,
+      "tag": "0001_public_shiver_man",
+      "breakpoints": true
     }
   ]
 }

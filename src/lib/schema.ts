@@ -4,6 +4,13 @@ import { relations, sql } from "drizzle-orm"
 import { boolean, pgTable, real, serial, text, timestamp, uuid } from "drizzle-orm/pg-core"
 import type { z } from "zod"
 
+export const allowedUsernames = pgTable("allowed_usernames", {
+	username: text("username").primaryKey(),
+	createdAt: timestamp("created_at").default(sql`now()`).notNull(),
+	note: text("note").notNull(),
+	telegram_username: text("telegram_username")
+})
+
 export const users = pgTable("users", {
 	uuid: uuid("uuid").default(sql`gen_random_uuid()`).primaryKey(),
 	createdAt: timestamp("created_at").default(sql`now()`).notNull(),

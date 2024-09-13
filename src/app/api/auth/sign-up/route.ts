@@ -1,6 +1,7 @@
 import { setSessionKey } from "@/lib/cookie"
 import { hashPassword } from "@/lib/crypto/password"
 import { secureRandomToken } from "@/lib/crypto/token"
+import { existsAllowedUsername } from "@/lib/database/allowed-username"
 import { insertSession } from "@/lib/database/session"
 import { existsUserByUsername, insertUser } from "@/lib/database/user"
 import { insertUserPreferences } from "@/lib/database/user-preferences"
@@ -12,7 +13,8 @@ import { NextResponse } from "next/server"
 
 export const POST = async (request: Request) => {
 	return parseZodSchema(AuthFormSchema, await request.json())
-		.asyncAndThen((signUpData) =>
+		.asyncAndThen((signUpData) => existsAllowedUsername(signUpData.username).map(() => signUpData))
+		.andThen((signUpData) =>
 			existsUserByUsername(signUpData.username)
 				.map((userExists) => ({ signUpData, userExists }))
 				.andThen(({ signUpData, userExists }) => {
