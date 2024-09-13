@@ -54,7 +54,7 @@ export const UsageTable = ({ initialAllUsage }: UsageTableProps) => {
 							<TableCell>${userUsage.usage.usageCurrentMonth}</TableCell>
 							<TableCell>${userUsage.usage.usagePreviousMonth}</TableCell>
 							<TableCell className={cn("font-semibold")}>${userUsage.usage.usageTotal}</TableCell>
-							<div className={cn("p-2", "w-full", "flex", "justify-center", "items-center")}>
+							<TableCell className={cn("p-1", "w-full", "flex", "justify-center", "items-center")}>
 								<Button variant={"outline"} size={"icon"}>
 									{userUsage.user.isRestricted ? (
 										<SmilePlus className={cn("size-4")} />
@@ -62,7 +62,7 @@ export const UsageTable = ({ initialAllUsage }: UsageTableProps) => {
 										<Ban className={cn("size-4")} />
 									)}
 								</Button>
-							</div>
+							</TableCell>
 						</TableRow>
 					))}
 			</TableBody>
