@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button"
-import { copyToClipboard } from "@/lib/clipboard"
-import { cn } from "@/lib/utils"
-import { Check, Copy } from "lucide-react"
-import { type FC, type HTMLAttributes, type ReactNode, memo, useState } from "react"
-import { toast } from "sonner"
+import {Button} from "@/components/ui/button"
+import {copyToClipboard} from "@/lib/clipboard"
+import {cn} from "@/lib/utils"
+import {Check, Copy} from "lucide-react"
+import {type FC, type HTMLAttributes, memo, type ReactNode, useState} from "react"
+import {toast} from "sonner"
 
 export interface CodeComponentProps extends HTMLAttributes<HTMLElement> {
 	language?: string
@@ -35,13 +35,20 @@ export const CodeComponent: FC<CodeComponentProps> = ({ className, language, ...
 
 	return (
 		<div className={cn("w-full", "border", "rounded-lg", "p-4")}>
-			<div className={cn("flex", "flex-row", "justify-between", "items-start")}>
-				<div className={cn("text-muted-foreground", "font-mono text-sm", "mb-4")}>{language}</div>
-				<Button variant={"ghost"} size={"icon"} onClick={() => handleCopy(props.children)}>
+			<div className={cn("flex", "flex-row", "justify-between", "items-start", "mb-4")}>
+				<div className={cn("text-muted-foreground", "font-mono text-sm")}>{language}</div>
+				<Button
+					variant={"ghost"}
+					className={cn("-mt-2", "-mr-2")}
+					size={"icon"}
+					onClick={() => handleCopy(props.children)}
+				>
 					{isCopied ? <Check className={cn("size-5")} /> : <Copy className={cn("size-5")} />}
 				</Button>
 			</div>
-			<code className={cn(className)} {...props} />
+			<div className={cn("w-full", "overflow-x-auto")}>
+				<code className={cn(className)} {...props} />
+			</div>
 		</div>
 	)
 }
