@@ -4,7 +4,7 @@ export const AiMessageRole = z.enum(["function", "system", "user", "assistant", 
 
 export const AiMessageSchema = z.object({
 	role: AiMessageRole,
-	content: z.string()
+	content: z.string().trim()
 })
 
 export const AiMessagesSchema = z.array(AiMessageSchema)

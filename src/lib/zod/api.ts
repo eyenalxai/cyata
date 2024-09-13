@@ -9,13 +9,13 @@ export const CompletionRequest = z.object({
 })
 
 export const ChatInfo = z.object({
-	title: z.string(),
+	title: z.string().trim(),
 	chatUuid: z.string().uuid()
 })
 
 export const ChatsResponse = z.array(ChatInfo)
 
-export const SystemPrompt = z.string().min(8).max(4096)
+export const SystemPrompt = z.string().trim().min(8).max(4096)
 
 export const PreferencesResponse = z.object({
 	userUuid: z.string().uuid(),
