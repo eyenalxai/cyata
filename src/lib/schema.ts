@@ -1,7 +1,7 @@
 import type { AiMessageRole } from "@/lib/zod/ai-message"
 import type { OpenAIModel } from "@/lib/zod/model"
 import { relations, sql } from "drizzle-orm"
-import { pgTable, real, serial, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import { boolean, pgTable, real, serial, text, timestamp, uuid } from "drizzle-orm/pg-core"
 import type { z } from "zod"
 
 export const users = pgTable("users", {
@@ -83,7 +83,8 @@ export const userPreferences = pgTable("user_preferences", {
 		.references(() => users.uuid, { onDelete: "cascade" })
 		.primaryKey(),
 	defaultModel: text("default_model").$type<z.infer<typeof OpenAIModel>>().notNull(),
-	systemPrompt: text("system_prompt").default("You're a helpful assistant").notNull()
+	systemPrompt: text("system_prompt").default("You're a helpful assistant").notNull(),
+	isAdmin: boolean("is_admin").default(false).notNull()
 })
 
 export type UserPreferences = typeof userPreferences.$inferSelect

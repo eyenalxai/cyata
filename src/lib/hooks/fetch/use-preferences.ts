@@ -11,16 +11,16 @@ import { useDebouncedCallback } from "use-debounce"
 import type { z } from "zod"
 
 type UsePreferencesProps = {
-	initialData: z.infer<typeof PreferencesResponse> | undefined
+	initialUserPreferences: z.infer<typeof PreferencesResponse>
 }
 
-export const usePreferences = ({ initialData }: UsePreferencesProps) => {
+export const usePreferences = ({ initialUserPreferences }: UsePreferencesProps) => {
 	const preferencesQueryKey = [PREFERENCES_QUERY_KEY]
 	const queryClient = useQueryClient()
 	const { data: preferences, error } = useQuery({
 		queryKey: preferencesQueryKey,
 		queryFn: fetchPreferences,
-		initialData: initialData
+		initialData: initialUserPreferences
 	})
 
 	const cancelQueries = async () => {

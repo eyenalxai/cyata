@@ -11,11 +11,13 @@ import type { PreferencesResponse } from "@/lib/zod/api"
 import type { z } from "zod"
 
 type ProfileProps = {
-	initialData: z.infer<typeof PreferencesResponse> | undefined
+	initialUserPreferences: z.infer<typeof PreferencesResponse>
 }
 
-export const UserSettings = ({ initialData }: ProfileProps) => {
-	const { preferencesResult, isLoading, updateDefaultModel, updateSystemPrompt } = usePreferences({ initialData })
+export const UserSettings = ({ initialUserPreferences }: ProfileProps) => {
+	const { preferencesResult, isLoading, updateDefaultModel, updateSystemPrompt } = usePreferences({
+		initialUserPreferences
+	})
 
 	if (isLoading) return <Loading />
 
