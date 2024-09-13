@@ -1,4 +1,7 @@
+"use client"
+
 import { CustomAlert } from "@/components/custom-alert"
+import { Loading } from "@/components/loading"
 import {
 	Table,
 	TableBody,
@@ -9,15 +12,19 @@ import {
 	TableHeader,
 	TableRow
 } from "@/components/ui/table"
-import { selectUsagesForAllUsers } from "@/lib/database/usage"
+import { useAllUsage } from "@/lib/hooks/fetch/use-all-usage"
 import { cn } from "@/lib/utils"
 
-export const UsageTable = async () => {
-	const userUsagesResult = await selectUsagesForAllUsers()
+export const UsageTable = () => {
+	const { allUsageResult, isLoading } = useAllUsage()
 
-	if (userUsagesResult.isErr()) return <CustomAlert>{userUsagesResult.error}</CustomAlert>
+	if (isLoading) return <Loading />
 
-	const totalAcrossAllUsers = userUsagesResult.value.reduce((acc, userUsage) => acc + userUsage.usages.usageTotal, 0)
+	if (allUsageResult.isErr()) {
+		return <CustomAlert>{allUsageResult.error}</CustomAlert>
+	}
+
+	const totalAcrossAllUsers = allUsageResult.value.reduce((acc, userUsage) => acc + userUsage.usage.usageTotal, 0)
 
 	return (
 		<Table>
@@ -31,14 +38,14 @@ export const UsageTable = async () => {
 				</TableRow>
 			</TableHeader>
 			<TableBody>
-				{userUsagesResult.value
-					.sort((a, b) => b.usages.usageTotal - a.usages.usageTotal)
+				{allUsageResult.value
+					.sort((a, b) => b.usage.usageTotal - a.usage.usageTotal)
 					.map((userUsage) => (
-						<TableRow key={userUsage.user.username}>
-							<TableCell>{userUsage.user.username}</TableCell>
-							<TableCell>${userUsage.usages.usageCurrentMonth}</TableCell>
-							<TableCell>${userUsage.usages.usagePreviousMonth}</TableCell>
-							<TableCell className={cn("text-right")}>${userUsage.usages.usageTotal}</TableCell>
+						<TableRow key={userUsage.username}>
+							<TableCell>{userUsage.username}</TableCell>
+							<TableCell>${userUsage.usage.usageCurrentMonth}</TableCell>
+							<TableCell>${userUsage.usage.usagePreviousMonth}</TableCell>
+							<TableCell className={cn("text-right")}>${userUsage.usage.usageTotal}</TableCell>
 						</TableRow>
 					))}
 			</TableBody>

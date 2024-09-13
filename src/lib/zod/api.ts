@@ -36,3 +36,10 @@ export const Usage = z.object({
 	usagePreviousMonth: z.number(),
 	usageTotal: z.number()
 })
+
+export const UsersUsage = z.object({
+	username: z.string(),
+	usage: Usage
+})
+
+export const AllUsersUsage = z.array(UsersUsage)

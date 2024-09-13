@@ -20,7 +20,7 @@ export default async function Page() {
 	return (
 		<div className={cn("max-w-screen-sm", "flex", "flex-col", "justify-center", "items-start", "gap-y-4")}>
 			<UserSettings initialUserPreferences={userPreferences.value} />
-			{userPreferences.value.isAdmin && <UsageTable />}
+			{session.value.isAdmin && <UsageTable />}
 		</div>
 	)
 }
