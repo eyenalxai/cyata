@@ -1,4 +1,6 @@
-import { cn } from "@/lib/utils"
+import { MemoizedCodeComponent } from "@/components/code-block"
+import { ArticleWrapper } from "@/components/markdown/article-wrapper"
+import { isInline } from "@/lib/utils"
 import { all } from "lowlight"
 import { memo } from "react"
 import Markdown from "react-markdown"
@@ -14,23 +16,22 @@ type MarkdownDisplayProps = {
 }
 
 const MarkdownDisplay = ({ markdown }: MarkdownDisplayProps) => (
-	<article
-		className={cn(
-			"prose",
-			"prose-slate",
-			"dark:prose-invert",
-			"prose-p:leading-relaxed",
-			"prose-pre:p-0",
-			"break-words"
-		)}
-	>
+	<ArticleWrapper>
 		<Markdown
 			remarkPlugins={[remarkParse, remarkMath, remarkRehype]}
 			rehypePlugins={[rehypeSanitize, rehypeKatex, [rehypeHighlight, { languages: all }]]}
+			components={{
+				code(props) {
+					if (isInline(props.children)) return <code {...props} />
+
+					const match = /language-(\w+)/.exec(props.className || "")
+					return <MemoizedCodeComponent key={Math.random()} {...props} language={match ? match[1] : ""} />
+				}
+			}}
 		>
 			{markdown}
 		</Markdown>
-	</article>
+	</ArticleWrapper>
 )
 
 export const MemoizedMarkdownDisplay = memo(MarkdownDisplay)
