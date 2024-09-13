@@ -14,9 +14,15 @@ import {
 } from "@/components/ui/table"
 import { useAllUsage } from "@/lib/hooks/fetch/use-all-usage"
 import { cn } from "@/lib/utils"
+import type { AllUsersUsage } from "@/lib/zod/api"
+import type { z } from "zod"
 
-export const UsageTable = () => {
-	const { allUsageResult, isLoading } = useAllUsage()
+type UsageTableProps = {
+	initialAllUsage: z.infer<typeof AllUsersUsage>
+}
+
+export const UsageTable = ({ initialAllUsage }: UsageTableProps) => {
+	const { allUsageResult, isLoading } = useAllUsage({ initialAllUsage })
 
 	if (isLoading) return <Loading />
 

@@ -1,5 +1,5 @@
 import { CustomAlert } from "@/components/custom-alert"
-import { UsageTable } from "@/components/usage-table"
+import { UsageServer } from "@/components/usage/usage-server"
 import { UserSettings } from "@/components/user-settings"
 import { selectUserPreferences } from "@/lib/database/user-preferences"
 import { getSession } from "@/lib/session"
@@ -20,7 +20,7 @@ export default async function Page() {
 	return (
 		<div className={cn("max-w-screen-sm", "flex", "flex-col", "justify-center", "items-start", "gap-y-4")}>
 			<UserSettings initialUserPreferences={userPreferences.value} />
-			{session.value.isAdmin && <UsageTable />}
+			{session.value.isAdmin && <UsageServer />}
 		</div>
 	)
 }

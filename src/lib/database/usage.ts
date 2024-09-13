@@ -3,8 +3,11 @@ import { selectAllUsers } from "@/lib/database/user"
 import { getErrorMessage } from "@/lib/error-message"
 import { type UsageInsert, usages } from "@/lib/schema"
 import type { AsyncOk } from "@/lib/type-utils"
+import { AllUsersUsage, type UsersUsage } from "@/lib/zod/api"
+import { parseZodSchema } from "@/lib/zod/parse"
 import { and, eq, gte, lte } from "drizzle-orm"
 import { ResultAsync } from "neverthrow"
+import type { z } from "zod"
 
 export const selectUsagesTotal = (userUuid: string) => {
 	return ResultAsync.fromPromise(db.select().from(usages).where(eq(usages.userUuid, userUuid)), (e) =>
@@ -68,14 +71,28 @@ export const selectUsages = (userUuid: string) => {
 }
 
 export const selectUsagesForAllUsers = () => {
-	return selectAllUsers().andThen((users) =>
-		ResultAsync.combine(
-			users.map((user) =>
-				selectUsages(user.uuid).map((usages) => ({
-					user,
-					usages
-				}))
+	return selectAllUsers()
+		.andThen((users) =>
+			ResultAsync.combine(
+				users.map((user) =>
+					selectUsages(user.uuid).map((usages) => ({
+						user,
+						usages
+					}))
+				)
 			)
 		)
-	)
+		.map((userUsages) => {
+			return userUsages.map((userUsage) => {
+				return {
+					username: userUsage.user.username,
+					usage: {
+						usageCurrentMonth: userUsage.usages.usageCurrentMonth,
+						usagePreviousMonth: userUsage.usages.usagePreviousMonth,
+						usageTotal: userUsage.usages.usageTotal
+					}
+				} satisfies z.infer<typeof UsersUsage>
+			})
+		})
+		.andThen((usages) => parseZodSchema(AllUsersUsage, usages))
 }
