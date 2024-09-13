@@ -25,6 +25,7 @@ const MarkdownDisplay = ({ markdown }: MarkdownDisplayProps) => (
 					if (isInline(props.children)) return <code {...props} />
 
 					const match = /language-(\w+)/.exec(props.className || "")
+					if (!match) return <code {...props} />
 					return <MemoizedCodeComponent key={Math.random()} {...props} language={match ? match[1] : ""} />
 				}
 			}}
