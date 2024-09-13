@@ -30,3 +30,9 @@ export const UpdateDefaultModelRequest = z.object({
 export const UpdateSystemPromptRequest = z.object({
 	systemPrompt: SystemPrompt
 })
+
+export const Usage = z.object({
+	usageCurrentMonth: z.number(),
+	usagePreviousMonth: z.number(),
+	usageTotal: z.number()
+})

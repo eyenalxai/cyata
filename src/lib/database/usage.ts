@@ -32,9 +32,35 @@ export const selectUsagesFromTo = ({ userUuid, from, to }: SelectUsagesFromToPro
 }
 
 export const insertUsage = (usage: UsageInsert) => {
-	console.log("saving")
-
 	return ResultAsync.fromPromise(db.insert(usages).values(usage).returning(), (e) =>
 		getErrorMessage(e, "Failed to insert usage")
 	).map(([insertedUsage]) => insertedUsage)
+}
+
+export const getUsages = (userUuid: string) => {
+	const firstDayCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+	const lastDayCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+
+	const firstDayPreviousMonth = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
+	const lastDayPreviousMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 0)
+
+	return selectUsagesFromTo({
+		userUuid: userUuid,
+		from: firstDayCurrentMonth,
+		to: lastDayCurrentMonth
+	})
+		.andThen((usageCurrentMonth) =>
+			selectUsagesFromTo({
+				userUuid: userUuid,
+				from: firstDayPreviousMonth,
+				to: lastDayPreviousMonth
+			}).map((usagePreviousMonth) => ({ usageCurrentMonth, usagePreviousMonth }))
+		)
+		.andThen(({ usageCurrentMonth, usagePreviousMonth }) =>
+			selectUsagesTotal(userUuid).map((usageTotal) => ({
+				usageCurrentMonth,
+				usagePreviousMonth,
+				usageTotal
+			}))
+		)
 }
