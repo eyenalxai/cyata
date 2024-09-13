@@ -1,18 +1,18 @@
 "use client"
 
-import type { UseChatHelpers } from "ai/react"
+import type {UseChatHelpers} from "ai/react"
 
-import { ButtonScrollToBottom } from "@/components/chat/button-scroll-to-bottom"
-import { PromptForm } from "@/components/chat/prompt-form"
-import { Button } from "@/components/ui/button"
-import { savePartial } from "@/lib/fetch/chat"
-import { cn } from "@/lib/utils"
-import type { OpenAIModel } from "@/lib/zod/model"
-import type { Message } from "ai"
-import { CircleStop, Pause, User } from "lucide-react"
-import { type RefObject, useState } from "react"
-import { toast } from "sonner"
-import type { z } from "zod"
+import {ButtonScrollToBottom} from "@/components/chat/button-scroll-to-bottom"
+import {PromptForm} from "@/components/chat/prompt-form"
+import {Button} from "@/components/ui/button"
+import {savePartial} from "@/lib/fetch/chat"
+import {cn} from "@/lib/utils"
+import type {OpenAIModel} from "@/lib/zod/model"
+import type {Message} from "ai"
+import {CircleStop} from "lucide-react"
+import {type RefObject, useState} from "react"
+import {toast} from "sonner"
+import type {z} from "zod"
 
 export interface ChatPanelProps extends Pick<UseChatHelpers, "append" | "isLoading" | "stop" | "input" | "setInput"> {
 	messages: Message[]
@@ -66,11 +66,10 @@ export const ChatPanel = ({
 						"border-t",
 						"bg-background",
 						"px-4",
-						"py-2",
+						"py-4",
 						"shadow-lg",
 						"sm:rounded-t-xl",
-						"sm:border",
-						"md:py-4"
+						"sm:border"
 					)}
 				>
 					<PromptForm
