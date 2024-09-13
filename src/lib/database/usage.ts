@@ -8,11 +8,10 @@ import { and, eq, gte, lte } from "drizzle-orm"
 import { ResultAsync } from "neverthrow"
 import type { z } from "zod"
 
-export const selectUsagesTotal = (userUuid: string) => {
-	return ResultAsync.fromPromise(db.select().from(usages).where(eq(usages.userUuid, userUuid)), (e) =>
+export const selectUsagesTotal = (userUuid: string) =>
+	ResultAsync.fromPromise(db.select().from(usages).where(eq(usages.userUuid, userUuid)), (e) =>
 		getErrorMessage(e, "Failed to select usages")
 	).map((usages) => Number.parseFloat(usages.reduce((acc, usage) => acc + usage.usage, 0).toFixed(2)))
-}
 
 type SelectUsagesFromToProps = {
 	userUuid: string
@@ -20,8 +19,8 @@ type SelectUsagesFromToProps = {
 	to: Date
 }
 
-export const selectUsagesFromTo = ({ userUuid, from, to }: SelectUsagesFromToProps) => {
-	return ResultAsync.fromPromise(
+export const selectUsagesFromTo = ({ userUuid, from, to }: SelectUsagesFromToProps) =>
+	ResultAsync.fromPromise(
 		db
 			.select()
 			.from(usages)
@@ -33,13 +32,11 @@ export const selectUsagesFromTo = ({ userUuid, from, to }: SelectUsagesFromToPro
 			),
 		(e) => getErrorMessage(e, "Failed to select usages")
 	).map((usages) => Number.parseFloat(usages.reduce((acc, usage) => acc + usage.usage, 0).toFixed(2)))
-}
 
-export const insertUsage = (usage: UsageInsert) => {
-	return ResultAsync.fromPromise(db.insert(usages).values(usage).returning(), (e) =>
+export const insertUsage = (usage: UsageInsert) =>
+	ResultAsync.fromPromise(db.insert(usages).values(usage).returning(), (e) =>
 		getErrorMessage(e, "Failed to insert usage")
 	).map(([insertedUsage]) => insertedUsage)
-}
 
 export const selectUsages = (userUuid: string) => {
 	const firstDayCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
@@ -69,8 +66,8 @@ export const selectUsages = (userUuid: string) => {
 		)
 }
 
-export const selectUsagesForAllUsers = () => {
-	return selectAllUsers()
+export const selectUsagesForAllUsers = () =>
+	selectAllUsers()
 		.andThen((users) =>
 			ResultAsync.combine(
 				users.map((user) =>
@@ -98,4 +95,3 @@ export const selectUsagesForAllUsers = () => {
 			})
 		})
 		.andThen((usages) => parseZodSchema(AllUsersUsage, usages))
-}

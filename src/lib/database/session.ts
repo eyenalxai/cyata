@@ -5,8 +5,8 @@ import { getSessionExpiryDate, isSessionExpired } from "@/lib/session"
 import { eq } from "drizzle-orm"
 import { ResultAsync, errAsync, okAsync } from "neverthrow"
 
-export const insertSession = (session: Omit<SessionInsert, "expiresAt">) => {
-	return ResultAsync.fromPromise(
+export const insertSession = (session: Omit<SessionInsert, "expiresAt">) =>
+	ResultAsync.fromPromise(
 		db
 			.insert(sessions)
 			.values({
@@ -17,10 +17,9 @@ export const insertSession = (session: Omit<SessionInsert, "expiresAt">) => {
 			.returning(),
 		(e) => getErrorMessage(e, "Failed to insert session")
 	).map(([insertedSession]) => insertedSession)
-}
 
-export const selectSessionByKey = (key: string) => {
-	return ResultAsync.fromPromise(db.select().from(sessions).where(eq(sessions.key, key)), (e) =>
+export const selectSessionByKey = (key: string) =>
+	ResultAsync.fromPromise(db.select().from(sessions).where(eq(sessions.key, key)), (e) =>
 		getErrorMessage(e, "Failed to select session by key")
 	)
 		.andThen((sessions) => (sessions.length > 0 ? okAsync(sessions[0]) : errAsync("Session not found")))
@@ -28,10 +27,9 @@ export const selectSessionByKey = (key: string) => {
 			if (isSessionExpired(session)) return errAsync("Session expired")
 			return okAsync(session)
 		})
-}
 
-export const updateSessionExpiration = (session: Omit<SessionInsert, "expiresAt">) => {
-	return ResultAsync.fromPromise(
+export const updateSessionExpiration = (session: Omit<SessionInsert, "expiresAt">) =>
+	ResultAsync.fromPromise(
 		db
 			.update(sessions)
 			.set({
@@ -43,4 +41,3 @@ export const updateSessionExpiration = (session: Omit<SessionInsert, "expiresAt"
 			.returning(),
 		(e) => getErrorMessage(e, "Failed to update session")
 	).map(([updatedSession]) => updatedSession)
-}
