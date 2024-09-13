@@ -26,3 +26,9 @@ export const selectUserByUuid = (uuid: string) => {
 		getErrorMessage(e, "Failed to select user by uuid")
 	).andThen((users) => (users.length > 0 ? okAsync(users[0]) : errAsync("User not found")))
 }
+
+export const selectAllUsers = () => {
+	return ResultAsync.fromPromise(db.select().from(users), (e) => getErrorMessage(e, "Failed to select all users")).map(
+		(users) => users
+	)
+}

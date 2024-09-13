@@ -1,6 +1,6 @@
 import { DropdownUser } from "@/components/dropdown-user"
 import { Sidebar } from "@/components/sidebar"
-import { getUsages } from "@/lib/database/usage"
+import { selectUsages } from "@/lib/database/usage"
 import { getSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
 import { redirect } from "next/navigation"
@@ -12,7 +12,7 @@ export const Header = async () => {
 		redirect("/auth")
 	}
 
-	const usagesResult = await getUsages(session.value.uuid)
+	const usagesResult = await selectUsages(session.value.uuid)
 
 	return (
 		<header

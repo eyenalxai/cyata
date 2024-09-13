@@ -1,6 +1,8 @@
 import { db } from "@/lib/database/client"
+import { selectAllUsers } from "@/lib/database/user"
 import { getErrorMessage } from "@/lib/error-message"
 import { type UsageInsert, usages } from "@/lib/schema"
+import type { AsyncOk } from "@/lib/type-utils"
 import { and, eq, gte, lte } from "drizzle-orm"
 import { ResultAsync } from "neverthrow"
 
@@ -37,7 +39,7 @@ export const insertUsage = (usage: UsageInsert) => {
 	).map(([insertedUsage]) => insertedUsage)
 }
 
-export const getUsages = (userUuid: string) => {
+export const selectUsages = (userUuid: string) => {
 	const firstDayCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
 	const lastDayCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
 
@@ -63,4 +65,17 @@ export const getUsages = (userUuid: string) => {
 				usageTotal
 			}))
 		)
+}
+
+export const selectUsagesForAllUsers = () => {
+	return selectAllUsers().andThen((users) =>
+		ResultAsync.combine(
+			users.map((user) =>
+				selectUsages(user.uuid).map((usages) => ({
+					user,
+					usages
+				}))
+			)
+		)
+	)
 }
