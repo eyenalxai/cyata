@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { env } from "@/lib/env.mjs"
 import { signIn, signUp } from "@/lib/fetch/auth"
 import { cn } from "@/lib/utils"
 import { AuthFormSchema, AuthType } from "@/lib/zod/form/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile"
 import { ArrowRight, Lock, User } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import type { z } from "zod"
@@ -25,9 +27,26 @@ export default function Page() {
 			authType: "sign-in",
 			username: "",
 			password: "",
-			confirmPassword: ""
+			confirmPassword: "",
+			"cf-turnstile-response": ""
 		}
 	})
+
+	const turnstileRef = useRef<TurnstileInstance>()
+
+	useEffect(() => {
+		if (!turnstileRef.current) return
+
+		const intervalId = setInterval(() => {
+			const response = turnstileRef.current?.getResponse()
+			if (response) {
+				clearInterval(intervalId)
+				form.setValue("cf-turnstile-response", response)
+			}
+		}, 300)
+
+		return () => clearInterval(intervalId)
+	}, [form])
 
 	const onSubmit = async (authData: z.infer<typeof AuthFormSchema>) => {
 		const action = authType === "sign-up" ? signUp : signIn
@@ -123,6 +142,15 @@ export default function Page() {
 							<span>Auth</span>
 							<ArrowRight className={cn("size-5", "ml-2")} />
 						</Button>
+						<div className={cn("w-full", "flex", "justify-center", "items-center")}>
+							<Turnstile
+								injectScript={false}
+								siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+								scriptOptions={{ id: "turnstile-script" }}
+								onExpire={() => turnstileRef.current?.reset()}
+								ref={turnstileRef}
+							/>
+						</div>
 					</form>
 				</Form>
 			</div>

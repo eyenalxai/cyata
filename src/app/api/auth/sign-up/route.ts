@@ -5,6 +5,7 @@ import { existsAllowedUsername } from "@/lib/database/allowed-username"
 import { insertSession } from "@/lib/database/session"
 import { existsUserByUsername, insertUser } from "@/lib/database/user"
 import { insertUserPreferences } from "@/lib/database/user-preferences"
+import { validateCaptcha } from "@/lib/fetch/captcha"
 import { AuthFormSchema } from "@/lib/zod/form/auth"
 import { defaultModel } from "@/lib/zod/model"
 import { parseZodSchema } from "@/lib/zod/parse"
@@ -13,7 +14,8 @@ import { NextResponse } from "next/server"
 
 export const POST = async (request: Request) => {
 	return parseZodSchema(AuthFormSchema, await request.json())
-		.asyncAndThen((signUpData) => existsAllowedUsername(signUpData.username).map(() => signUpData))
+		.asyncAndThen((signInData) => validateCaptcha(signInData["cf-turnstile-response"]).map(() => signInData))
+		.andThen((signUpData) => existsAllowedUsername(signUpData.username).map(() => signUpData))
 		.andThen((signUpData) =>
 			existsUserByUsername(signUpData.username)
 				.map((userExists) => ({ signUpData, userExists }))

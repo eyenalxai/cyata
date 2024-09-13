@@ -3,13 +3,15 @@ import { verifyPassword } from "@/lib/crypto/password"
 import { secureRandomToken } from "@/lib/crypto/token"
 import { insertSession } from "@/lib/database/session"
 import { selectUserByUsername } from "@/lib/database/user"
+import { validateCaptcha } from "@/lib/fetch/captcha"
 import { AuthFormSchema } from "@/lib/zod/form/auth"
 import { parseZodSchema } from "@/lib/zod/parse"
 import { NextResponse } from "next/server"
 
 export const POST = async (request: Request) => {
 	return parseZodSchema(AuthFormSchema, await request.json())
-		.asyncAndThen((signInData) =>
+		.asyncAndThen((signInData) => validateCaptcha(signInData["cf-turnstile-response"]).map(() => signInData))
+		.andThen((signInData) =>
 			selectUserByUsername(signInData.username)
 				.map((user) => ({ signInData, user }))
 				.andThen(({ signInData, user }) =>

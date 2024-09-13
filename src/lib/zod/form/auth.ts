@@ -8,6 +8,13 @@ export const AuthFormSchema = z
 		authType: AuthType,
 		username: z.string().trim().min(3, { message: "Username must be at least 3 characters long." }),
 		password: Password,
+		"cf-turnstile-response": z
+			.string()
+			.trim()
+
+			.refine((value) => value.length > 0, {
+				message: "Please complete the Cloudflare CAPTCHA"
+			}),
 		confirmPassword: z
 			.union([z.string().length(0), Password])
 			.optional()
