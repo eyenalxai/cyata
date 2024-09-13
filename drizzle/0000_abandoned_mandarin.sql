@@ -1,13 +1,20 @@
+CREATE TABLE IF NOT EXISTS "allowed_usernames" (
+	"username" text PRIMARY KEY NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"note" text NOT NULL,
+	"telegram_username" text
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "chats" (
 	"uuid" uuid PRIMARY KEY NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"model" text NOT NULL,
 	"user_uuid" uuid NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "messages" (
 	"uuid" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"role" text NOT NULL,
 	"content" text NOT NULL,
 	"chat_uuid" uuid NOT NULL
@@ -34,7 +41,7 @@ CREATE TABLE IF NOT EXISTS "user_preferences" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
 	"uuid" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"username" text NOT NULL,
 	"password_hash" text NOT NULL,
 	"is_admin" boolean DEFAULT false NOT NULL,

@@ -1,19 +1,22 @@
-import type { AiMessageRole } from "@/lib/zod/ai-message"
-import type { OpenAIModel } from "@/lib/zod/model"
-import { relations, sql } from "drizzle-orm"
-import { boolean, pgTable, real, serial, text, timestamp, uuid } from "drizzle-orm/pg-core"
-import type { z } from "zod"
+import type {AiMessageRole} from "@/lib/zod/ai-message"
+import type {OpenAIModel} from "@/lib/zod/model"
+import {relations, sql} from "drizzle-orm"
+import {boolean, pgTable, real, serial, text, timestamp, uuid} from "drizzle-orm/pg-core"
+import type {z} from "zod"
 
 export const allowedUsernames = pgTable("allowed_usernames", {
 	username: text("username").primaryKey(),
-	createdAt: timestamp("created_at").default(sql`now()`).notNull(),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).default(sql`now()`).notNull(),
 	note: text("note").notNull(),
 	telegram_username: text("telegram_username")
 })
 
+export type AllowedUsername = typeof allowedUsernames.$inferSelect
+export type AllowedUsernameInsert = typeof allowedUsernames.$inferInsert
+
 export const users = pgTable("users", {
 	uuid: uuid("uuid").default(sql`gen_random_uuid()`).primaryKey(),
-	createdAt: timestamp("created_at").default(sql`now()`).notNull(),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).default(sql`now()`).notNull(),
 	username: text("username").notNull(),
 	passwordHash: text("password_hash").notNull(),
 	isAdmin: boolean("is_admin").default(false).notNull(),
@@ -47,7 +50,7 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 
 export const chats = pgTable("chats", {
 	uuid: uuid("uuid").primaryKey(),
-	createdAt: timestamp("created_at").default(sql`now()`).notNull(),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).default(sql`now()`).notNull(),
 	model: text("model").$type<z.infer<typeof OpenAIModel>>().notNull(),
 	userUuid: uuid("user_uuid")
 		.references(() => users.uuid, { onDelete: "cascade" })
@@ -68,7 +71,7 @@ export const chatsRelations = relations(chats, ({ one, many }) => ({
 
 export const messages = pgTable("messages", {
 	uuid: uuid("uuid").default(sql`gen_random_uuid()`).primaryKey(),
-	createdAt: timestamp("created_at").default(sql`now()`).notNull(),
+	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).default(sql`now()`).notNull(),
 	role: text("role").$type<z.infer<typeof AiMessageRole>>().notNull(),
 	content: text("content").notNull(),
 	chatUuid: uuid("chat_uuid")
