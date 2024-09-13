@@ -1,10 +1,7 @@
 import { Sidebar } from "@/components/sidebar"
-import { SignOutButton } from "@/components/sign-out-button"
-import { Button } from "@/components/ui/button"
+import { UserDropdown } from "@/components/user-dropdown"
 import { getSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
-import { CircleUserRound } from "lucide-react"
-import Link from "next/link"
 import { redirect } from "next/navigation"
 
 export const Header = async () => {
@@ -26,22 +23,15 @@ export const Header = async () => {
 				"flex-row",
 				"w-full",
 				"shrink-0",
-				"items-stretch",
-				"justify-between",
+				"items-center",
+				"justify-start",
 				"backdrop-blur",
 				"border-b",
 				"gap-4"
 			)}
 		>
-			<div className={cn("flex", "flex-row", "justify-center", "items-center", "gap-x-2")}>
-				<Sidebar />
-				<Button variant={"ghost"} asChild>
-					<Link href={"/profile"}>
-						<CircleUserRound />
-					</Link>
-				</Button>
-			</div>
-			<SignOutButton />
+			<Sidebar />
+			<UserDropdown username={session.value.username} />
 		</header>
 	)
 }
