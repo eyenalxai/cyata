@@ -33,6 +33,7 @@ export const Profile = ({ initialData }: ProfileProps) => {
 			<div className={cn("w-full", "flex", "flex-col", "justify-start", "items-start", "gap-y-1")}>
 				<Label className={cn("ml-1")}>Default System Prompt</Label>
 				<Textarea
+					className={cn("resize-none")}
 					autoResize
 					rows={Math.max(preferencesResult.value.systemPrompt.split("\n").length, 4)}
 					onChange={(event) => updateSystemPrompt(event.target.value)}
