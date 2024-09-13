@@ -22,7 +22,7 @@ export const deleteChat = (uuid: string) => {
 
 export const selectChat = (uuid: string) => {
 	return ResultAsync.fromPromise(db.select().from(chats).where(eq(chats.uuid, uuid)), (e) =>
-		getErrorMessage(e, "Failed to get session by key")
+		getErrorMessage(e, "Failed to select chat")
 	).andThen((chats) => (chats.length > 0 ? okAsync(chats[0]) : errAsync("CHAT_NOT_FOUND" as const)))
 }
 
@@ -47,7 +47,7 @@ export const selectChatWithMessages = (chatUuid: string) => {
 				}
 			}
 		}),
-		(e) => getErrorMessage(e, "Failed to get session by key")
+		(e) => getErrorMessage(e, "Failed to select chat with messages")
 	).andThen((chat) => (chat !== undefined ? okAsync(chat) : errAsync("CHAT_NOT_FOUND" as const)))
 }
 
@@ -62,7 +62,7 @@ export const selectChatsWithMessages = (userUuid: string) => {
 				}
 			}
 		}),
-		(e) => getErrorMessage(e, "Failed to get session by key")
+		(e) => getErrorMessage(e, "Failed to select chats with messages")
 	)
 }
 

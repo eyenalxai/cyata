@@ -21,7 +21,7 @@ export const insertSession = (session: Omit<SessionInsert, "expiresAt">) => {
 
 export const selectSessionByKey = (key: string) => {
 	return ResultAsync.fromPromise(db.select().from(sessions).where(eq(sessions.key, key)), (e) =>
-		getErrorMessage(e, "Failed to get session by key")
+		getErrorMessage(e, "Failed to select session by key")
 	)
 		.andThen((sessions) => (sessions.length > 0 ? okAsync(sessions[0]) : errAsync("Session not found")))
 		.andThen((session) => {

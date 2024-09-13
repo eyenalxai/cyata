@@ -9,7 +9,7 @@ import type { z } from "zod"
 
 export const selectUserPreferences = (userUuid: string) => {
 	return ResultAsync.fromPromise(db.select().from(userPreferences).where(eq(userPreferences.userUuid, userUuid)), (e) =>
-		getErrorMessage(e, "Failed to get user by username")
+		getErrorMessage(e, "Failed to select user preferences")
 	).andThen((preferences) => (preferences.length > 0 ? okAsync(preferences[0]) : errAsync("User not found")))
 }
 

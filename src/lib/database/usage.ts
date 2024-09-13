@@ -6,7 +6,7 @@ import { ResultAsync } from "neverthrow"
 
 export const selectUsages = (userUuid: string) => {
 	return ResultAsync.fromPromise(db.select().from(usages).where(eq(usages.userUuid, userUuid)), (e) =>
-		getErrorMessage(e, "Failed to get usages")
+		getErrorMessage(e, "Failed to select usages")
 	)
 }
 
