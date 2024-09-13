@@ -5,7 +5,8 @@ export function useAtBottom(offset = 0) {
 
 	useEffect(() => {
 		const handleScroll = () => {
-			setIsAtBottom(window.innerHeight + window.scrollY >= document.body.offsetHeight - offset)
+			const atBottom = Math.ceil(window.innerHeight + window.scrollY) >= Math.floor(document.body.offsetHeight - offset)
+			setIsAtBottom(atBottom)
 		}
 
 		window.addEventListener("scroll", handleScroll, { passive: true })

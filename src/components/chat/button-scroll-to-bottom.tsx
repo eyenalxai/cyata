@@ -1,12 +1,12 @@
 "use client"
 
-import { Button, type ButtonProps } from "@/components/ui/button"
-import { useAtBottom } from "@/lib/hooks/use-at-bottom"
-import { cn } from "@/lib/utils"
-import { ArrowDown } from "lucide-react"
+import {Button, type ButtonProps} from "@/components/ui/button"
+import {useAtBottom} from "@/lib/hooks/use-at-bottom"
+import {cn} from "@/lib/utils"
+import {ArrowDown} from "lucide-react"
 
 export const ButtonScrollToBottom = ({ className, ...props }: ButtonProps) => {
-	const isAtBottom = useAtBottom()
+	const isAtBottom = useAtBottom(64)
 
 	return (
 		<Button
