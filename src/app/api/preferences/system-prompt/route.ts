@@ -1,7 +1,7 @@
 import { getSession } from "@/lib/session"
 
-import { updateDefaultModel } from "@/lib/database/user-preferences"
-import { UpdateDefaultModelRequest } from "@/lib/zod/api"
+import { updateSystemPrompt } from "@/lib/database/user-preferences"
+import { UpdateSystemPromptRequest } from "@/lib/zod/api"
 import { parseZodSchema } from "@/lib/zod/parse"
 import { NextResponse } from "next/server"
 
@@ -12,11 +12,11 @@ export async function PATCH(request: Request) {
 		return new NextResponse("Unauthorized", { status: 403 })
 	}
 
-	return parseZodSchema(UpdateDefaultModelRequest, await request.json())
-		.asyncAndThen(({ defaultModel }) =>
-			updateDefaultModel({
+	return parseZodSchema(UpdateSystemPromptRequest, await request.json())
+		.asyncAndThen(({ systemPrompt }) =>
+			updateSystemPrompt({
 				userUuid: session.value.uuid,
-				defaultModel: defaultModel
+				systemPrompt: systemPrompt
 			})
 		)
 		.match(

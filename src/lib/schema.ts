@@ -81,7 +81,8 @@ export const userPreferences = pgTable("user_preferences", {
 	userUuid: uuid("user_uuid")
 		.references(() => users.uuid, { onDelete: "cascade" })
 		.primaryKey(),
-	defaultModel: text("default_model").$type<z.infer<typeof OpenAIModel>>().notNull()
+	defaultModel: text("default_model").$type<z.infer<typeof OpenAIModel>>().notNull(),
+	systemPrompt: text("system_prompt").default("You're a helpful assistant").notNull()
 })
 
 export type UserPreferences = typeof userPreferences.$inferSelect

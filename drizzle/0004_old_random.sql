@@ -1,0 +1,1 @@
+ALTER TABLE "user_preferences" ADD COLUMN "system_prompt" text DEFAULT 'You''re a helpful assistant' NOT NULL;

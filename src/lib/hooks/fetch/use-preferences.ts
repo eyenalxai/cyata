@@ -1,12 +1,13 @@
 "use client"
 
-import { fetchPreferences, updateDefaultModel } from "@/lib/fetch/preferences"
+import { fetchPreferences, updateDefaultModel, updateSystemPrompt } from "@/lib/fetch/preferences"
 import { PREFERENCES_QUERY_KEY } from "@/lib/hooks/fetch/query-keys"
-import type { PreferencesResponse } from "@/lib/zod/api"
+import type { PreferencesResponse, SystemPrompt } from "@/lib/zod/api"
 import type { OpenAIModel } from "@/lib/zod/model"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { err, ok } from "neverthrow"
 import { toast } from "sonner"
+import { useDebouncedCallback } from "use-debounce"
 import type { z } from "zod"
 
 type UsePreferencesProps = {
@@ -53,12 +54,39 @@ export const usePreferences = ({ initialData }: UsePreferencesProps) => {
 		}
 	})
 
+	const { mutate: updateSystemPromptMutation, isPending: updatingSystemPrompt } = useMutation({
+		mutationFn: async (systemPrompt: z.infer<typeof SystemPrompt>) => updateSystemPrompt(systemPrompt),
+		onMutate: async (systemPrompt: z.infer<typeof SystemPrompt>) => {
+			await cancelQueries()
+			const oldPreferences: z.infer<typeof PreferencesResponse> | undefined =
+				queryClient.getQueryData(preferencesQueryKey)
+
+			queryClient.setQueryData(preferencesQueryKey, () => {
+				if (oldPreferences === undefined) return oldPreferences
+				return {
+					...oldPreferences,
+					systemPrompt
+				} satisfies z.infer<typeof PreferencesResponse>
+			})
+		},
+		onError: (_error, _variables, _context) => {
+			toast.error("Failed to update system prompt")
+		},
+		onSettled: async (_error, _variables, _context) => {
+			await invalidatesQueries()
+		}
+	})
+
+	const debouncedUpdateSystemPrompt = useDebouncedCallback((value: string) => updateSystemPrompt(value), 300)
+
 	if (error)
 		return {
 			preferencesResult: err(error.message),
 			isLoading: false,
 			updateDefaultModel: updateDefaultModelMutation,
-			updatingDefaultModel
+			updatingDefaultModel,
+			updateSystemPrompt: debouncedUpdateSystemPrompt,
+			updatingSystemPrompt
 		} as const
 
 	if (!preferences)
@@ -66,13 +94,17 @@ export const usePreferences = ({ initialData }: UsePreferencesProps) => {
 			preferencesResult: null,
 			isLoading: true,
 			updateDefaultModel: updateDefaultModelMutation,
-			updatingDefaultModel
+			updatingDefaultModel,
+			updateSystemPrompt: debouncedUpdateSystemPrompt,
+			updatingSystemPrompt
 		} as const
 
 	return {
 		preferencesResult: ok(preferences),
 		isLoading: false,
 		updateDefaultModel: updateDefaultModelMutation,
-		updatingDefaultModel
+		updatingDefaultModel,
+		updateSystemPrompt: debouncedUpdateSystemPrompt,
+		updatingSystemPrompt
 	} as const
 }

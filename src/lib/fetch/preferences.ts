@@ -1,5 +1,5 @@
 import { api } from "@/lib/fetch/fetcher"
-import type { PreferencesResponse } from "@/lib/zod/api"
+import type { PreferencesResponse, SystemPrompt } from "@/lib/zod/api"
 import type { OpenAIModel } from "@/lib/zod/model"
 import type { z } from "zod"
 
@@ -13,4 +13,10 @@ export const updateDefaultModel = (defaultModel: z.infer<typeof OpenAIModel>) =>
 	api("/api/preferences/default-model", {
 		method: "patch",
 		json: { defaultModel }
+	})
+
+export const updateSystemPrompt = (systemPrompt: z.infer<typeof SystemPrompt>) =>
+	api("/api/preferences/system-prompt", {
+		method: "patch",
+		json: { systemPrompt }
 	})

@@ -1,15 +1,11 @@
 import { db } from "@/lib/database/client"
 import { getErrorMessage } from "@/lib/error-message"
-import { userPreferences } from "@/lib/schema"
+import { type UserPreferencesInsert, userPreferences } from "@/lib/schema"
+import type { SystemPrompt } from "@/lib/zod/api"
 import type { OpenAIModel } from "@/lib/zod/model"
 import { eq } from "drizzle-orm"
 import { ResultAsync, errAsync, okAsync } from "neverthrow"
 import type { z } from "zod"
-
-type UpdateDefaultModelProps = {
-	userUuid: string
-	defaultModel: z.infer<typeof OpenAIModel>
-}
 
 export const selectUserPreferences = (userUuid: string) => {
 	return ResultAsync.fromPromise(db.select().from(userPreferences).where(eq(userPreferences.userUuid, userUuid)), (e) =>
@@ -17,10 +13,15 @@ export const selectUserPreferences = (userUuid: string) => {
 	).andThen((preferences) => (preferences.length > 0 ? okAsync(preferences[0]) : errAsync("User not found")))
 }
 
-export const insertUserPreferences = ({ userUuid, defaultModel }: UpdateDefaultModelProps) => {
-	return ResultAsync.fromPromise(db.insert(userPreferences).values({ userUuid, defaultModel }).returning(), (e) =>
+export const insertUserPreferences = (preferences: UserPreferencesInsert) => {
+	return ResultAsync.fromPromise(db.insert(userPreferences).values(preferences).returning(), (e) =>
 		getErrorMessage(e, "Failed to insert user preferences")
 	).map(([insertedPreferences]) => insertedPreferences)
+}
+
+type UpdateDefaultModelProps = {
+	userUuid: string
+	defaultModel: z.infer<typeof OpenAIModel>
 }
 
 export const updateDefaultModel = ({ userUuid, defaultModel }: UpdateDefaultModelProps) => {
@@ -30,12 +31,14 @@ export const updateDefaultModel = ({ userUuid, defaultModel }: UpdateDefaultMode
 	).map(([preferences]) => preferences)
 }
 
-export const setDefaultModel = ({ userUuid, defaultModel }: UpdateDefaultModelProps) => {
-	return selectUserPreferences(userUuid)
-		.andThen((preferences) => {
-			if (preferences.defaultModel === defaultModel) return okAsync(preferences)
+type UpdateSystemPromptProps = {
+	userUuid: string
+	systemPrompt: z.infer<typeof SystemPrompt>
+}
 
-			return updateDefaultModel({ userUuid, defaultModel })
-		})
-		.orElse(() => insertUserPreferences({ userUuid, defaultModel }))
+export const updateSystemPrompt = ({ userUuid, systemPrompt }: UpdateSystemPromptProps) => {
+	return ResultAsync.fromPromise(
+		db.update(userPreferences).set({ systemPrompt }).where(eq(userPreferences.userUuid, userUuid)),
+		(e) => getErrorMessage(e, "Failed to update user system prompt")
+	).map(([preferences]) => preferences)
 }

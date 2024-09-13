@@ -15,11 +15,18 @@ export const ChatInfo = z.object({
 
 export const ChatsResponse = z.array(ChatInfo)
 
+export const SystemPrompt = z.string().min(8).max(4096)
+
 export const PreferencesResponse = z.object({
 	userUuid: z.string().uuid(),
-	defaultModel: OpenAIModel
+	defaultModel: OpenAIModel,
+	systemPrompt: SystemPrompt
 })
 
 export const UpdateDefaultModelRequest = z.object({
 	defaultModel: OpenAIModel
+})
+
+export const UpdateSystemPromptRequest = z.object({
+	systemPrompt: SystemPrompt
 })
