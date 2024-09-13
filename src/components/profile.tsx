@@ -23,9 +23,12 @@ export const Profile = ({ initialData }: ProfileProps) => {
 	}
 
 	return (
-		<div className={cn("flex", "flex-col", "justify-start", "items-start", "gap-y-1")}>
-			<Label className={cn("ml-1")}>Default model</Label>
-			<SelectModel model={preferencesResult.value.defaultModel} setModel={updateDefaultModel} />
+		<div className={cn("w-full", "flex", "flex-col", "justify-center", "items-start", "gap-y-4")}>
+			<h1 className={cn("text-2xl", "font-bold")}>Settings</h1>
+			<div className={cn("flex", "flex-col", "justify-start", "items-start", "gap-y-1")}>
+				<Label className={cn("ml-1")}>Default model</Label>
+				<SelectModel model={preferencesResult.value.defaultModel} setModel={updateDefaultModel} />
+			</div>
 		</div>
 	)
 }
