@@ -13,7 +13,15 @@ export const ChatInfo = z.object({
 	chatUuid: z.string().uuid()
 })
 
-export const ChatsResponse = z.array(ChatInfo)
+export const ChatInfoArray = z.array(ChatInfo)
+
+export const ChatsResponse = z.object({
+	chatsToday: ChatInfoArray,
+	chatsYesterday: ChatInfoArray,
+	chatsThisWeek: ChatInfoArray,
+	chatsThisMonth: ChatInfoArray,
+	chatsRest: ChatInfoArray
+})
 
 export const SystemPrompt = z.string().trim().min(8).max(4096)
 

@@ -1,4 +1,4 @@
-import { updateEmptyChatTitle } from "@/lib/chat-title"
+import { updateEmptyChatTitle } from "@/lib/chat/title"
 import { db } from "@/lib/database/client"
 import { insertMessage } from "@/lib/database/message"
 import { getErrorMessage } from "@/lib/error-message"

@@ -1,6 +1,6 @@
 "use client"
 
-import {ChatLink} from "@/components/chat-list/chat-link"
+import {ChatGroups} from "@/components/chat-list/chat-groups"
 import {CustomAlert} from "@/components/custom-alert"
 import {Loading} from "@/components/loading"
 import {useChats} from "@/lib/hooks/fetch/use-chats"
@@ -21,9 +21,7 @@ export const ChatList = ({ className }: ChatListProps) => {
 
 	return (
 		<div className={cn("w-full", "flex", "flex-col", "justify-center", "items-center", "gap-y-2", className)}>
-			{chatsResult.value.map((chatInfo) => (
-				<ChatLink key={chatInfo.chatUuid} chatInfo={chatInfo} deleteChat={deleteChat} isDeletingChat={isDeletingChat} />
-			))}
+			<ChatGroups chats={chatsResult.value} deleteChat={deleteChat} isDeletingChat={isDeletingChat} />
 		</div>
 	)
 }

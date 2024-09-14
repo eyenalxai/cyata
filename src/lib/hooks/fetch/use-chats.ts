@@ -2,7 +2,7 @@
 
 import { deleteChat, fetchChats } from "@/lib/fetch/chat"
 import { CHATS_QUERY_KEY } from "@/lib/hooks/fetch/query-keys"
-import type { ChatsResponse } from "@/lib/zod/api"
+import type { ChatInfo, ChatsResponse } from "@/lib/zod/api"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { err, ok } from "neverthrow"
 import { usePathname, useRouter } from "next/navigation"
@@ -35,7 +35,14 @@ export const useChats = () => {
 
 			queryClient.setQueryData(chatsQueryKey, (oldChats: z.infer<typeof ChatsResponse> | undefined) => {
 				if (oldChats === undefined) return oldChats
-				return oldChats.filter((chat) => chat.chatUuid !== chatUuid)
+
+				for (const key in oldChats) {
+					const chatKey = key as keyof z.infer<typeof ChatsResponse>
+
+					if (Array.isArray(oldChats[chatKey])) {
+						oldChats[chatKey] = oldChats[chatKey].filter((chat: z.infer<typeof ChatInfo>) => chat.chatUuid !== chatUuid)
+					}
+				}
 			})
 
 			return { oldChats, chatUuid }

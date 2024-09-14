@@ -1,10 +1,10 @@
-import {selectChatWithMessages, updateChatTitle} from "@/lib/database/chat"
-import {getErrorMessage} from "@/lib/error-message"
-import {openaiClient} from "@/lib/open-ai"
-import {parseZodSchema} from "@/lib/zod/parse"
-import {errAsync, okAsync, ResultAsync} from "neverthrow"
-import {zodResponseFormat} from "openai/helpers/zod"
-import {z} from "zod"
+import { selectChatWithMessages, updateChatTitle } from "@/lib/database/chat"
+import { getErrorMessage } from "@/lib/error-message"
+import { openaiClient } from "@/lib/open-ai"
+import { parseZodSchema } from "@/lib/zod/parse"
+import { ResultAsync, errAsync, okAsync } from "neverthrow"
+import { zodResponseFormat } from "openai/helpers/zod"
+import { z } from "zod"
 
 export const TitleResponse = z.object({
 	title: z.string()

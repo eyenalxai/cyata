@@ -16,7 +16,7 @@ export const ChatLink = ({ chatInfo, deleteChat, isDeletingChat }: ChatLinkProps
 		<div className={cn("w-full", "flex", "flex-row", "justify-center", "items-center", "gap-x-2")}>
 			<Button disabled={isDeletingChat} asChild variant={"ghost"} className={cn("justify-start", "w-full", "truncate")}>
 				<Link href={`/chat/${chatInfo.chatUuid}`}>
-					<span className={cn("truncate", "shrink")}>{chatInfo.title}</span>
+					<span className={cn("truncate", "shrink", "font-normal")}>{chatInfo.title}</span>
 				</Link>
 			</Button>
 			<Button disabled={isDeletingChat} onClick={() => deleteChat(chatInfo.chatUuid)} variant={"ghost"} size={"sm"}>
