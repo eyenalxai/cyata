@@ -1,9 +1,9 @@
-import {selectChatsWithMessages} from "@/lib/database/chat"
-import {getSession} from "@/lib/session"
+import { selectChatsWithMessages } from "@/lib/database/chat"
+import { getSession } from "@/lib/session"
 
-import {ChatsResponse} from "@/lib/zod/api"
-import {parseZodSchema} from "@/lib/zod/parse"
-import {NextResponse} from "next/server"
+import { ChatsResponse } from "@/lib/zod/api"
+import { parseZodSchema } from "@/lib/zod/parse"
+import { NextResponse } from "next/server"
 
 export async function GET() {
 	const session = await getSession()
