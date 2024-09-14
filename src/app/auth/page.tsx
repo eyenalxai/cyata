@@ -1,5 +1,6 @@
 "use client"
 
+import { Loading } from "@/components/loading"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -12,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile"
 import { ArrowRight, Lock, User } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import type { z } from "zod"
@@ -20,6 +21,7 @@ import type { z } from "zod"
 export default function Page() {
 	const router = useRouter()
 	const [authType, setAuthType] = useState<z.infer<typeof AuthType>>("sign-in")
+	const [isSubmitting, startTransition] = useTransition()
 
 	const form = useForm<z.infer<typeof AuthFormSchema>>({
 		resolver: zodResolver(AuthFormSchema),
@@ -50,10 +52,12 @@ export default function Page() {
 
 	const onSubmit = async (authData: z.infer<typeof AuthFormSchema>) => {
 		const action = authType === "sign-up" ? signUp : signIn
-		await action(authData).match(
-			() => router.push(`/chat/${window.crypto.randomUUID()}`),
-			(e) => toast.error(e)
-		)
+		startTransition(async () => {
+			await action(authData).match(
+				() => router.push(`/chat/${window.crypto.randomUUID()}`),
+				(e) => toast.error(e)
+			)
+		})
 	}
 
 	useEffect(() => {
@@ -139,8 +143,14 @@ export default function Page() {
 							/>
 						)}
 						<Button className={cn("w-full")} type="submit">
-							<span>Auth</span>
-							<ArrowRight className={cn("size-5", "ml-2")} />
+							{isSubmitting ? (
+								<Loading className={cn("size-5")} />
+							) : (
+								<>
+									<span>Auth</span>
+									<ArrowRight className={cn("size-5", "ml-2")} />
+								</>
+							)}
 						</Button>
 						<div className={cn("w-full", "flex", "justify-center", "items-center")}>
 							<Turnstile
