@@ -1,10 +1,10 @@
 "use client"
 
-import { ChatLink } from "@/components/chat-list/chat-link"
-import { CustomAlert } from "@/components/custom-alert"
-import { Loading } from "@/components/loading"
-import { useChats } from "@/lib/hooks/fetch/use-chats"
-import { cn } from "@/lib/utils"
+import {ChatLink} from "@/components/chat-list/chat-link"
+import {CustomAlert} from "@/components/custom-alert"
+import {Loading} from "@/components/loading"
+import {useChats} from "@/lib/hooks/fetch/use-chats"
+import {cn} from "@/lib/utils"
 
 type ChatListProps = {
 	className?: string
@@ -13,7 +13,7 @@ type ChatListProps = {
 export const ChatList = ({ className }: ChatListProps) => {
 	const { chatsResult, isLoading, deleteChat, isDeletingChat } = useChats()
 
-	if (isLoading) return <Loading />
+	if (isLoading) return <Loading className={cn("mt-2")} />
 
 	if (chatsResult.isErr()) {
 		return <CustomAlert>{chatsResult.error}</CustomAlert>
