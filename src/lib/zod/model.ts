@@ -34,3 +34,10 @@ export const ModelPricing: Record<z.infer<typeof OpenAIModel>, z.infer<typeof Pr
 		output: 30.0 / 1_000_000
 	}
 }
+
+export const ModelContextWindows: Record<z.infer<typeof OpenAIModel>, number> = {
+	"gpt-4o": 128_000,
+	"gpt-4o-mini": 128_000,
+	"gpt-4": 8_192,
+	"gpt-4-turbo": 128_000
+}

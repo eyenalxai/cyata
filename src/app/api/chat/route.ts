@@ -1,3 +1,4 @@
+import { trimMessagesToFitContextWindow } from "@/lib/ai-message"
 import { addMessageToChat } from "@/lib/database/chat"
 import { insertUsage } from "@/lib/database/usage"
 import { selectUserPreferences } from "@/lib/database/user-preferences"
@@ -33,6 +34,8 @@ export async function POST(request: Request) {
 		)
 		.match(
 			async ({ messages, chatUuid, model, preferences }) => {
+				const trimmedMessages = trimMessagesToFitContextWindow(messages, model)
+
 				const result = await streamText({
 					model: openai(model),
 					messages: convertToCoreMessages([
@@ -40,7 +43,7 @@ export async function POST(request: Request) {
 							role: "system",
 							content: preferences.systemPrompt
 						} satisfies CoreMessage,
-						...messages
+						...trimmedMessages
 					]),
 					onFinish: ({ text }) => {
 						const assistantMessage = {
@@ -54,7 +57,7 @@ export async function POST(request: Request) {
 									role: "system",
 									content: preferences.systemPrompt
 								},
-								...messages
+								...trimmedMessages
 							],
 							model,
 							type: "input"
