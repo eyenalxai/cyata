@@ -1,6 +1,5 @@
 "use client"
 
-import { Loading } from "@/components/loading"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -11,7 +10,7 @@ import { cn } from "@/lib/utils"
 import { AuthFormSchema, AuthType } from "@/lib/zod/form/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile"
-import { ArrowRight, Lock, User } from "lucide-react"
+import { ArrowRight, Loader, Lock, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
@@ -151,9 +150,9 @@ export default function Page() {
 								)}
 							/>
 						)}
-						<Button className={cn("w-full")} type="submit">
+						<Button className={cn("w-full", "h-9")} type="submit">
 							{isSubmitting ? (
-								<Loading className={cn("size-5")} />
+								<Loader className={cn("size-5", "animate-spin")} />
 							) : (
 								<>
 									<span>Auth</span>
