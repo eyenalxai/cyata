@@ -1,22 +1,22 @@
 "use client"
 
-import { Loading } from "@/components/loading"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { env } from "@/lib/env.mjs"
-import { signIn, signUp } from "@/lib/fetch/auth"
-import { cn } from "@/lib/utils"
-import { AuthFormSchema, AuthType } from "@/lib/zod/form/auth"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile"
-import { ArrowRight, Lock, User } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { useEffect, useRef, useState, useTransition } from "react"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import type { z } from "zod"
+import {Loading} from "@/components/loading"
+import {Button} from "@/components/ui/button"
+import {Form, FormControl, FormField, FormItem} from "@/components/ui/form"
+import {Input} from "@/components/ui/input"
+import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
+import {env} from "@/lib/env.mjs"
+import {signIn, signUp} from "@/lib/fetch/auth"
+import {cn} from "@/lib/utils"
+import {AuthFormSchema, AuthType} from "@/lib/zod/form/auth"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {Turnstile, type TurnstileInstance} from "@marsidev/react-turnstile"
+import {ArrowRight, Lock, User} from "lucide-react"
+import {useRouter} from "next/navigation"
+import {useEffect, useRef, useState, useTransition} from "react"
+import {useForm} from "react-hook-form"
+import {toast} from "sonner"
+import type {z} from "zod"
 
 export default function Page() {
 	const router = useRouter()
@@ -55,7 +55,11 @@ export default function Page() {
 		startTransition(async () => {
 			await action(authData).match(
 				() => router.push(`/chat/${window.crypto.randomUUID()}`),
-				(e) => toast.error(e)
+				(e) => {
+					toast.error(e)
+					turnstileRef.current?.reset()
+					form.setValue("cf-turnstile-response", "")
+				}
 			)
 		})
 	}
@@ -66,10 +70,15 @@ export default function Page() {
 
 	useEffect(() => {
 		const errors = Object.values(form.formState.errors)
+		if (errors.length === 0) return
+
 		for (const error of errors) {
 			toast.error(error.message)
 		}
-	}, [form.formState.errors])
+
+		turnstileRef.current?.reset()
+		form.setValue("cf-turnstile-response", "")
+	}, [form, form.setValue, form.formState.errors])
 
 	return (
 		<div className={cn("w-full", "mt-12", "flex", "flex-col", "items-center", "px-4")}>
