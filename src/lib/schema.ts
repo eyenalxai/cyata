@@ -1,8 +1,8 @@
-import type {AiMessageRole} from "@/lib/zod/ai-message"
-import type {OpenAIModel} from "@/lib/zod/model"
-import {relations, sql} from "drizzle-orm"
-import {boolean, pgTable, real, serial, text, timestamp, uuid} from "drizzle-orm/pg-core"
-import type {z} from "zod"
+import type { AiMessageRole } from "@/lib/zod/ai-message"
+import type { OpenAIModel } from "@/lib/zod/model"
+import { relations, sql } from "drizzle-orm"
+import { boolean, pgTable, real, serial, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import type { z } from "zod"
 
 export const allowedUsernames = pgTable("allowed_usernames", {
 	username: text("username").primaryKey(),
@@ -52,6 +52,7 @@ export const chats = pgTable("chats", {
 	uuid: uuid("uuid").primaryKey(),
 	createdAt: timestamp("created_at", { mode: "string", withTimezone: true }).default(sql`now()`).notNull(),
 	model: text("model").$type<z.infer<typeof OpenAIModel>>().notNull(),
+	title: text("title"),
 	userUuid: uuid("user_uuid")
 		.references(() => users.uuid, { onDelete: "cascade" })
 		.notNull()

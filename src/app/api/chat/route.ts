@@ -1,3 +1,4 @@
+import { generateChatTitle } from "@/lib/chat-title"
 import { addMessageToChat } from "@/lib/database/chat"
 import { insertUsage } from "@/lib/database/usage"
 import { selectUserPreferences } from "@/lib/database/user-preferences"
