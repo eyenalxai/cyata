@@ -6,5 +6,12 @@ export const parseZodSchema = <T>(schema: ZodSchema<T>, data: unknown): Result<T
 
 	if (result.success) return ok(result.data)
 
-	return err(result.error.errors.map(({ message, path }) => `${path.join(".")}: ${message}`).join(", "))
+	return err(
+		result.error.errors
+			.map(({ message, path }) => {
+				if (path.length === 0) return message
+				return `${path.join(".")}: ${message}`
+			})
+			.join(", ")
+	)
 }

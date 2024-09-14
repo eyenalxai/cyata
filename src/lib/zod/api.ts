@@ -62,3 +62,9 @@ export const RestrictRequest = z.object({
 	userUuid: z.string().uuid(),
 	isRestricted: z.boolean()
 })
+
+export const CaptchaValidation = z
+	.object({
+		success: z.boolean()
+	})
+	.refine((data) => data.success, { message: "Captcha validation failed" })
