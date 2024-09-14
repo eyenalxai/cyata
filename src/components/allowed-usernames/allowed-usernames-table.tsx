@@ -67,12 +67,12 @@ export const AllowedUsernamesTable = ({ initialAllowedUsernames }: UsageTablePro
 				</TableHeader>
 				<TableBody>
 					{allowedUsernamesResult.value.map((allowedUsernameData) => (
-						<TableRow key={allowedUsernameData.username} className={cn("h-14")}>
+						<TableRow key={allowedUsernameData.username} className={cn("h-11")}>
 							<TableCell className={cn("text-start")}>{allowedUsernameData.username}</TableCell>
 							<TableCell>{allowedUsernameData.note}</TableCell>
 							<TableCell>
 								{allowedUsernameData.telegram_username && (
-									<Button variant={"link"} asChild>
+									<Button variant={"link"} className={cn("text-md", "h-4")} asChild>
 										<a
 											href={`https://t.me/${allowedUsernameData.telegram_username}`}
 											target="_blank"
