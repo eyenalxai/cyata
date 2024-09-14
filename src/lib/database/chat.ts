@@ -1,13 +1,13 @@
-import {updateEmptyChatTitle} from "@/lib/chat-title"
-import {db} from "@/lib/database/client"
-import {insertMessage} from "@/lib/database/message"
-import {getErrorMessage} from "@/lib/error-message"
-import {type ChatInsert, chats} from "@/lib/schema"
-import type {AiMessageSchema} from "@/lib/zod/ai-message"
-import type {OpenAIModel} from "@/lib/zod/model"
-import {eq} from "drizzle-orm"
-import {errAsync, okAsync, ResultAsync} from "neverthrow"
-import type {z} from "zod"
+import { updateEmptyChatTitle } from "@/lib/chat-title"
+import { db } from "@/lib/database/client"
+import { insertMessage } from "@/lib/database/message"
+import { getErrorMessage } from "@/lib/error-message"
+import { type ChatInsert, chats } from "@/lib/schema"
+import type { AiMessageSchema } from "@/lib/zod/ai-message"
+import type { OpenAIModel } from "@/lib/zod/model"
+import { eq } from "drizzle-orm"
+import { ResultAsync, errAsync, okAsync } from "neverthrow"
+import type { z } from "zod"
 
 export const insertChat = (chat: ChatInsert) =>
 	ResultAsync.fromPromise(db.insert(chats).values(chat).returning(), (e) =>
@@ -88,7 +88,7 @@ export const addMessageToChat = ({ userUuid, chatUuid, message, model }: AddMess
 
 			return errAsync(e)
 		})
-		.andTee(() => updateEmptyChatTitle(chatUuid))
+		.andThen(() => updateEmptyChatTitle(chatUuid))
 
 export const updateChatTitle = (chatUuid: string, title: string) =>
 	ResultAsync.fromPromise(db.update(chats).set({ title }).where(eq(chats.uuid, chatUuid)).returning(), (e) =>
