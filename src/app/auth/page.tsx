@@ -1,22 +1,22 @@
 "use client"
 
-import {Loading} from "@/components/loading"
-import {Button} from "@/components/ui/button"
-import {Form, FormControl, FormField, FormItem} from "@/components/ui/form"
-import {Input} from "@/components/ui/input"
-import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
-import {env} from "@/lib/env.mjs"
-import {signIn, signUp} from "@/lib/fetch/auth"
-import {cn} from "@/lib/utils"
-import {AuthFormSchema, AuthType} from "@/lib/zod/form/auth"
-import {zodResolver} from "@hookform/resolvers/zod"
-import {Turnstile, type TurnstileInstance} from "@marsidev/react-turnstile"
-import {ArrowRight, Lock, User} from "lucide-react"
-import {useRouter} from "next/navigation"
-import {useEffect, useRef, useState, useTransition} from "react"
-import {useForm} from "react-hook-form"
-import {toast} from "sonner"
-import type {z} from "zod"
+import { Loading } from "@/components/loading"
+import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { env } from "@/lib/env.mjs"
+import { signIn, signUp } from "@/lib/fetch/auth"
+import { cn } from "@/lib/utils"
+import { AuthFormSchema, AuthType } from "@/lib/zod/form/auth"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile"
+import { ArrowRight, Lock, User } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useEffect, useRef, useState, useTransition } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import type { z } from "zod"
 
 export default function Page() {
 	const router = useRouter()
@@ -102,7 +102,7 @@ export default function Page() {
 								<FormItem>
 									<div className={cn("relative")}>
 										<FormControl>
-											<Input className={cn("pr-8")} placeholder="Username" {...field} />
+											<Input autoComplete={"username"} className={cn("pr-8")} placeholder="Username" {...field} />
 										</FormControl>
 										<User className={cn("absolute", "right-2", "top-2.5", "text-slate-500", "size-4")} />
 									</div>
@@ -167,6 +167,7 @@ export default function Page() {
 								siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
 								scriptOptions={{ id: "turnstile-script" }}
 								onExpire={() => turnstileRef.current?.reset()}
+								onError={() => turnstileRef.current?.reset()}
 								ref={turnstileRef}
 							/>
 						</div>
