@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { env } from "@/lib/env.mjs"
 import { signIn, signUp } from "@/lib/fetch/auth"
 import { cn } from "@/lib/utils"
@@ -22,6 +21,12 @@ export default function Page() {
 	const router = useRouter()
 	const [authType, setAuthType] = useState<z.infer<typeof AuthType>>("sign-in")
 	const [isSubmitting, startTransition] = useTransition()
+
+	const tabs = ["sign-in", "sign-up"] satisfies z.infer<typeof AuthType>[]
+	const tabNames: Record<z.infer<typeof AuthType>, string> = {
+		"sign-in": "Sign In",
+		"sign-up": "Sign Up"
+	}
 
 	const form = useForm<z.infer<typeof AuthFormSchema>>({
 		resolver: zodResolver(AuthFormSchema),
@@ -85,21 +90,53 @@ export default function Page() {
 			<MotionConfig
 				transition={{
 					type: "spring",
-					duration: 0.7,
-					bounce: 0.3
+					duration: 0.5,
+					bounce: 0.1
 				}}
 			>
 				<div className={cn("w-full", "max-w-md", "flex", "flex-col", "items-center", "gap-y-2")}>
-					<Tabs className={cn("w-full")} value={authType} onValueChange={(tab) => setAuthType(AuthType.parse(tab))}>
-						<TabsList className={cn("w-full")}>
-							<TabsTrigger className={cn("w-full")} value="sign-in">
-								Sign In
-							</TabsTrigger>
-							<TabsTrigger className={cn("w-full")} value="sign-up">
-								Sign Up
-							</TabsTrigger>
-						</TabsList>
-					</Tabs>
+					<div
+						className={cn(
+							"w-full",
+							"flex",
+							"flex-row",
+							"justify-center",
+							"items-center",
+							"bg-muted",
+							"p-1",
+							"rounded-lg",
+							"gap-x-2"
+						)}
+					>
+						{tabs.map((tab) => (
+							<Button
+								key={"tab"}
+								onClick={() => setAuthType(AuthType.parse(tab))}
+								onFocus={() => setAuthType(AuthType.parse(tab))}
+								variant={"ghost"}
+								className={cn(
+									"w-full",
+									"relative",
+									"hover:bg-transparent",
+									"bg-transparent",
+									"text-sm",
+									"h-7",
+									"focus-visible:ring-0",
+									authType === tab
+										? ["text-primary", "hover:text-primary"]
+										: ["text-muted-foreground", "hover:text-muted-foreground"]
+								)}
+							>
+								{authType === tab ? (
+									<motion.div
+										layoutId="tab-indicator"
+										className={cn("absolute", "inset-0", "rounded-lg", "bg-background", "shadow", "z-10")}
+									/>
+								) : null}
+								<span className={cn("z-20")}>{tabNames[tab]}</span>
+							</Button>
+						))}
+					</div>
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-2", "w-full")}>
 							<FormField
