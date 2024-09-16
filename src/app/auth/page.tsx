@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 import { AuthFormSchema, AuthType } from "@/lib/zod/form/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile"
+import { motion } from "framer-motion"
 import { ArrowRight, Loader, Lock, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState, useTransition } from "react"
@@ -128,7 +129,18 @@ export default function Page() {
 								</FormItem>
 							)}
 						/>
-						{authType === "sign-up" && (
+						<motion.div
+							initial={false}
+							transition={{
+								type: "spring",
+								duration: 0.7,
+								bounce: 0.3
+							}}
+							animate={{
+								y: authType === "sign-in" ? "-2.75rem" : 0
+							}}
+							className={cn("w-full", "space-y-2")}
+						>
 							<FormField
 								control={form.control}
 								name="repeatedPassword"
@@ -137,8 +149,13 @@ export default function Page() {
 										<div className={cn("relative", "z-10")}>
 											<FormControl>
 												<Input
+													disabled={authType === "sign-in"}
 													autoComplete={authType === "sign-up" ? "new-password" : "current-password"}
-													className={cn("pr-8", "bg-background")}
+													className={cn("pr-8", "bg-background", "disabled:opacity-0", [
+														"transition-opacity",
+														"duration-300",
+														"ease-out"
+													])}
 													type={"password"}
 													placeholder="Repeat Password"
 													{...field}
@@ -149,33 +166,33 @@ export default function Page() {
 									</FormItem>
 								)}
 							/>
-						)}
-						<Button className={cn("w-full", "h-9")} type="submit">
-							{isSubmitting ? (
-								<Loader className={cn("size-5", "animate-spin")} />
-							) : (
-								<>
-									<span>Auth</span>
-									<ArrowRight className={cn("size-5", "ml-2")} />
-								</>
-							)}
-						</Button>
-						<div className={cn("w-full", "flex", "justify-center", "items-center")}>
-							<Turnstile
-								injectScript={false}
-								siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-								scriptOptions={{ id: "turnstile-script" }}
-								onExpire={() => {
-									turnstileRef.current?.reset()
-									form.setValue("cf-turnstile-response", "")
-								}}
-								onError={() => {
-									turnstileRef.current?.reset()
-									form.setValue("cf-turnstile-response", "")
-								}}
-								ref={turnstileRef}
-							/>
-						</div>
+							<Button className={cn("w-full", "h-9")} type="submit">
+								{isSubmitting ? (
+									<Loader className={cn("size-5", "animate-spin")} />
+								) : (
+									<>
+										<span>Auth</span>
+										<ArrowRight className={cn("size-5", "ml-2")} />
+									</>
+								)}
+							</Button>
+							<div className={cn("w-full", "flex", "justify-center", "items-center")}>
+								<Turnstile
+									injectScript={false}
+									siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+									scriptOptions={{ id: "turnstile-script" }}
+									onExpire={() => {
+										turnstileRef.current?.reset()
+										form.setValue("cf-turnstile-response", "")
+									}}
+									onError={() => {
+										turnstileRef.current?.reset()
+										form.setValue("cf-turnstile-response", "")
+									}}
+									ref={turnstileRef}
+								/>
+							</div>
+						</motion.div>
 					</form>
 				</Form>
 			</div>
