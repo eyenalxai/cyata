@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 import { AuthFormSchema, AuthType } from "@/lib/zod/form/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile"
-import { motion } from "framer-motion"
+import { AnimatePresence, MotionConfig, motion } from "framer-motion"
 import { ArrowRight, Loader, Lock, User } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState, useTransition } from "react"
@@ -82,82 +82,52 @@ export default function Page() {
 
 	return (
 		<div className={cn("w-full", "mt-12", "flex", "flex-col", "items-center", "px-4")}>
-			<div className={cn("w-full", "max-w-md", "flex", "flex-col", "items-center", "gap-y-2")}>
-				<Tabs className={cn("w-full")} value={authType} onValueChange={(tab) => setAuthType(AuthType.parse(tab))}>
-					<TabsList className={cn("w-full")}>
-						<TabsTrigger className={cn("w-full")} value="sign-in">
-							Sign In
-						</TabsTrigger>
-						<TabsTrigger className={cn("w-full")} value="sign-up">
-							Sign Up
-						</TabsTrigger>
-					</TabsList>
-				</Tabs>
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-2", "w-full")}>
-						<FormField
-							control={form.control}
-							name="username"
-							render={({ field }) => (
-								<FormItem>
-									<div className={cn("relative")}>
-										<FormControl>
-											<Input autoComplete={"username"} className={cn("pr-8")} placeholder="Username" {...field} />
-										</FormControl>
-										<User className={cn("absolute", "right-2", "top-2.5", "text-slate-500", "size-4")} />
-									</div>
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="password"
-							render={({ field }) => (
-								<FormItem>
-									<div className={cn("relative", "z-20")}>
-										<FormControl>
-											<Input
-												autoComplete={authType === "sign-up" ? "new-password" : "current-password"}
-												className={cn("pr-8", "bg-background")}
-												type={"password"}
-												placeholder="Password"
-												{...field}
-											/>
-										</FormControl>
-										<Lock className={cn("absolute", "right-2", "top-2.5", "text-slate-500", "size-4")} />
-									</div>
-								</FormItem>
-							)}
-						/>
-						<motion.div
-							initial={false}
-							transition={{
-								type: "spring",
-								duration: 0.7,
-								bounce: 0.3
-							}}
-							animate={{
-								y: authType === "sign-in" ? "-2.75rem" : 0
-							}}
-							className={cn("w-full", "space-y-2")}
-						>
+			<MotionConfig
+				transition={{
+					type: "spring",
+					duration: 0.7,
+					bounce: 0.3
+				}}
+			>
+				<div className={cn("w-full", "max-w-md", "flex", "flex-col", "items-center", "gap-y-2")}>
+					<Tabs className={cn("w-full")} value={authType} onValueChange={(tab) => setAuthType(AuthType.parse(tab))}>
+						<TabsList className={cn("w-full")}>
+							<TabsTrigger className={cn("w-full")} value="sign-in">
+								Sign In
+							</TabsTrigger>
+							<TabsTrigger className={cn("w-full")} value="sign-up">
+								Sign Up
+							</TabsTrigger>
+						</TabsList>
+					</Tabs>
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-2", "w-full")}>
 							<FormField
 								control={form.control}
-								name="repeatedPassword"
+								name="username"
 								render={({ field }) => (
 									<FormItem>
-										<div className={cn("relative", "z-10")}>
+										<div className={cn("relative")}>
+											<FormControl>
+												<Input autoComplete={"username"} className={cn("pr-8")} placeholder="Username" {...field} />
+											</FormControl>
+											<User className={cn("absolute", "right-2", "top-2.5", "text-slate-500", "size-4")} />
+										</div>
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="password"
+								render={({ field }) => (
+									<FormItem>
+										<div className={cn("relative", "z-20")}>
 											<FormControl>
 												<Input
-													disabled={authType === "sign-in"}
 													autoComplete={authType === "sign-up" ? "new-password" : "current-password"}
-													className={cn("pr-8", "bg-background", "disabled:opacity-0", [
-														"transition-opacity",
-														"duration-300",
-														"ease-out"
-													])}
+													className={cn("pr-8", "bg-background")}
 													type={"password"}
-													placeholder="Repeat Password"
+													placeholder="Password"
 													{...field}
 												/>
 											</FormControl>
@@ -166,36 +136,78 @@ export default function Page() {
 									</FormItem>
 								)}
 							/>
-							<Button className={cn("w-full", "h-9")} type="submit">
-								{isSubmitting ? (
-									<Loader className={cn("size-5", "animate-spin")} />
-								) : (
-									<>
-										<span>Auth</span>
-										<ArrowRight className={cn("size-5", "ml-2")} />
-									</>
-								)}
-							</Button>
-							<div className={cn("w-full", "flex", "justify-center", "items-center")}>
-								<Turnstile
-									injectScript={false}
-									siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-									scriptOptions={{ id: "turnstile-script" }}
-									onExpire={() => {
-										turnstileRef.current?.reset()
-										form.setValue("cf-turnstile-response", "")
-									}}
-									onError={() => {
-										turnstileRef.current?.reset()
-										form.setValue("cf-turnstile-response", "")
-									}}
-									ref={turnstileRef}
+							<motion.div
+								initial={false}
+								animate={{
+									y: authType === "sign-in" ? "-2.75rem" : 0
+								}}
+								className={cn("w-full", "space-y-2")}
+							>
+								<FormField
+									control={form.control}
+									name="repeatedPassword"
+									render={({ field }) => (
+										<FormItem>
+											<div className={cn("relative", "z-10")}>
+												<FormControl>
+													<Input
+														disabled={authType === "sign-in"}
+														autoComplete={authType === "sign-up" ? "new-password" : "current-password"}
+														className={cn("pr-8", "bg-background", "disabled:opacity-0", [
+															"transition-opacity",
+															"duration-300",
+															"ease-out"
+														])}
+														type={"password"}
+														placeholder="Repeat Password"
+														{...field}
+													/>
+												</FormControl>
+												<Lock className={cn("absolute", "right-2", "top-2.5", "text-slate-500", "size-4")} />
+											</div>
+										</FormItem>
+									)}
 								/>
-							</div>
-						</motion.div>
-					</form>
-				</Form>
-			</div>
+								<Button className={cn("w-full", "h-9")} type="submit">
+									<AnimatePresence mode="popLayout" initial={false}>
+										<motion.div
+											initial={{ opacity: 0, y: -25 }}
+											animate={{ opacity: 1, y: 0 }}
+											exit={{ opacity: 0, y: 25 }}
+											key={isSubmitting ? "loading" : "auth"}
+										>
+											{isSubmitting ? (
+												<Loader className={cn("size-5", "animate-spin")} />
+											) : (
+												<div className={cn("w-full", "flex", "flex-row", "justify-center", "items-center", "gap-x-1")}>
+													<span>Auth</span>
+													<ArrowRight className={cn("size-5")} />
+												</div>
+											)}
+										</motion.div>
+									</AnimatePresence>
+								</Button>
+								<div className={cn("w-full", "flex", "justify-center", "items-center")}>
+									<Turnstile
+										injectScript={false}
+										siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+										scriptOptions={{ id: "turnstile-script" }}
+										onExpire={() => {
+											turnstileRef.current?.reset()
+											form.setValue("cf-turnstile-response", "")
+										}}
+										onError={() => {
+											turnstileRef.current?.reset()
+											form.setValue("cf-turnstile-response", "")
+										}}
+										ref={turnstileRef}
+									/>
+								</div>
+							</motion.div>
+						</form>
+					</Form>
+				</div>
+			</MotionConfig>
 		</div>
 	)
 }
