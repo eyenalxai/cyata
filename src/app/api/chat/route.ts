@@ -1,16 +1,10 @@
-import { trimMessagesToFitContextWindow } from "@/lib/ai-message"
 import { addMessageToChat } from "@/lib/database/chat"
-import { insertUsage } from "@/lib/database/usage"
 import { selectUserPreferences } from "@/lib/database/user-preferences"
-import { priceMessage, priceMessages } from "@/lib/pricing"
 import { getSession } from "@/lib/session"
-import type { AiMessageSchema } from "@/lib/zod/ai-message"
+import { streamMessage } from "@/lib/stream-message"
 import { CompletionRequest } from "@/lib/zod/api"
 import { parseZodSchema } from "@/lib/zod/parse"
-import { openai } from "@ai-sdk/openai"
-import { type CoreMessage, convertToCoreMessages, streamText } from "ai"
 import { NextResponse } from "next/server"
-import type { z } from "zod"
 
 export async function POST(request: Request) {
 	const session = await getSession()
@@ -31,62 +25,18 @@ export async function POST(request: Request) {
 				.andThen(({ messages, chatUuid, model }) =>
 					selectUserPreferences(session.value.uuid).map((preferences) => ({ messages, chatUuid, model, preferences }))
 				)
+				.andThen(({ messages, chatUuid, model, preferences }) =>
+					streamMessage({
+						model,
+						systemPrompt: preferences.systemPrompt,
+						messages,
+						userUuid: session.value.uuid,
+						chatUuid
+					})
+				)
 		)
 		.match(
-			async ({ messages, chatUuid, model, preferences }) => {
-				const trimmedMessages = trimMessagesToFitContextWindow(messages, model)
-
-				const result = await streamText({
-					model: openai(model),
-					messages: convertToCoreMessages([
-						{
-							role: "system",
-							content: preferences.systemPrompt
-						} satisfies CoreMessage,
-						...trimmedMessages
-					]),
-					onFinish: ({ text }) => {
-						const assistantMessage = {
-							role: "assistant",
-							content: text
-						} satisfies z.infer<typeof AiMessageSchema>
-
-						const inputPrice = priceMessages({
-							messages: [
-								{
-									role: "system",
-									content: preferences.systemPrompt
-								},
-								...trimmedMessages
-							],
-							model,
-							type: "input"
-						})
-
-						const outputPrice = priceMessage({
-							message: assistantMessage,
-							model,
-							type: "output"
-						})
-
-						addMessageToChat({
-							userUuid: session.value.uuid,
-							chatUuid: chatUuid,
-							model,
-							message: assistantMessage
-						})
-							.andThen(() =>
-								insertUsage({
-									userUuid: session.value.uuid,
-									usage: inputPrice + outputPrice
-								})
-							)
-							.mapErr((e) => new NextResponse(e, { status: 400 }))
-					}
-				})
-
-				return result.toDataStreamResponse()
-			},
+			(result) => result.toDataStreamResponse(),
 			(e) => new NextResponse(e, { status: 400 })
 		)
 }
