@@ -9,14 +9,18 @@ import { usePathname, useRouter } from "next/navigation"
 import { toast } from "sonner"
 import type { z } from "zod"
 
-export const useChats = () => {
+type UseChatsProps = {
+	initialChats: z.infer<typeof ChatsResponse> | undefined
+}
+
+export const useChats = ({ initialChats }: UseChatsProps) => {
 	const chatsQueryKey = [CHATS_QUERY_KEY]
 
 	const pathname = usePathname()
 	const router = useRouter()
 	const queryClient = useQueryClient()
 
-	const { data: chats, error } = useQuery({ queryKey: chatsQueryKey, queryFn: fetchChats })
+	const { data: chats, error } = useQuery({ queryKey: chatsQueryKey, queryFn: fetchChats, initialData: initialChats })
 
 	const cancelQueries = async () => {
 		await queryClient.cancelQueries({ queryKey: chatsQueryKey })

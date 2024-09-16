@@ -1,17 +1,20 @@
 "use client"
 
-import {ChatGroups} from "@/components/chat-list/chat-groups"
-import {CustomAlert} from "@/components/custom-alert"
-import {Loading} from "@/components/loading"
-import {useChats} from "@/lib/hooks/fetch/use-chats"
-import {cn} from "@/lib/utils"
+import { ChatGroups } from "@/components/chat-list/chat-groups"
+import { CustomAlert } from "@/components/custom-alert"
+import { Loading } from "@/components/loading"
+import { useChats } from "@/lib/hooks/fetch/use-chats"
+import { cn } from "@/lib/utils"
+import type { ChatsResponse } from "@/lib/zod/api"
+import type { z } from "zod"
 
 type ChatListProps = {
+	initialChats: z.infer<typeof ChatsResponse> | undefined
 	className?: string
 }
 
-export const ChatList = ({ className }: ChatListProps) => {
-	const { chatsResult, isLoading, deleteChat, isDeletingChat } = useChats()
+export const ChatList = ({ initialChats, className }: ChatListProps) => {
+	const { chatsResult, isLoading, deleteChat, isDeletingChat } = useChats({ initialChats })
 
 	if (isLoading) return <Loading className={cn("mt-2")} />
 

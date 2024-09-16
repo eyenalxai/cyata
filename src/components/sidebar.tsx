@@ -4,11 +4,18 @@ import { ChatList } from "@/components/chat-list/chat-list"
 import { Button } from "@/components/ui/button"
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
 import { cn } from "@/lib/utils"
+import type { ChatsResponse } from "@/lib/zod/api"
 import { PanelLeft } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
+import type { z } from "zod"
 
-export const Sidebar = () => {
+type SidebarProps = {
+	initialChats: z.infer<typeof ChatsResponse> | undefined
+	className?: string
+}
+
+export const Sidebar = ({ initialChats }: SidebarProps) => {
 	const [open, setOpen] = useState(false)
 
 	return (
@@ -25,7 +32,7 @@ export const Sidebar = () => {
 							<Link href={`/chat/${crypto.randomUUID()}`}>New Chat</Link>
 						</Button>
 					</div>
-					<ChatList className={cn("mt-4")} />
+					<ChatList initialChats={initialChats} className={cn("mt-4")} />
 				</div>
 			</DrawerContent>
 		</Drawer>
