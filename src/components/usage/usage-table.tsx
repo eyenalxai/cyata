@@ -43,9 +43,9 @@ export const UsageTable = ({ initialAllUsage }: UsageTableProps) => {
 						.map((userUsage) => (
 							<TableRow key={userUsage.user.username}>
 								<TableCell className={cn("text-start")}>{userUsage.user.username}</TableCell>
-								<TableCell>${userUsage.usage.usageCurrentMonth}</TableCell>
-								<TableCell>${userUsage.usage.usagePreviousMonth}</TableCell>
-								<TableCell className={cn("font-semibold")}>${userUsage.usage.usageTotal}</TableCell>
+								<TableCell>${userUsage.usage.usageCurrentMonth.toFixed(2)}</TableCell>
+								<TableCell>${userUsage.usage.usagePreviousMonth.toFixed(2)}</TableCell>
+								<TableCell className={cn("font-semibold")}>${userUsage.usage.usageTotal.toFixed(2)}</TableCell>
 								<TableCell className={cn("p-1", "w-full", "flex", "justify-center", "items-center")}>
 									<Button
 										disabled={isTogglingIsRestricted}
