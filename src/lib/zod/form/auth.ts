@@ -1,4 +1,4 @@
-import { z } from "zod"
+import {z} from "zod"
 
 export const AuthType = z.enum(["sign-in", "sign-up"])
 const Password = z
@@ -30,14 +30,14 @@ export const AuthFormSchema = z
 			.refine((value) => value.length > 0, {
 				message: "Please complete the Cloudflare CAPTCHA"
 			}),
-		confirmPassword: z
+		repeatedPassword: z
 			.union([z.string(), Password])
 			.optional()
 			.transform((value) => (value === "" ? undefined : value))
 	})
 	.refine(
 		(data) => {
-			if (data.authType === "sign-up") return data.password === data.confirmPassword
+			if (data.authType === "sign-up") return data.password === data.repeatedPassword
 			return true
 		},
 		{

@@ -28,7 +28,7 @@ export default function Page() {
 			authType: "sign-in",
 			username: "",
 			password: "",
-			confirmPassword: "",
+			repeatedPassword: "",
 			"cf-turnstile-response": ""
 		}
 	})
@@ -131,7 +131,7 @@ export default function Page() {
 						{authType === "sign-up" && (
 							<FormField
 								control={form.control}
-								name="confirmPassword"
+								name="repeatedPassword"
 								render={({ field }) => (
 									<FormItem>
 										<div className={cn("relative", "z-10")}>
@@ -140,7 +140,7 @@ export default function Page() {
 													autoComplete={authType === "sign-up" ? "new-password" : "current-password"}
 													className={cn("pr-8", "bg-background")}
 													type={"password"}
-													placeholder="Confirm password"
+													placeholder="Repeat Password"
 													{...field}
 												/>
 											</FormControl>
