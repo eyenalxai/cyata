@@ -42,6 +42,15 @@ export const Chat = ({ chatUuid, initialMessages, initialModel }: ChatProps) => 
 	const inputRef = useRef<HTMLTextAreaElement>(null)
 
 	useEffect(() => {
+		if (messages.length === 2 && !isLoading) {
+			setTimeout(async () => {
+				await queryClient.invalidateQueries({ queryKey: [CHATS_QUERY_KEY] })
+				await queryClient.refetchQueries({ queryKey: [CHATS_QUERY_KEY] })
+			}, 500)
+		}
+	}, [messages, isLoading, queryClient])
+
+	useEffect(() => {
 		if (error) {
 			toast.error(error.message)
 			setInput(currentInput)
