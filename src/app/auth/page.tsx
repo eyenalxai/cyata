@@ -74,10 +74,7 @@ export default function Page() {
 		for (const error of errors) {
 			toast.error(error.message)
 		}
-
-		turnstileRef.current?.reset()
-		form.setValue("cf-turnstile-response", "")
-	}, [form, form.setValue, form.formState.errors])
+	}, [form, form.formState.errors])
 
 	return (
 		<div className={cn("w-full", "mt-12", "flex", "flex-col", "items-center", "px-4")}>
@@ -165,8 +162,14 @@ export default function Page() {
 								injectScript={false}
 								siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
 								scriptOptions={{ id: "turnstile-script" }}
-								onExpire={() => turnstileRef.current?.reset()}
-								onError={() => turnstileRef.current?.reset()}
+								onExpire={() => {
+									turnstileRef.current?.reset()
+									form.setValue("cf-turnstile-response", "")
+								}}
+								onError={() => {
+									turnstileRef.current?.reset()
+									form.setValue("cf-turnstile-response", "")
+								}}
 								ref={turnstileRef}
 							/>
 						</div>
