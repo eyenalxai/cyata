@@ -34,8 +34,11 @@ export default function Page() {
 	})
 
 	const turnstileRef = useRef<TurnstileInstance>()
+	const cfTurnstileResponse = form.watch("cf-turnstile-response")
 
 	useEffect(() => {
+		if (cfTurnstileResponse !== "") return
+
 		if (!turnstileRef.current) return
 
 		const intervalId = setInterval(() => {
@@ -47,7 +50,7 @@ export default function Page() {
 		}, 300)
 
 		return () => clearInterval(intervalId)
-	}, [form])
+	}, [form, cfTurnstileResponse])
 
 	const onSubmit = async (authData: z.infer<typeof AuthFormSchema>) => {
 		const action = authType === "sign-up" ? signUp : signIn
