@@ -1,4 +1,4 @@
-import { db } from "@/lib/database/client"
+import type { db } from "@/lib/database/client"
 import { selectAllUsers } from "@/lib/database/user"
 import { getErrorMessage } from "@/lib/error-message"
 import { type UsageInsert, usages } from "@/lib/schema"
@@ -8,8 +8,8 @@ import { and, eq, gte, lte } from "drizzle-orm"
 import { ResultAsync } from "neverthrow"
 import type { z } from "zod"
 
-export const selectUsagesTotal = (userUuid: string) =>
-	ResultAsync.fromPromise(db.select().from(usages).where(eq(usages.userUuid, userUuid)), (e) =>
+export const selectUsagesTotal = (tx: typeof db, userUuid: string) =>
+	ResultAsync.fromPromise(tx.select().from(usages).where(eq(usages.userUuid, userUuid)), (e) =>
 		getErrorMessage(e, "Failed to select usages")
 	).map((usages) => Number.parseFloat(usages.reduce((acc, usage) => acc + usage.usage, 0).toFixed(2)))
 
@@ -19,9 +19,9 @@ type SelectUsagesFromToProps = {
 	to: Date
 }
 
-export const selectUsagesFromTo = ({ userUuid, from, to }: SelectUsagesFromToProps) =>
+export const selectUsagesFromTo = (tx: typeof db, { userUuid, from, to }: SelectUsagesFromToProps) =>
 	ResultAsync.fromPromise(
-		db
+		tx
 			.select()
 			.from(usages)
 			.where(
@@ -33,32 +33,32 @@ export const selectUsagesFromTo = ({ userUuid, from, to }: SelectUsagesFromToPro
 		(e) => getErrorMessage(e, "Failed to select usages")
 	).map((usages) => Number.parseFloat(usages.reduce((acc, usage) => acc + usage.usage, 0).toFixed(2)))
 
-export const insertUsage = (usage: UsageInsert) =>
-	ResultAsync.fromPromise(db.insert(usages).values(usage).returning(), (e) =>
+export const insertUsage = (tx: typeof db, usage: UsageInsert) =>
+	ResultAsync.fromPromise(tx.insert(usages).values(usage).returning(), (e) =>
 		getErrorMessage(e, "Failed to insert usage")
 	).map(([insertedUsage]) => insertedUsage)
 
-export const selectUsages = (userUuid: string) => {
+export const selectUsages = (tx: typeof db, userUuid: string) => {
 	const firstDayCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
 	const lastDayCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
 
 	const firstDayPreviousMonth = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)
 	const lastDayPreviousMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 0)
 
-	return selectUsagesFromTo({
+	return selectUsagesFromTo(tx, {
 		userUuid: userUuid,
 		from: firstDayCurrentMonth,
 		to: lastDayCurrentMonth
 	})
 		.andThen((usageCurrentMonth) =>
-			selectUsagesFromTo({
+			selectUsagesFromTo(tx, {
 				userUuid: userUuid,
 				from: firstDayPreviousMonth,
 				to: lastDayPreviousMonth
 			}).map((usagePreviousMonth) => ({ usageCurrentMonth, usagePreviousMonth }))
 		)
 		.andThen(({ usageCurrentMonth, usagePreviousMonth }) =>
-			selectUsagesTotal(userUuid).map((usageTotal) => ({
+			selectUsagesTotal(tx, userUuid).map((usageTotal) => ({
 				usageCurrentMonth,
 				usagePreviousMonth,
 				usageTotal
@@ -66,12 +66,12 @@ export const selectUsages = (userUuid: string) => {
 		)
 }
 
-export const selectUsagesForAllUsers = () =>
-	selectAllUsers()
+export const selectUsagesForAllUsers = (tx: typeof db) =>
+	selectAllUsers(tx)
 		.andThen((users) =>
 			ResultAsync.combine(
 				users.map((user) =>
-					selectUsages(user.uuid).map((usages) => ({
+					selectUsages(tx, user.uuid).map((usages) => ({
 						user,
 						usages
 					}))

@@ -1,5 +1,6 @@
 import { getSession } from "@/lib/session"
 
+import { db } from "@/lib/database/client"
 import { updateUserIsRestricted } from "@/lib/database/user"
 import { RestrictRequest } from "@/lib/zod/api"
 import { parseZodSchema } from "@/lib/zod/parse"
@@ -16,12 +17,14 @@ export async function PATCH(request: Request) {
 		return new NextResponse("Unauthorized", { status: 403 })
 	}
 
-	return parseZodSchema(RestrictRequest, await request.json())
-		.asyncAndThen(({ userUuid, isRestricted }) =>
-			updateUserIsRestricted(userUuid, isRestricted).map(() => isRestricted)
-		)
-		.match(
-			(isRestricted) => new NextResponse(`User ${isRestricted ? "restricted" : "unrestricted"}`, { status: 200 }),
-			(e) => new NextResponse(e, { status: 400 })
-		)
+	return await db.transaction(async (tx) =>
+		parseZodSchema(RestrictRequest, await request.json())
+			.asyncAndThen(({ userUuid, isRestricted }) =>
+				updateUserIsRestricted(tx, userUuid, isRestricted).map(() => isRestricted)
+			)
+			.match(
+				(isRestricted) => new NextResponse(`User ${isRestricted ? "restricted" : "unrestricted"}`, { status: 200 }),
+				(e) => new NextResponse(e, { status: 400 })
+			)
+	)
 }

@@ -1,5 +1,5 @@
 import { updateEmptyChatTitle } from "@/lib/chat/title"
-import { db } from "@/lib/database/client"
+import type { db } from "@/lib/database/client"
 import { insertMessage } from "@/lib/database/message"
 import { getErrorMessage } from "@/lib/error-message"
 import { type ChatInsert, chats } from "@/lib/schema"
@@ -9,18 +9,18 @@ import { eq } from "drizzle-orm"
 import { ResultAsync, errAsync, okAsync } from "neverthrow"
 import type { z } from "zod"
 
-export const insertChat = (chat: ChatInsert) =>
-	ResultAsync.fromPromise(db.insert(chats).values(chat).returning(), (e) =>
+export const insertChat = (tx: typeof db, chat: ChatInsert) =>
+	ResultAsync.fromPromise(tx.insert(chats).values(chat).returning(), (e) =>
 		getErrorMessage(e, "Failed to insert chat")
 	).map(([insertedChat]) => insertedChat)
 
-export const deleteChat = (uuid: string) =>
-	ResultAsync.fromPromise(db.delete(chats).where(eq(chats.uuid, uuid)), (e) =>
+export const deleteChat = (tx: typeof db, uuid: string) =>
+	ResultAsync.fromPromise(tx.delete(chats).where(eq(chats.uuid, uuid)), (e) =>
 		getErrorMessage(e, "Failed to delete chat")
 	).map(() => undefined)
 
-export const selectChat = (uuid: string) =>
-	ResultAsync.fromPromise(db.select().from(chats).where(eq(chats.uuid, uuid)), (e) =>
+export const selectChat = (tx: typeof db, uuid: string) =>
+	ResultAsync.fromPromise(tx.select().from(chats).where(eq(chats.uuid, uuid)), (e) =>
 		getErrorMessage(e, "Failed to select chat")
 	).andThen((chats) => (chats.length > 0 ? okAsync(chats[0]) : errAsync("CHAT_NOT_FOUND" as const)))
 
@@ -29,14 +29,14 @@ type UpdateChatModelProps = {
 	model: z.infer<typeof OpenAIModel>
 }
 
-export const updateChatModel = ({ uuid, model }: UpdateChatModelProps) =>
-	ResultAsync.fromPromise(db.update(chats).set({ model }).where(eq(chats.uuid, uuid)).returning(), (e) =>
+export const updateChatModel = (tx: typeof db, { uuid, model }: UpdateChatModelProps) =>
+	ResultAsync.fromPromise(tx.update(chats).set({ model }).where(eq(chats.uuid, uuid)).returning(), (e) =>
 		getErrorMessage(e, "Failed to update chat model")
 	).map(([updatedChat]) => updatedChat)
 
-export const selectChatWithMessages = (chatUuid: string) =>
+export const selectChatWithMessages = (tx: typeof db, chatUuid: string) =>
 	ResultAsync.fromPromise(
-		db.query.chats.findFirst({
+		tx.query.chats.findFirst({
 			where: eq(chats.uuid, chatUuid),
 			with: {
 				messages: {
@@ -47,9 +47,9 @@ export const selectChatWithMessages = (chatUuid: string) =>
 		(e) => getErrorMessage(e, "Failed to select chat with messages")
 	).andThen((chat) => (chat !== undefined ? okAsync(chat) : errAsync("CHAT_NOT_FOUND" as const)))
 
-export const selectChatsWithMessages = (userUuid: string) =>
+export const selectChatsWithMessages = (tx: typeof db, userUuid: string) =>
 	ResultAsync.fromPromise(
-		db.query.chats.findMany({
+		tx.query.chats.findMany({
 			where: eq(chats.userUuid, userUuid),
 			orderBy: (chats, { desc }) => [desc(chats.createdAt)],
 			with: {
@@ -68,19 +68,19 @@ type AddMessageToChat = {
 	model: z.infer<typeof OpenAIModel>
 }
 
-export const addMessageToChat = ({ userUuid, chatUuid, message, model }: AddMessageToChat) =>
-	selectChat(chatUuid)
-		.andThen((chat) => updateChatModel({ uuid: chat.uuid, model }))
+export const addMessageToChat = (tx: typeof db, { userUuid, chatUuid, message, model }: AddMessageToChat) =>
+	selectChat(tx, chatUuid)
+		.andThen((chat) => updateChatModel(tx, { uuid: chat.uuid, model }))
 		.andThen((chat) =>
-			insertMessage({
+			insertMessage(tx, {
 				...message,
 				chatUuid: chat.uuid
 			})
 		)
 		.orElse((e) => {
 			if (e === "CHAT_NOT_FOUND")
-				return insertChat({ uuid: chatUuid, userUuid, model }).andThen((chat) =>
-					insertMessage({
+				return insertChat(tx, { uuid: chatUuid, userUuid, model }).andThen((chat) =>
+					insertMessage(tx, {
 						...message,
 						chatUuid: chat.uuid
 					})
@@ -88,9 +88,9 @@ export const addMessageToChat = ({ userUuid, chatUuid, message, model }: AddMess
 
 			return errAsync(e)
 		})
-		.andThen(() => updateEmptyChatTitle(chatUuid))
+		.andThen(() => updateEmptyChatTitle(tx, chatUuid))
 
-export const updateChatTitle = (chatUuid: string, title: string) =>
-	ResultAsync.fromPromise(db.update(chats).set({ title }).where(eq(chats.uuid, chatUuid)).returning(), (e) =>
+export const updateChatTitle = (tx: typeof db, chatUuid: string, title: string) =>
+	ResultAsync.fromPromise(tx.update(chats).set({ title }).where(eq(chats.uuid, chatUuid)).returning(), (e) =>
 		getErrorMessage(e, "Failed to update chat title")
 	)

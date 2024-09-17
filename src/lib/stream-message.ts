@@ -1,15 +1,16 @@
-import {trimMessagesToFitContextWindow} from "@/lib/ai-message"
-import {addMessageToChat} from "@/lib/database/chat"
-import {insertUsage} from "@/lib/database/usage"
-import {getErrorMessage} from "@/lib/error-message"
-import {priceMessage, priceMessages} from "@/lib/pricing"
-import type {AiMessageSchema, AiMessagesSchema} from "@/lib/zod/ai-message"
-import type {OpenAIModel} from "@/lib/zod/model"
-import {openai} from "@ai-sdk/openai"
-import {convertToCoreMessages, type CoreMessage, streamText} from "ai"
-import {ResultAsync} from "neverthrow"
-import {NextResponse} from "next/server"
-import type {z} from "zod"
+import { trimMessagesToFitContextWindow } from "@/lib/ai-message"
+import { addMessageToChat } from "@/lib/database/chat"
+import type { db } from "@/lib/database/client"
+import { insertUsage } from "@/lib/database/usage"
+import { getErrorMessage } from "@/lib/error-message"
+import { priceMessage, priceMessages } from "@/lib/pricing"
+import type { AiMessageSchema, AiMessagesSchema } from "@/lib/zod/ai-message"
+import type { OpenAIModel } from "@/lib/zod/model"
+import { openai } from "@ai-sdk/openai"
+import { type CoreMessage, convertToCoreMessages, streamText } from "ai"
+import { ResultAsync } from "neverthrow"
+import { NextResponse } from "next/server"
+import type { z } from "zod"
 
 type StreamMessageProps = {
 	model: z.infer<typeof OpenAIModel>
@@ -19,7 +20,10 @@ type StreamMessageProps = {
 	chatUuid: string
 }
 
-export const streamMessage = ({ model, systemPrompt, messages, userUuid, chatUuid }: StreamMessageProps) => {
+export const streamMessage = (
+	tx: typeof db,
+	{ model, systemPrompt, messages, userUuid, chatUuid }: StreamMessageProps
+) => {
 	const trimmedMessages = trimMessagesToFitContextWindow(messages, model)
 
 	return ResultAsync.fromPromise(
@@ -56,14 +60,14 @@ export const streamMessage = ({ model, systemPrompt, messages, userUuid, chatUui
 					type: "output"
 				})
 
-				await addMessageToChat({
+				await addMessageToChat(tx, {
 					userUuid: userUuid,
 					chatUuid: chatUuid,
 					model,
 					message: assistantMessage
 				})
 					.andThen(() =>
-						insertUsage({
+						insertUsage(tx, {
 							userUuid: userUuid,
 							usage: inputPrice + outputPrice
 						})

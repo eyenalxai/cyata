@@ -2,6 +2,7 @@ import { getSession } from "@/lib/session"
 
 import { selectUsagesForAllUsers } from "@/lib/database/usage"
 
+import { db } from "@/lib/database/client"
 import { NextResponse } from "next/server"
 
 export async function GET() {
@@ -15,8 +16,10 @@ export async function GET() {
 		return new NextResponse("Unauthorized", { status: 403 })
 	}
 
-	return selectUsagesForAllUsers().match(
-		(usages) => NextResponse.json(usages),
-		(e) => new NextResponse(e, { status: 400 })
+	return await db.transaction(async (tx) =>
+		selectUsagesForAllUsers(tx).match(
+			(usages) => NextResponse.json(usages),
+			(e) => new NextResponse(e, { status: 400 })
+		)
 	)
 }

@@ -1,6 +1,7 @@
 import { getSession } from "@/lib/session"
 
 import { insertAllowedUsername, selectAllowedUsernames } from "@/lib/database/allowed-username"
+import { db } from "@/lib/database/client"
 import { AllowedUsername, AllowedUsernames } from "@/lib/zod/api"
 import { parseZodSchema } from "@/lib/zod/parse"
 import { NextResponse } from "next/server"
@@ -16,7 +17,7 @@ export async function GET() {
 		return new NextResponse("Unauthorized", { status: 403 })
 	}
 
-	return selectAllowedUsernames()
+	return selectAllowedUsernames(db)
 		.andThen((allowedUsernames) => parseZodSchema(AllowedUsernames, allowedUsernames))
 		.match(
 			(allowedUsernames) => NextResponse.json(allowedUsernames),
@@ -35,10 +36,12 @@ export async function POST(request: Request) {
 		return new NextResponse("Unauthorized", { status: 403 })
 	}
 
-	return parseZodSchema(AllowedUsername, await request.json())
-		.asyncAndThen((allowedUsername) => insertAllowedUsername(allowedUsername))
-		.match(
-			(allowedUsernames) => new NextResponse("Created", { status: 201 }),
-			(e) => new NextResponse(e, { status: 400 })
-		)
+	return await db.transaction(async (tx) =>
+		parseZodSchema(AllowedUsername, await request.json())
+			.asyncAndThen((allowedUsername) => insertAllowedUsername(tx, allowedUsername))
+			.match(
+				() => new NextResponse("Created", { status: 201 }),
+				(e) => new NextResponse(e, { status: 400 })
+			)
+	)
 }

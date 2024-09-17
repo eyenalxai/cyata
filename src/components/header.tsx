@@ -2,6 +2,7 @@ import { DropdownUser } from "@/components/dropdown-user"
 import { Sidebar } from "@/components/sidebar"
 import { groupChatsByInterval } from "@/lib/chat/group"
 import { selectChatsWithMessages } from "@/lib/database/chat"
+import { db } from "@/lib/database/client"
 import { selectUsages } from "@/lib/database/usage"
 import { getSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
@@ -16,9 +17,9 @@ export const Header = async () => {
 		redirect("/auth")
 	}
 
-	const usagesResult = await selectUsages(session.value.uuid)
+	const usagesResult = await selectUsages(db, session.value.uuid)
 
-	const chatsResult = await selectChatsWithMessages(session.value.uuid).andThen((chats) => {
+	const chatsResult = await selectChatsWithMessages(db, session.value.uuid).andThen((chats) => {
 		return parseZodSchema(ChatsResponse, groupChatsByInterval(chats))
 	})
 

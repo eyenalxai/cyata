@@ -1,5 +1,6 @@
 import "server-only"
 import { getSessionKey } from "@/lib/cookie"
+import { db } from "@/lib/database/client"
 import { selectSessionByKey, updateSessionExpiration } from "@/lib/database/session"
 import { selectUserByUuid } from "@/lib/database/user"
 import { env } from "@/lib/env.mjs"
@@ -14,19 +15,21 @@ export const isSessionExpiresSoon = (session: Session) => {
 }
 
 export const getSession = async () => {
-	return getSessionKey().asyncAndThen((sessionKey) =>
-		selectSessionByKey(sessionKey)
-			.andThen((session) => {
-				if (isSessionExpiresSoon(session)) {
-					return updateSessionExpiration({
-						key: session.key,
-						userUuid: session.userUuid
-					})
-				}
+	return await db.transaction(async (tx) =>
+		getSessionKey().asyncAndThen((sessionKey) =>
+			selectSessionByKey(tx, sessionKey)
+				.andThen((session) => {
+					if (isSessionExpiresSoon(session)) {
+						return updateSessionExpiration(tx, {
+							key: session.key,
+							userUuid: session.userUuid
+						})
+					}
 
-				return okAsync(session)
-			})
-			.andThen((session) => selectUserByUuid(session.userUuid))
+					return okAsync(session)
+				})
+				.andThen((session) => selectUserByUuid(tx, session.userUuid))
+		)
 	)
 }
 

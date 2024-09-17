@@ -2,6 +2,7 @@ import { AllowedUsernamesServer } from "@/components/allowed-usernames/allowed-u
 import { CustomAlert } from "@/components/custom-alert"
 import { UsageServer } from "@/components/usage/usage-server"
 import { UserSettings } from "@/components/user-settings"
+import { db } from "@/lib/database/client"
 import { selectUserPreferences } from "@/lib/database/user-preferences"
 import { getSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
@@ -14,7 +15,7 @@ export default async function Page() {
 		redirect("/auth")
 	}
 
-	const userPreferences = await selectUserPreferences(session.value.uuid)
+	const userPreferences = await selectUserPreferences(db, session.value.uuid)
 
 	if (userPreferences.isErr()) return <CustomAlert>{userPreferences.error}</CustomAlert>
 

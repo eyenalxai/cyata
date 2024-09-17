@@ -1,4 +1,5 @@
 import { selectChatWithMessages, updateChatTitle } from "@/lib/database/chat"
+import type { db } from "@/lib/database/client"
 import { getErrorMessage } from "@/lib/error-message"
 import { openaiClient } from "@/lib/open-ai"
 import { parseZodSchema } from "@/lib/zod/parse"
@@ -45,8 +46,8 @@ export const generateChatTitle = ({ userMessage, assistantMessage }: GenerateCha
 		.map((json) => json.title)
 }
 
-export const updateEmptyChatTitle = (chatUuid: string) =>
-	selectChatWithMessages(chatUuid).andThen((chat) => {
+export const updateEmptyChatTitle = (tx: typeof db, chatUuid: string) =>
+	selectChatWithMessages(tx, chatUuid).andThen((chat) => {
 		if (!chat.title) {
 			const firstUserMessage = chat.messages.find((message) => message.role === "user")
 			const firstAssistantMessage = chat.messages.find((message) => message.role === "assistant")
@@ -56,7 +57,7 @@ export const updateEmptyChatTitle = (chatUuid: string) =>
 			return generateChatTitle({
 				userMessage: firstUserMessage.content,
 				assistantMessage: firstAssistantMessage.content
-			}).andThen((title) => updateChatTitle(chatUuid, title))
+			}).andThen((title) => updateChatTitle(tx, chatUuid, title))
 		}
 
 		return okAsync(chat)
