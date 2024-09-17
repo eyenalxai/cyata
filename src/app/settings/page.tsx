@@ -20,7 +20,7 @@ export default async function Page() {
 	if (userPreferences.isErr()) return <CustomAlert>{userPreferences.error}</CustomAlert>
 
 	return (
-		<div className={cn("max-w-screen-sm", "flex", "flex-col", "justify-center", "items-start", "gap-y-4")}>
+		<div className={cn("max-w-screen-sm", "flex", "flex-col", "justify-center", "items-start", "gap-y-4", "mb-12")}>
 			<UserSettings initialUserPreferences={userPreferences.value} />
 			{session.value.isAdmin && <UsageServer />}
 			{session.value.isAdmin && <AllowedUsernamesServer />}
