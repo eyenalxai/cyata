@@ -40,14 +40,17 @@ export const Chat = ({ chatUuid, initialMessages, initialModel }: ChatProps) => 
 	})
 
 	const inputRef = useRef<HTMLTextAreaElement>(null)
+	const prevIsLoadingRef = useRef(isLoading)
 
 	useEffect(() => {
-		if (messages.length === 2 && !isLoading) {
+		const prevIsLoading = prevIsLoadingRef.current
+		if (messages.length === 2 && prevIsLoading && !isLoading) {
 			setTimeout(async () => {
 				await queryClient.invalidateQueries({ queryKey: [CHATS_QUERY_KEY] })
 				await queryClient.refetchQueries({ queryKey: [CHATS_QUERY_KEY] })
 			}, 500)
 		}
+		prevIsLoadingRef.current = isLoading
 	}, [messages, isLoading, queryClient])
 
 	useEffect(() => {
