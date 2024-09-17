@@ -71,7 +71,7 @@ export const UsageTable = ({ initialAllUsage }: UsageTableProps) => {
 				<TableFooter className={cn("bg-background")}>
 					<TableRow>
 						<TableCell colSpan={3}>Total</TableCell>
-						<TableCell>${totalAcrossAllUsers}</TableCell>
+						<TableCell>${totalAcrossAllUsers.toFixed(2)}</TableCell>
 					</TableRow>
 				</TableFooter>
 			</Table>
