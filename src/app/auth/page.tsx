@@ -144,9 +144,18 @@ export default function Page() {
 								name="username"
 								render={({ field }) => (
 									<FormItem>
+										<label htmlFor={field.name} className="sr-only">
+											Username
+										</label>
 										<div className={cn("relative")}>
 											<FormControl>
-												<Input autoComplete={"username"} className={cn("pr-8")} placeholder="Username" {...field} />
+												<Input
+													id={field.name}
+													autoComplete={"username"}
+													className={cn("pr-8")}
+													placeholder="Username"
+													{...field}
+												/>
 											</FormControl>
 											<User className={cn("absolute", "right-2", "top-2.5", "text-slate-500", "size-4")} />
 										</div>
@@ -159,8 +168,12 @@ export default function Page() {
 								render={({ field }) => (
 									<FormItem>
 										<div className={cn("relative", "z-20")}>
+											<label htmlFor={field.name} className="sr-only">
+												Password
+											</label>
 											<FormControl>
 												<Input
+													id={field.name}
 													autoComplete={authType === "sign-up" ? "new-password" : "current-password"}
 													className={cn("pr-8", "bg-background")}
 													type={"password"}
@@ -186,10 +199,14 @@ export default function Page() {
 									render={({ field }) => (
 										<FormItem>
 											<div className={cn("relative", "z-10")}>
+												<label htmlFor={field.name} className="sr-only">
+													Repeat Password
+												</label>
 												<FormControl>
 													<Input
+														id={field.name}
 														disabled={authType === "sign-in"}
-														autoComplete={authType === "sign-up" ? "new-password" : "current-password"}
+														autoComplete={"new-password"}
 														className={cn("pr-8", "bg-background", "disabled:opacity-0", [
 															"transition-opacity",
 															"duration-300",
