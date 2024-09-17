@@ -9,5 +9,5 @@ type ChatMessageContentProps = {
 export const ChatMessageContent = ({ message }: ChatMessageContentProps) => {
 	if (message.role !== "user") return <MemoizedMarkdownDisplay markdown={message.content} />
 
-	return <ArticleWrapper>{message.content}</ArticleWrapper>
+	return <ArticleWrapper preserveNewlines>{message.content}</ArticleWrapper>
 }
