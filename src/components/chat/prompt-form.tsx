@@ -1,6 +1,6 @@
 import type { UseChatHelpers } from "ai/react"
 import * as React from "react"
-import { type RefObject, useEffect, useRef } from "react"
+import { type RefObject, useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -61,7 +61,8 @@ export const PromptForm = ({ onSubmit, input, setInput, isLoading, inputRef }: P
 						"pr-20",
 						"focus-within:outline-none",
 						"sm:text-sm",
-						"resize-none"
+						"resize-none",
+						"max-h-[60vh]"
 					)}
 				/>
 				<div className={cn("absolute", "right-0", "top-4", "sm:right-4")}>
