@@ -110,7 +110,7 @@ export default function Page() {
 					>
 						{tabs.map((tab) => (
 							<Button
-								key={"tab"}
+								key={tab}
 								onClick={() => setAuthType(AuthType.parse(tab))}
 								onFocus={() => setAuthType(AuthType.parse(tab))}
 								variant={"ghost"}
