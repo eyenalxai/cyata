@@ -2,7 +2,7 @@
 
 import { ChatList } from "@/components/chat-list/chat-list"
 import { Button } from "@/components/ui/button"
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import type { ChatsResponse } from "@/lib/zod/api"
 import { PanelLeft } from "lucide-react"
@@ -19,22 +19,22 @@ export const Sidebar = ({ initialChats }: SidebarProps) => {
 	const [open, setOpen] = useState(false)
 
 	return (
-		<Drawer open={open} onOpenChange={(state) => setOpen(state)} direction={"left"}>
-			<DrawerTrigger asChild>
+		<Sheet open={open} onOpenChange={(state) => setOpen(state)}>
+			<SheetTrigger asChild>
 				<Button variant={"ghost"}>
 					<PanelLeft />
 				</Button>
-			</DrawerTrigger>
-			<DrawerContent className={cn("w-full", "sm:w-96", "h-screen", "p-4")}>
+			</SheetTrigger>
+			<SheetContent side={"left"} className={cn("w-full", "sm:w-96", "p-4", "overflow-y-auto")}>
 				<div className={cn("w-full", "flex", "flex-col", "justify-center", "items-start", "gap-y-2")}>
 					<div className={cn("w-full", "px-2")}>
-						<Button asChild className={cn("w-full")} onClick={() => setOpen(false)}>
+						<Button autoFocus asChild className={cn("w-full")} onClick={() => setOpen(false)}>
 							<Link href={`/chat/${crypto.randomUUID()}`}>New Chat</Link>
 						</Button>
 					</div>
-					<ChatList initialChats={initialChats} className={cn("mt-4")} />
+					<ChatList initialChats={initialChats} className={cn("my-4")} />
 				</div>
-			</DrawerContent>
-		</Drawer>
+			</SheetContent>
+		</Sheet>
 	)
 }
