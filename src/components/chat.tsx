@@ -6,6 +6,7 @@ import { ChatScrollAnchor } from "@/components/chat/chat-scroll-anchor"
 import { SelectModel } from "@/components/chat/select-model"
 import { mapMessages } from "@/lib/ai-message"
 import { CHATS_QUERY_KEY, USAGE_QUERY_KEY } from "@/lib/hooks/fetch/query-keys"
+import { revalidate } from "@/lib/revalidate-server"
 import type { Message } from "@/lib/schema"
 import { cn } from "@/lib/utils"
 import type { OpenAIModel } from "@/lib/zod/model"
@@ -36,6 +37,10 @@ export const Chat = ({ chatUuid, initialMessages, initialModel }: ChatProps) => 
 			await queryClient.refetchQueries({ queryKey: [CHATS_QUERY_KEY] })
 			await queryClient.invalidateQueries({ queryKey: [USAGE_QUERY_KEY] })
 			await queryClient.refetchQueries({ queryKey: [USAGE_QUERY_KEY] })
+
+			setTimeout(async () => {
+				await revalidate(`/chat/${chatUuid}`)
+			}, 500)
 		}
 	})
 
