@@ -2,5 +2,5 @@ import { env } from "@/lib/env.mjs"
 import OpenAI from "openai"
 
 export const openaiClient = new OpenAI({
-	apiKey: env.OPENAI_API_KEY
+	apiKey: env.OPENAI_API_KEY || "BUILD_TIME"
 })

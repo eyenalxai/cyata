@@ -17,6 +17,8 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import type { z } from "zod"
 
+export const dynamic = "force-dynamic"
+
 export default function Page() {
 	const router = useRouter()
 	const [authType, setAuthType] = useState<z.infer<typeof AuthType>>("sign-in")

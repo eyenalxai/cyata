@@ -5,6 +5,8 @@ import { selectUsagesForAllUsers } from "@/lib/database/usage"
 import { db } from "@/lib/database/client"
 import { NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic"
+
 export async function GET() {
 	const session = await getSession()
 

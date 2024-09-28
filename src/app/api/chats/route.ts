@@ -7,6 +7,8 @@ import { ChatsResponse } from "@/lib/zod/api"
 import { parseZodSchema } from "@/lib/zod/parse"
 import { NextResponse } from "next/server"
 
+export const dynamic = "force-dynamic"
+
 export async function GET() {
 	const session = await getSession()
 

@@ -7,6 +7,8 @@ import { getSession } from "@/lib/session"
 import { defaultModel } from "@/lib/zod/model"
 import { redirect } from "next/navigation"
 
+export const dynamic = "force-dynamic"
+
 export type PageProps = {
 	params: {
 		uuid?: string

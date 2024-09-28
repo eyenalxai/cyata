@@ -2,11 +2,12 @@ import { trimMessagesToFitContextWindow } from "@/lib/ai-message"
 import { addMessageToChat } from "@/lib/database/chat"
 import type { db } from "@/lib/database/client"
 import { insertUsage } from "@/lib/database/usage"
+import { env } from "@/lib/env.mjs"
 import { getErrorMessage } from "@/lib/error-message"
 import { priceMessage, priceMessages } from "@/lib/pricing"
 import type { AiMessageSchema, AiMessagesSchema } from "@/lib/zod/ai-message"
 import type { OpenAIModel } from "@/lib/zod/model"
-import { openai } from "@ai-sdk/openai"
+import { createOpenAI } from "@ai-sdk/openai"
 import { type CoreMessage, convertToCoreMessages, streamText } from "ai"
 import { ResultAsync } from "neverthrow"
 import { NextResponse } from "next/server"
@@ -25,6 +26,8 @@ export const streamMessage = (
 	{ model, systemPrompt, messages, userUuid, chatUuid }: StreamMessageProps
 ) => {
 	const trimmedMessages = trimMessagesToFitContextWindow(messages, model)
+
+	const openai = createOpenAI({ apiKey: env.OPENAI_API_KEY || "BUILD_TIME" })
 
 	return ResultAsync.fromPromise(
 		streamText({
