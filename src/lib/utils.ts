@@ -15,3 +15,14 @@ export const isInline = (children: ReactNode): boolean => {
 
 	return true
 }
+
+type BuildDatabaseUrlProps = {
+	user: string
+	password: string
+	address: string
+	database: string
+}
+
+export const buildDatabaseUrl = ({ user, password, address, database }: BuildDatabaseUrlProps) => {
+	return `postgres://${user}:${password}@${address}/${database}`
+}
