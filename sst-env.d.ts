@@ -5,17 +5,5 @@ import "sst"
 export {}
 declare module "sst" {
   export interface Resource {
-    "OpenAiApiKey": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "PostgresPassword": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
-    "TurnstileSecretKey": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
   }
 }
