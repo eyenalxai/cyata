@@ -1,4 +1,4 @@
-variable "NOMAD_ENDPOINT_ADDRESS" {
+variable "NOMAD_URL" {
   type = string
 }
 
@@ -35,7 +35,7 @@ job "traefik" {
           "--entrypoints.web.address=:${NOMAD_PORT_http}",
           "--entrypoints.traefik.address=:${NOMAD_PORT_admin}",
           "--providers.nomad=true",
-          "--providers.nomad.endpoint.address=${NOMAD_ENDPOINT_ADDRESS}",
+          "--providers.nomad.endpoint.address=${NOMAD_URL}",
           "--providers.nomad.exposedByDefault=false",
           "--accesslog=true",
           "--log.level=DEBUG"
@@ -43,7 +43,7 @@ job "traefik" {
       }
 
       env {
-        NOMAD_ENDPOINT_ADDRESS = var.NOMAD_ENDPOINT_ADDRESS
+        NOMAD_URL = var.NOMAD_URL
       }
 
       identity {
