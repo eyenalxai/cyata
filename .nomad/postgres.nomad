@@ -37,6 +37,7 @@ job "postgres" {
       config {
         image = "docker.io/postgres"
         ports = ["db"]
+        volumes = ["/opt/nomad/data/postgres:/var/lib/postgresql/data"]
       }
 
       env {
