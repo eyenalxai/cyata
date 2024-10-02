@@ -29,6 +29,9 @@ export default $config({
 		const turnstileSecretKey = process.env.TURNSTILE_SECRET_KEY
 		if (!turnstileSecretKey) throw new Error("TURNSTILE_SECRET_KEY is not set")
 
+		const cyataImage = process.env.CYATA_IMAGE
+		if (!cyataImage) throw new Error("CYATA_IMAGE is not set")
+
 		const nomadProvider = new nomad.Provider("NomadProvider", {
 			address: nomadUrl,
 			skipVerify: true
@@ -71,9 +74,12 @@ export default $config({
 				jobspec: readFileSync(".nomad/cyata.nomad", "utf-8"),
 				hcl2: {
 					vars: {
-						DATABASE_URL: $interpolate`postgres://${postgresUser}:${postgresPassword}@192.168.1.135:5432/${postgresDatabase}`,
+						POSTGRES_USER: postgresUser,
+						POSTGRES_PASSWORD: postgresPassword,
+						POSTGRES_DATABASE: postgresDatabase,
 						OPENAI_API_KEY: $interpolate`${openAiApiKey}`,
-						TURNSTILE_SECRET_KEY: $interpolate`${turnstileSecretKey}`
+						TURNSTILE_SECRET_KEY: $interpolate`${turnstileSecretKey}`,
+						CYATA_IMAGE: cyataImage
 					}
 				}
 			},
