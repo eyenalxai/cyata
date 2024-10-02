@@ -30,7 +30,7 @@ job "traefik" {
         image = "traefik"
         ports = ["admin", "http"]
         args = [
-          "--api.dashboard=true",
+          "--api.dashboard=false",
           "--api.insecure=true",
           "--entrypoints.web.address=:${NOMAD_PORT_http}",
           "--entrypoints.traefik.address=:${NOMAD_PORT_admin}",
