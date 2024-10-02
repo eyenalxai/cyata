@@ -5,8 +5,7 @@
 node_modules
 .dockerignore
 Dockerfile
-.env*.local
-.env
+.env*
 .eslintrc.json
 .gitignore
 biome.json
