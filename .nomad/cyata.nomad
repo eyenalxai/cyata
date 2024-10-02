@@ -1,4 +1,12 @@
-variable "DATABASE_URL" {
+variable "POSTGRES_USER" {
+  type = string
+}
+
+variable "POSTGRES_PASSWORD" {
+  type = string
+}
+
+variable "POSTGRES_DATABASE" {
   type = string
 }
 
@@ -10,14 +18,13 @@ variable "TURNSTILE_SECRET_KEY" {
   type = string
 }
 
+variable "CYATA_IMAGE" {
+  type = string
+}
+
+
 job "cyata" {
-  datacenters = ["dc1"]
-
-  type = "service"
-
   group "cyata-group" {
-    count = 3
-
     network {
       port "frontend" {
         to = -1
@@ -47,16 +54,24 @@ job "cyata" {
       driver = "docker"
 
       config {
-        image      = "localhost:5000/cyata:local"
-        force_pull = true
+        image      = var.CYATA_IMAGE
         ports = ["frontend"]
       }
 
       env {
-        DATABASE_URL = var.DATABASE_URL
         OPENAI_API_KEY = var.OPENAI_API_KEY
         TURNSTILE_SECRET_KEY = var.TURNSTILE_SECRET_KEY
         PORT    = "${NOMAD_PORT_frontend}"
+      }
+
+      template {
+        data = <<EOF
+{{- range service "cyata-postgres" }}
+DATABASE_URL=postgres://${var.POSTGRES_USER}:${var.POSTGRES_PASSWORD}@{{ .Address }}:{{ .Port }}/${var.POSTGRES_DATABASE}
+{{- end }}
+EOF
+        destination = "secrets/env"
+        env         = true
       }
     }
   }
