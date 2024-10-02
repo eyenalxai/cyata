@@ -3,12 +3,7 @@ variable "NOMAD_URL" {
 }
 
 job "traefik" {
-  datacenters = ["dc1"]
-  type        = "service"
-
   group "traefik-group" {
-    count = 1
-
     network {
       port  "http"{
         static = 80
@@ -26,6 +21,7 @@ job "traefik" {
 
     task "traefik-task" {
       driver = "docker"
+      
       config {
         image = "traefik"
         ports = ["admin", "http"]
