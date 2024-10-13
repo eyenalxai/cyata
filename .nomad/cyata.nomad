@@ -26,6 +26,8 @@ variable "CYATA_IMAGE" {
 job "cyata" {
   group "cyata-group" {
     network {
+      mode = "bridge"
+
       port "frontend" {
         to = -1
       }
@@ -38,7 +40,7 @@ job "cyata" {
       tags = [
         "frontend",
         "traefik.enable=true",
-        "traefik.http.routers.cyata.rule=Host(`cyata.local`)",
+        "traefik.http.routers.cyata.rule=Host(`test-cyata.takx.xyz`)",
         "traefik.http.services.cyata.loadbalancer.server.port=${NOMAD_PORT_frontend}"
       ]
 

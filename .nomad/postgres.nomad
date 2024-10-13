@@ -13,6 +13,8 @@ variable "POSTGRES_DB" {
 job "postgres" {
   group "postgres-group" {
     network {
+      mode = "bridge"
+
       port "db" {
         static = 5432
       }
@@ -23,11 +25,8 @@ job "postgres" {
       port = "db"
       tags = ["database", "postgres"]
 
-      check {
-        name     = "Postgres Health"
-        type     = "tcp"
-        interval = "10s"
-        timeout  = "2s"
+      connect {
+        sidecar_service {}
       }
     }
 
