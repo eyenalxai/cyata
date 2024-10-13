@@ -3,10 +3,7 @@ import { z } from "zod"
 
 export const env = createEnv({
 	server: {
-		POSTGRES_USER: z.string().min(2),
-		POSTGRES_PASSWORD: z.string().min(2),
-		POSTGRES_DB: z.string().min(2),
-		POSTGRES_ADDRESS: z.string().min(2),
+		DATABASE_URL: z.string().url(),
 		SESSION_COOKIES_EXPIRES_IN_DAYS: z.coerce.number().optional().default(30),
 		SESSION_COOKIE_NAME: z.string().min(2).optional().default("session"),
 		OPENAI_API_KEY: z.string().refine((value) => value.startsWith("sk-") && value.length >= 16, {
@@ -18,10 +15,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string()
 	},
 	runtimeEnv: {
-		POSTGRES_USER: process.env.POSTGRES_USER,
-		POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
-		POSTGRES_ADDRESS: process.env.POSTGRES_ADDRESS,
-		POSTGRES_DB: process.env.POSTGRES_DB,
+		DATABASE_URL: process.env.DATABASE_URL, // s
 		SESSION_COOKIES_EXPIRES_IN_DAYS: process.env.SESSION_COOKIES_EXPIRES_IN_DAYS,
 		SESSION_COOKIE_NAME: process.env.SESSION_COOKIE_NAME,
 		OPENAI_API_KEY: process.env.OPENAI_API_KEY,
