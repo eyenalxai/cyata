@@ -33,9 +33,7 @@ job "traefik" {
           "--entrypoints.traefik.address=:${NOMAD_PORT_admin}",
           "--providers.nomad=true",
           "--providers.nomad.endpoint.address=${NOMAD_URL}",
-          "--providers.nomad.exposedByDefault=false",
-          "--accesslog=true",
-          "--log.level=DEBUG"
+          "--providers.nomad.exposedByDefault=false"
         ]
       }
 
