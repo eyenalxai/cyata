@@ -5,10 +5,11 @@ variable "NOMAD_URL" {
 job "traefik" {
   group "traefik-group" {
     network {
-      port  "http"{
+      port "http" {
         static = 80
       }
-      port  "admin"{
+
+      port "admin" {
         static = 8080
       }
     }
