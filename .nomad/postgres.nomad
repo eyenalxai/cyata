@@ -16,7 +16,7 @@ job "postgres" {
       mode = "bridge"
 
       port "db" {
-        static = 5432
+        to = 5432
       }
     }
 
