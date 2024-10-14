@@ -24,10 +24,6 @@ job "postgres" {
       name = "cyata-postgres"
       port = "db"
       tags = ["database", "postgres"]
-
-      connect {
-        sidecar_service {}
-      }
     }
 
     task "postgres-task" {
