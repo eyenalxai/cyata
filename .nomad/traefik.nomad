@@ -5,6 +5,8 @@ variable "NOMAD_URL" {
 job "traefik" {
   group "traefik-group" {
     network {
+      mode = "bridge"
+
       port "http" {
         static = 80
       }
