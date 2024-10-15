@@ -11,6 +11,10 @@ job "traefik" {
         static = 80
       }
 
+      port "http_secure" {
+        static = 443
+      }
+
       port "admin" {
         static = 8080
       }
@@ -19,7 +23,6 @@ job "traefik" {
     service {
       name = "traefik-http"
       provider = "nomad"
-      port = "http"
     }
 
     task "traefik-task" {
@@ -27,11 +30,12 @@ job "traefik" {
       
       config {
         image = "traefik"
-        ports = ["admin", "http"]
+        ports = ["admin", "http", "http_secure"]
         args = [
           "--api.dashboard=false",
           "--api.insecure=true",
           "--entrypoints.web.address=:${NOMAD_PORT_http}",
+          "--entrypoints.websecure.address=:${NOMAD_PORT_http_secure}",
           "--entrypoints.traefik.address=:${NOMAD_PORT_admin}",
           "--providers.nomad=true",
           "--providers.nomad.endpoint.address=${NOMAD_URL}",
