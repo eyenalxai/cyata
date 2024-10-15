@@ -11,8 +11,11 @@ export default $config({
 		}
 	},
 	async run() {
-		const nomadUrl = process.env.NOMAD_URL
-		if (!nomadUrl) throw new Error("NOMAD_URL is not set")
+		const localNomadUrl = process.env.LOCAL_NOMAD_URL
+		if (!localNomadUrl) throw new Error("LOCAL_NOMAD_URL is not set")
+
+		const remoteNomadUrl = process.env.REMOTE_NOMAD_URL
+		if (!remoteNomadUrl) throw new Error("REMOTE_NOMAD_URL is not set")
 
 		const postgresPassword = process.env.POSTGRES_PASSWORD
 		if (!postgresPassword) throw new Error("POSTGRES_PASSWORD is not set")
@@ -33,7 +36,7 @@ export default $config({
 		if (!cyataImage) throw new Error("CYATA_IMAGE is not set")
 
 		const nomadProvider = new nomad.Provider("NomadProvider", {
-			address: nomadUrl,
+			address: remoteNomadUrl,
 			skipVerify: true
 		})
 
@@ -59,7 +62,7 @@ export default $config({
 				jobspec: readFileSync(".nomad/traefik.nomad", "utf-8"),
 				hcl2: {
 					vars: {
-						NOMAD_URL: nomadUrl
+						NOMAD_URL: localNomadUrl
 					}
 				}
 			},
