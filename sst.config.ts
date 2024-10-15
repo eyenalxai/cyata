@@ -1,6 +1,43 @@
 /// <reference path="./.sst/platform/config.d.ts" />
 import { readFileSync } from "node:fs"
 
+const getEnvVariables = () => {
+	const localNomadUrl = process.env.LOCAL_NOMAD_URL
+	if (!localNomadUrl) throw new Error("LOCAL_NOMAD_URL is not set")
+
+	const remoteNomadUrl = process.env.REMOTE_NOMAD_URL
+	if (!remoteNomadUrl) throw new Error("REMOTE_NOMAD_URL is not set")
+
+	const postgresPassword = process.env.POSTGRES_PASSWORD
+	if (!postgresPassword) throw new Error("POSTGRES_PASSWORD is not set")
+
+	const postgresUser = process.env.POSTGRES_USER
+	if (!postgresUser) throw new Error("POSTGRES_USER is not set")
+
+	const postgresDatabase = process.env.POSTGRES_DB
+	if (!postgresDatabase) throw new Error("POSTGRES_DB is not set")
+
+	const openAiApiKey = process.env.OPENAI_API_KEY
+	if (!openAiApiKey) throw new Error("OPENAI_API_KEY is not set")
+
+	const turnstileSecretKey = process.env.TURNSTILE_SECRET_KEY
+	if (!turnstileSecretKey) throw new Error("TURNSTILE_SECRET_KEY is not set")
+
+	const cyataImage = process.env.CYATA_IMAGE
+	if (!cyataImage) throw new Error("CYATA_IMAGE is not set")
+
+	return {
+		localNomadUrl,
+		remoteNomadUrl,
+		postgresPassword,
+		postgresUser,
+		postgresDatabase,
+		openAiApiKey,
+		turnstileSecretKey,
+		cyataImage
+	}
+}
+
 export default $config({
 	app(input) {
 		return {
@@ -11,29 +48,16 @@ export default $config({
 		}
 	},
 	async run() {
-		const localNomadUrl = process.env.LOCAL_NOMAD_URL
-		if (!localNomadUrl) throw new Error("LOCAL_NOMAD_URL is not set")
-
-		const remoteNomadUrl = process.env.REMOTE_NOMAD_URL
-		if (!remoteNomadUrl) throw new Error("REMOTE_NOMAD_URL is not set")
-
-		const postgresPassword = process.env.POSTGRES_PASSWORD
-		if (!postgresPassword) throw new Error("POSTGRES_PASSWORD is not set")
-
-		const postgresUser = process.env.POSTGRES_USER
-		if (!postgresUser) throw new Error("POSTGRES_USER is not set")
-
-		const postgresDatabase = process.env.POSTGRES_DB
-		if (!postgresDatabase) throw new Error("POSTGRES_DB is not set")
-
-		const openAiApiKey = process.env.OPENAI_API_KEY
-		if (!openAiApiKey) throw new Error("OPENAI_API_KEY is not set")
-
-		const turnstileSecretKey = process.env.TURNSTILE_SECRET_KEY
-		if (!turnstileSecretKey) throw new Error("TURNSTILE_SECRET_KEY is not set")
-
-		const cyataImage = process.env.CYATA_IMAGE
-		if (!cyataImage) throw new Error("CYATA_IMAGE is not set")
+		const {
+			localNomadUrl,
+			remoteNomadUrl,
+			postgresPassword,
+			postgresUser,
+			postgresDatabase,
+			openAiApiKey,
+			turnstileSecretKey,
+			cyataImage
+		} = getEnvVariables()
 
 		const nomadProvider = new nomad.Provider("NomadProvider", {
 			address: remoteNomadUrl,
@@ -56,6 +80,7 @@ export default $config({
 				provider: nomadProvider
 			}
 		)
+
 		const traefik = new nomad.Job(
 			"Traefik",
 			{
