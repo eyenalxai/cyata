@@ -2,11 +2,8 @@
 import { readFileSync } from "node:fs"
 
 const getEnvVariables = () => {
-	const localNomadUrl = process.env.LOCAL_NOMAD_URL
-	if (!localNomadUrl) throw new Error("LOCAL_NOMAD_URL is not set")
-
-	const remoteNomadUrl = process.env.REMOTE_NOMAD_URL
-	if (!remoteNomadUrl) throw new Error("REMOTE_NOMAD_URL is not set")
+	const nomadUrl = process.env.NOMAD_URL
+	if (!nomadUrl) throw new Error("NOMAD_URL is not set")
 
 	const postgresPassword = process.env.POSTGRES_PASSWORD
 	if (!postgresPassword) throw new Error("POSTGRES_PASSWORD is not set")
@@ -27,8 +24,7 @@ const getEnvVariables = () => {
 	if (!cyataImage) throw new Error("CYATA_IMAGE is not set")
 
 	return {
-		localNomadUrl,
-		remoteNomadUrl,
+		nomadUrl,
 		postgresPassword,
 		postgresUser,
 		postgresDatabase,
@@ -48,19 +44,11 @@ export default $config({
 		}
 	},
 	async run() {
-		const {
-			localNomadUrl,
-			remoteNomadUrl,
-			postgresPassword,
-			postgresUser,
-			postgresDatabase,
-			openAiApiKey,
-			turnstileSecretKey,
-			cyataImage
-		} = getEnvVariables()
+		const { nomadUrl, postgresPassword, postgresUser, postgresDatabase, openAiApiKey, turnstileSecretKey, cyataImage } =
+			getEnvVariables()
 
 		const nomadProvider = new nomad.Provider("NomadProvider", {
-			address: remoteNomadUrl,
+			address: nomadUrl,
 			skipVerify: true
 		})
 
@@ -72,7 +60,7 @@ export default $config({
 					vars: {
 						POSTGRES_PASSWORD: postgresPassword,
 						POSTGRES_USER: postgresUser,
-						POSTGRES_DB: postgresDatabase
+						POSTGRES_DATABASE: postgresDatabase
 					}
 				}
 			},
@@ -87,7 +75,7 @@ export default $config({
 				jobspec: readFileSync(".nomad/traefik.nomad", "utf-8"),
 				hcl2: {
 					vars: {
-						NOMAD_URL: localNomadUrl
+						NOMAD_URL: nomadUrl
 					}
 				}
 			},
@@ -97,9 +85,9 @@ export default $config({
 		)
 
 		const frontend = new nomad.Job(
-			"Cyata",
+			"Frontend",
 			{
-				jobspec: readFileSync(".nomad/cyata.nomad", "utf-8"),
+				jobspec: readFileSync(".nomad/frontend.nomad", "utf-8"),
 				hcl2: {
 					vars: {
 						POSTGRES_USER: postgresUser,
