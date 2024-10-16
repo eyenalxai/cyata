@@ -43,6 +43,8 @@ job "frontend" {
         "frontend",
         "traefik.enable=true",
         "traefik.http.routers.cyata.rule=Host(`test-cyata.takx.xyz`)",
+        "traefik.http.routers.cyata.entrypoints=websecure",
+        "traefik.http.routers.cyata.tls.certresolver=myresolver",
         "traefik.http.services.cyata.loadbalancer.server.port=${NOMAD_PORT_frontend}"
       ]
 
