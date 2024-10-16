@@ -6,7 +6,7 @@ variable "POSTGRES_USER" {
   type = string
 }
 
-variable "POSTGRES_DB" {
+variable "POSTGRES_DATABASE" {
   type = string
 }
 
@@ -15,15 +15,14 @@ job "postgres" {
     network {
       mode = "bridge"
 
-      port "db" {
+      port "database" {
         to = 5432
       }
     }
 
     service {
-      name = "cyata-postgres"
-      port = "db"
-      tags = ["database", "postgres"]
+      name = "postgres"
+      port = "database"
     }
 
     task "postgres-task" {
@@ -31,14 +30,14 @@ job "postgres" {
 
       config {
         image = "docker.io/postgres"
-        ports = ["db"]
+        ports = ["database"]
         volumes = ["/opt/nomad/data/postgres:/var/lib/postgresql/data"]
       }
 
       env {
         POSTGRES_PASSWORD = var.POSTGRES_PASSWORD
         POSTGRES_USER = var.POSTGRES_USER
-        POSTGRES_DB = var.POSTGRES_DB
+        POSTGRES_DB = var.POSTGRES_DATABASE
       }
     }
   }
