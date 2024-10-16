@@ -48,7 +48,7 @@ job "traefik" {
           "--providers.nomad.endpoint.address=${NOMAD_URL}",
           "--providers.nomad.exposedByDefault=false",
           "--accesslog=true",
-          "--log.level=DEBUG",
+          "--log.level=INFO",
           "--certificatesresolvers.myresolver.acme.dnschallenge=true",
           "--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare",
           "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
