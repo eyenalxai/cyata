@@ -21,7 +21,7 @@ job "traefik" {
     }
 
     service {
-      name = "traefik-http"
+      name = "traefik"
       provider = "nomad"
     }
 
