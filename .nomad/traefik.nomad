@@ -31,6 +31,7 @@ job "traefik" {
       config {
         image = "traefik"
         ports = ["admin", "http", "http_secure"]
+        volumes = ["/opt/letsencrypt:/letsencrypt"]
         args = [
           "--api.dashboard=false",
           "--api.insecure=true",
