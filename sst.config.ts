@@ -23,9 +23,6 @@ const getEnvVariables = () => {
 	const cyataImage = process.env.CYATA_IMAGE
 	if (!cyataImage) throw new Error("CYATA_IMAGE is not set")
 
-	const cfDnsApiKey = process.env.CF_DNS_API_TOKEN
-	if (!cfDnsApiKey) throw new Error("CF_DNS_API_TOKEN is not set")
-
 	return {
 		nomadUrl,
 		postgresPassword,
@@ -33,8 +30,7 @@ const getEnvVariables = () => {
 		postgresDatabase,
 		openAiApiKey,
 		turnstileSecretKey,
-		cyataImage,
-		cfDnsApiKey
+		cyataImage
 	}
 }
 
@@ -48,16 +44,8 @@ export default $config({
 		}
 	},
 	async run() {
-		const {
-			nomadUrl,
-			postgresPassword,
-			postgresUser,
-			postgresDatabase,
-			openAiApiKey,
-			turnstileSecretKey,
-			cyataImage,
-			cfDnsApiKey
-		} = getEnvVariables()
+		const { nomadUrl, postgresPassword, postgresUser, postgresDatabase, openAiApiKey, turnstileSecretKey, cyataImage } =
+			getEnvVariables()
 
 		const nomadProvider = new nomad.Provider("NomadProvider", {
 			address: nomadUrl,
@@ -87,8 +75,7 @@ export default $config({
 				jobspec: readFileSync(".nomad/traefik.nomad", "utf-8"),
 				hcl2: {
 					vars: {
-						NOMAD_URL: nomadUrl,
-						CF_DNS_API_TOKEN: cfDnsApiKey
+						NOMAD_URL: nomadUrl
 					}
 				}
 			},
