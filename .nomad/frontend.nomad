@@ -23,8 +23,10 @@ variable "CYATA_IMAGE" {
 }
 
 
-job "cyata" {
-  group "cyata-group" {
+job "frontend" {
+  group "frontend-group" {
+    count = 3
+
     network {
       mode = "bridge"
 
@@ -34,7 +36,7 @@ job "cyata" {
     }
 
     service {
-      name = "cyata-frontend"
+      name = "frontend"
       provider = "nomad"
       port = "frontend"
       tags = [
@@ -68,7 +70,7 @@ job "cyata" {
 
       template {
         data = <<EOF
-{{- range service "cyata-postgres" }}
+{{- range service "postgres" }}
 DATABASE_URL=postgres://${var.POSTGRES_USER}:${var.POSTGRES_PASSWORD}@{{ .Address }}:{{ .Port }}/${var.POSTGRES_DATABASE}
 {{- end }}
 EOF
