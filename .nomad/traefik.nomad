@@ -9,7 +9,7 @@ variable "CF_DNS_API_TOKEN" {
 job "traefik" {
   group "traefik-group" {
     network {
-      mode = "bridge"
+      mode = "host"
 
       port "http" {
         static = 80
@@ -17,10 +17,6 @@ job "traefik" {
 
       port "http_secure" {
         static = 443
-      }
-
-      port "admin" {
-        static = 8080
       }
     }
 
@@ -34,14 +30,13 @@ job "traefik" {
 
       config {
         image = "traefik"
-        ports = ["admin", "http", "http_secure"]
+        ports = ["http", "http_secure"]
         volumes = ["/opt/letsencrypt:/letsencrypt"]
         args = [
           "--api.dashboard=false",
           "--api.insecure=true",
           "--entrypoints.web.address=:${NOMAD_PORT_http}",
           "--entrypoints.websecure.address=:${NOMAD_PORT_http_secure}",
-          "--entrypoints.traefik.address=:${NOMAD_PORT_admin}",
           "--entrypoints.web.http.redirections.entrypoint.to=websecure",
           "--entrypoints.web.http.redirections.entrypoint.scheme=https",
           "--providers.nomad=true",
