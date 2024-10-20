@@ -27,6 +27,13 @@ job "postgres" {
         "traefik.tcp.routers.db.tls.certresolver=myresolver",
         "traefik.tcp.services.db.loadbalancer.server.port=${NOMAD_PORT_database}"
       ]
+
+      check {
+        name     = "Postgres Health"
+        type     = "tcp"
+        interval = "10s"
+        timeout  = "2s"
+      }
     }
 
     task "postgres-task" {
