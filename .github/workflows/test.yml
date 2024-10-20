@@ -41,22 +41,22 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Refresh SST
-        run: npx sst refresh --stage production
-        env:
-          NOMAD_URL: ${{ secrets.NOMAD_URL }}
-          NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
-          DOMAIN: ${{ secrets.DOMAIN }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
-          CYATA_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/cyata:latest
-          CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
+#      - name: Refresh SST
+#        run: npx sst refresh --stage production
+#        env:
+#          NOMAD_URL: ${{ secrets.NOMAD_URL }}
+#          NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
+#          DOMAIN: ${{ secrets.DOMAIN }}
+#          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+#          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+#          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+#          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+#          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+#          CYATA_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/cyata:latest
+#          CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
 
       - name: Deploy SST
-        run: npx sst deploy --stage production
+        run: npx sst deploy
         env:
           NOMAD_URL: ${{ secrets.NOMAD_URL }}
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
