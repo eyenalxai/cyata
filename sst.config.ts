@@ -1,5 +1,4 @@
 /// <reference path="./.sst/platform/config.d.ts" />
-
 import { readFileSync } from "node:fs"
 
 const getEnvVariables = () => {
@@ -53,7 +52,7 @@ export default $config({
 			name: "cyata",
 			removal: input?.stage === "production" ? "retain" : "remove",
 			home: "local",
-			providers: { nomad: true, random: "4.16.6" }
+			providers: { nomad: "2.4.0" }
 		}
 	},
 	async run() {
