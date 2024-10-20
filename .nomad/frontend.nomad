@@ -46,6 +46,7 @@ job "frontend" {
 
       config {
         image      = var.CYATA_IMAGE
+        force_pull = true
         ports = ["frontend"]
       }
 
