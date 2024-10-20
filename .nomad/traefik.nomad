@@ -1,7 +1,3 @@
-variable "NOMAD_URL" {
-  type = string
-}
-
 job "traefik" {
   group "traefik-group" {
     network {
@@ -53,14 +49,11 @@ job "traefik" {
         ]
       }
 
-      env {
-        NOMAD_URL = var.NOMAD_URL
-      }
-
       template {
         data        = <<EOF
 {{- with nomadVar "nomad/jobs/traefik" -}}
 CF_DNS_API_TOKEN = {{.cf_dns_api_token}}
+NOMAD_URL = {{.nomad_url}}
 {{- end -}}
 EOF
         destination = "secrets/env"

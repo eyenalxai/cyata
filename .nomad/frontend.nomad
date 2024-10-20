@@ -1,23 +1,3 @@
-variable "POSTGRES_USER" {
-  type = string
-}
-
-variable "POSTGRES_PASSWORD" {
-  type = string
-}
-
-variable "POSTGRES_DATABASE" {
-  type = string
-}
-
-variable "OPENAI_API_KEY" {
-  type = string
-}
-
-variable "TURNSTILE_SECRET_KEY" {
-  type = string
-}
-
 variable "CYATA_IMAGE" {
   type = string
 }
@@ -70,15 +50,22 @@ job "frontend" {
       }
 
       env {
-        OPENAI_API_KEY = var.OPENAI_API_KEY
-        TURNSTILE_SECRET_KEY = var.TURNSTILE_SECRET_KEY
         PORT    = "${NOMAD_PORT_frontend}"
       }
 
       template {
         data = <<EOF
+{{- with nomadVar "nomad/jobs/frontend" }}
+OPENAI_API_KEY={{.openai_api_key}}
+TURNSTILE_SECRET_KEY={{.turnstile_secret_key}}
+
+{{- $user := .postgres_user -}}
+{{- $password := .postgres_password -}}
+{{- $database := .postgres_database -}}
+
 {{- range nomadService "postgres" }}
-DATABASE_URL=postgres://${var.POSTGRES_USER}:${var.POSTGRES_PASSWORD}@{{ .Address }}:{{ .Port }}/${var.POSTGRES_DATABASE}
+DATABASE_URL=postgres://{{$user}}:{{$password}}@{{ .Address }}:{{ .Port }}/{{$database}}
+{{- end }}
 {{- end }}
 EOF
         destination = "secrets/env"

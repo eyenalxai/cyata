@@ -1,15 +1,3 @@
-variable "POSTGRES_PASSWORD" {
-  type = string
-}
-
-variable "POSTGRES_USER" {
-  type = string
-}
-
-variable "POSTGRES_DATABASE" {
-  type = string
-}
-
 variable "DOMAIN" {
   type = string
 }
@@ -51,10 +39,19 @@ job "postgres" {
       }
 
       env {
-        POSTGRES_PASSWORD = var.POSTGRES_PASSWORD
-        POSTGRES_USER = var.POSTGRES_USER
-        POSTGRES_DB = var.POSTGRES_DATABASE
         PGPORT = "${NOMAD_PORT_database}"
+      }
+
+      template {
+        data        = <<EOF
+{{- with nomadVar "nomad/jobs/postgres" -}}
+POSTGRES_PASSWORD = {{.postgres_password}}
+POSTGRES_USER = {{.postgres_user}}
+POSTGRES_DB = {{.postgres_database}}
+{{- end -}}
+EOF
+        destination = "secrets/env"
+        env         = true
       }
     }
   }

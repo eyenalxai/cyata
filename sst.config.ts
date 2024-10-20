@@ -30,6 +30,9 @@ const getEnvVariables = () => {
 	const cyataImage = process.env.CYATA_IMAGE
 	if (!cyataImage) throw new Error("CYATA_IMAGE is not set")
 
+	const cfDnsApiToken = process.env.CF_DNS_API_TOKEN
+	if (!cfDnsApiToken) throw new Error("CF_DNS_API_TOKEN is not set")
+
 	return {
 		nomadUrl,
 		nomadToken,
@@ -39,7 +42,8 @@ const getEnvVariables = () => {
 		postgresDatabase,
 		openAiApiKey,
 		turnstileSecretKey,
-		cyataImage
+		cyataImage,
+		cfDnsApiToken
 	}
 }
 
@@ -62,7 +66,8 @@ export default $config({
 			postgresDatabase,
 			openAiApiKey,
 			turnstileSecretKey,
-			cyataImage
+			cyataImage,
+			cfDnsApiToken
 		} = getEnvVariables()
 
 		const nomadProvider = new nomad.Provider("NomadProvider", {
@@ -71,14 +76,40 @@ export default $config({
 			secretId: nomadToken
 		})
 
+		const traefikVariables = new nomad.Variable(
+			"TraefikVariables",
+			{
+				path: "nomad/jobs/traefik",
+				items: {
+					nomad_url: nomadUrl,
+					cf_dns_api_token: cfDnsApiToken
+				}
+			},
+			{
+				provider: nomadProvider
+			}
+		)
+
 		const traefik = new nomad.Job(
 			"Traefik",
 			{
-				jobspec: readFileSync(".nomad/traefik.nomad", "utf-8"),
-				hcl2: {
-					vars: {
-						NOMAD_URL: nomadUrl
-					}
+				jobspec: readFileSync(".nomad/traefik.nomad", "utf-8")
+			},
+			{
+				provider: nomadProvider
+			}
+		)
+
+		const frontendVariables = new nomad.Variable(
+			"FrontendVariables",
+			{
+				path: "nomad/jobs/frontend",
+				items: {
+					postgres_user: postgresUser,
+					postgres_password: postgresPassword,
+					postgres_database: postgresDatabase,
+					openai_api_key: openAiApiKey,
+					turnstile_secret_key: turnstileSecretKey
 				}
 			},
 			{
@@ -92,14 +123,24 @@ export default $config({
 				jobspec: readFileSync(".nomad/frontend.nomad", "utf-8"),
 				hcl2: {
 					vars: {
-						POSTGRES_USER: postgresUser,
-						POSTGRES_PASSWORD: postgresPassword,
-						POSTGRES_DATABASE: postgresDatabase,
-						OPENAI_API_KEY: openAiApiKey,
-						TURNSTILE_SECRET_KEY: turnstileSecretKey,
 						CYATA_IMAGE: cyataImage,
 						DOMAIN: domain
 					}
+				}
+			},
+			{
+				provider: nomadProvider
+			}
+		)
+
+		const postgresVariables = new nomad.Variable(
+			"PostgresVariables",
+			{
+				path: "nomad/jobs/postgres",
+				items: {
+					postgres_user: postgresUser,
+					postgres_password: postgresPassword,
+					postgres_database: postgresDatabase
 				}
 			},
 			{
@@ -113,9 +154,6 @@ export default $config({
 				jobspec: readFileSync(".nomad/postgres.nomad", "utf-8"),
 				hcl2: {
 					vars: {
-						POSTGRES_PASSWORD: postgresPassword,
-						POSTGRES_USER: postgresUser,
-						POSTGRES_DATABASE: postgresDatabase,
 						DOMAIN: domain
 					}
 				}
