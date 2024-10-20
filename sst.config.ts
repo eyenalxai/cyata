@@ -1,9 +1,16 @@
 /// <reference path="./.sst/platform/config.d.ts" />
+
 import { readFileSync } from "node:fs"
 
 const getEnvVariables = () => {
 	const nomadUrl = process.env.NOMAD_URL
 	if (!nomadUrl) throw new Error("NOMAD_URL is not set")
+
+	const nomadToken = process.env.NOMAD_TOKEN
+	if (!nomadToken) throw new Error("NOMAD_TOKEN is not set")
+
+	const domain = process.env.DOMAIN
+	if (!domain) throw new Error("DOMAIN is not set")
 
 	const postgresPassword = process.env.POSTGRES_PASSWORD
 	if (!postgresPassword) throw new Error("POSTGRES_PASSWORD is not set")
@@ -25,6 +32,8 @@ const getEnvVariables = () => {
 
 	return {
 		nomadUrl,
+		nomadToken,
+		domain,
 		postgresPassword,
 		postgresUser,
 		postgresDatabase,
@@ -44,30 +53,23 @@ export default $config({
 		}
 	},
 	async run() {
-		const { nomadUrl, postgresPassword, postgresUser, postgresDatabase, openAiApiKey, turnstileSecretKey, cyataImage } =
-			getEnvVariables()
+		const {
+			nomadUrl,
+			nomadToken,
+			domain,
+			postgresPassword,
+			postgresUser,
+			postgresDatabase,
+			openAiApiKey,
+			turnstileSecretKey,
+			cyataImage
+		} = getEnvVariables()
 
 		const nomadProvider = new nomad.Provider("NomadProvider", {
 			address: nomadUrl,
-			skipVerify: true
+			skipVerify: false,
+			secretId: nomadToken
 		})
-
-		const postgres = new nomad.Job(
-			"Postgres",
-			{
-				jobspec: readFileSync(".nomad/postgres.nomad", "utf-8"),
-				hcl2: {
-					vars: {
-						POSTGRES_PASSWORD: postgresPassword,
-						POSTGRES_USER: postgresUser,
-						POSTGRES_DATABASE: postgresDatabase
-					}
-				}
-			},
-			{
-				provider: nomadProvider
-			}
-		)
 
 		const traefik = new nomad.Job(
 			"Traefik",
@@ -93,9 +95,28 @@ export default $config({
 						POSTGRES_USER: postgresUser,
 						POSTGRES_PASSWORD: postgresPassword,
 						POSTGRES_DATABASE: postgresDatabase,
-						OPENAI_API_KEY: $interpolate`${openAiApiKey}`,
-						TURNSTILE_SECRET_KEY: $interpolate`${turnstileSecretKey}`,
-						CYATA_IMAGE: cyataImage
+						OPENAI_API_KEY: openAiApiKey,
+						TURNSTILE_SECRET_KEY: turnstileSecretKey,
+						CYATA_IMAGE: cyataImage,
+						DOMAIN: domain
+					}
+				}
+			},
+			{
+				provider: nomadProvider
+			}
+		)
+
+		const postgres = new nomad.Job(
+			"Postgres",
+			{
+				jobspec: readFileSync(".nomad/postgres.nomad", "utf-8"),
+				hcl2: {
+					vars: {
+						POSTGRES_PASSWORD: postgresPassword,
+						POSTGRES_USER: postgresUser,
+						POSTGRES_DATABASE: postgresDatabase,
+						DOMAIN: domain
 					}
 				}
 			},

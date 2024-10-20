@@ -22,6 +22,10 @@ variable "CYATA_IMAGE" {
   type = string
 }
 
+variable "DOMAIN" {
+  type = string
+}
+
 
 job "frontend" {
   group "frontend-group" {
@@ -32,6 +36,7 @@ job "frontend" {
 
       port "frontend" {
         to = -1
+        host_network = "private"
       }
     }
 
@@ -42,7 +47,7 @@ job "frontend" {
       tags = [
         "frontend",
         "traefik.enable=true",
-        "traefik.http.routers.cyata.rule=Host(`test-cyata.takx.xyz`)",
+        "traefik.http.routers.http-echo.rule=Host(`${var.DOMAIN}`)",
         "traefik.http.routers.cyata.entrypoints=websecure",
         "traefik.http.routers.cyata.tls.certresolver=myresolver",
         "traefik.http.services.cyata.loadbalancer.server.port=${NOMAD_PORT_frontend}"
@@ -72,7 +77,7 @@ job "frontend" {
 
       template {
         data = <<EOF
-{{- range service "postgres" }}
+{{- range nomadService "postgres" }}
 DATABASE_URL=postgres://${var.POSTGRES_USER}:${var.POSTGRES_PASSWORD}@{{ .Address }}:{{ .Port }}/${var.POSTGRES_DATABASE}
 {{- end }}
 EOF
