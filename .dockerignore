@@ -4,7 +4,7 @@
 .nomad
 node_modules
 .dockerignore
-Dockerfile
+.Dockerfile
 .env*
 .eslintrc.json
 .gitignore
