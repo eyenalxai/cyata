@@ -1,5 +1,5 @@
 import { DropdownUser } from "@/components/dropdown-user"
-import { Sidebar } from "@/components/sidebar"
+import { SidebarTrigger } from "@/components/ui/sidebar"
 import { groupChatsByInterval } from "@/lib/chat/group"
 import { selectChatsWithMessages } from "@/lib/database/chat"
 import { db } from "@/lib/database/client"
@@ -42,7 +42,7 @@ export const Header = async () => {
 				"gap-4"
 			)}
 		>
-			<Sidebar initialChats={chatsResult.isOk() ? chatsResult.value : undefined} />
+			<SidebarTrigger />
 			<DropdownUser username={session.value.username} usages={usagesResult.isOk() ? usagesResult.value : undefined} />
 		</header>
 	)

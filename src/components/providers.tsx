@@ -1,5 +1,6 @@
 "use client"
 
+import { SidebarProvider } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/sonner"
 import { QueryClient, QueryClientProvider, isServer } from "@tanstack/react-query"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
@@ -28,7 +29,9 @@ export const Providers = ({ children, ...props }: ThemeProviderProps) => {
 
 	return (
 		<NextThemesProvider {...props}>
-			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+			<QueryClientProvider client={queryClient}>
+				<SidebarProvider defaultOpen={false}>{children}</SidebarProvider>
+			</QueryClientProvider>
 			<Toaster />
 		</NextThemesProvider>
 	)

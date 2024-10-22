@@ -2,6 +2,8 @@ import "./globals.css"
 import "./code-style.css"
 import "katex/dist/katex.min.css"
 import { Providers } from "@/components/providers"
+import { AppSidebar } from "@/components/sidebar"
+import { SidebarInset } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import { GeistMono } from "geist/font/mono"
 import { GeistSans } from "geist/font/sans"
@@ -37,7 +39,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 		<html lang="en" suppressHydrationWarning>
 			<body className={cn("font-sans", "antialiased", GeistSans.variable, GeistMono.variable)}>
 				<Providers attribute="class" defaultTheme="system" enableSystem>
-					{children}
+					<AppSidebar />
+					<SidebarInset>{children}</SidebarInset>
 				</Providers>
 			</body>
 		</html>

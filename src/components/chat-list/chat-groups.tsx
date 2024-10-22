@@ -14,9 +14,16 @@ export const ChatRow = ({ name, chats, deleteChat, isDeletingChat }: ChatRowProp
 	return (
 		<div className={cn("w-full")}>
 			<span className={cn("font-semibold", "ml-4", "text-sm")}>{name}</span>
-			{chats.map((chatInfo) => (
-				<ChatLink key={chatInfo.chatUuid} chatInfo={chatInfo} deleteChat={deleteChat} isDeletingChat={isDeletingChat} />
-			))}
+			<div className={cn("w-full", "mt-2")}>
+				{chats.map((chatInfo) => (
+					<ChatLink
+						key={chatInfo.chatUuid}
+						chatInfo={chatInfo}
+						deleteChat={deleteChat}
+						isDeletingChat={isDeletingChat}
+					/>
+				))}
+			</div>
 		</div>
 	)
 }

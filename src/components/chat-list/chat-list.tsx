@@ -5,16 +5,9 @@ import { CustomAlert } from "@/components/custom-alert"
 import { Loading } from "@/components/loading"
 import { useChats } from "@/lib/hooks/fetch/use-chats"
 import { cn } from "@/lib/utils"
-import type { ChatsResponse } from "@/lib/zod/api"
-import type { z } from "zod"
 
-type ChatListProps = {
-	initialChats: z.infer<typeof ChatsResponse> | undefined
-	className?: string
-}
-
-export const ChatList = ({ initialChats, className }: ChatListProps) => {
-	const { chatsResult, isLoading, deleteChat, isDeletingChat } = useChats({ initialChats })
+export const ChatList = () => {
+	const { chatsResult, isLoading, deleteChat, isDeletingChat } = useChats()
 
 	if (isLoading) return <Loading className={cn("mt-2")} />
 
@@ -23,7 +16,7 @@ export const ChatList = ({ initialChats, className }: ChatListProps) => {
 	}
 
 	return (
-		<div className={cn("w-full", "flex", "flex-col", "justify-center", "items-center", "gap-y-2", className)}>
+		<div className={cn("w-full", "flex", "flex-col", "justify-center", "items-center", "gap-y-2")}>
 			<ChatGroups chats={chatsResult.value} deleteChat={deleteChat} isDeletingChat={isDeletingChat} />
 		</div>
 	)
