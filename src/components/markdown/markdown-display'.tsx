@@ -2,6 +2,7 @@ import { CodeComponent } from "@/components/code-block"
 import { ArticleWrapper } from "@/components/markdown/article-wrapper"
 import { isInline } from "@/lib/utils"
 import { all } from "lowlight"
+import { memo } from "react"
 import Markdown from "react-markdown"
 import rehypeHighlight from "rehype-highlight"
 import rehypeKatex from "rehype-katex"
@@ -14,7 +15,7 @@ type MarkdownDisplayProps = {
 	markdown: string
 }
 
-export const MarkdownDisplay = ({ markdown }: MarkdownDisplayProps) => (
+const MarkdownDisplay = ({ markdown }: MarkdownDisplayProps) => (
 	<ArticleWrapper>
 		<Markdown
 			remarkPlugins={[remarkParse, remarkMath, remarkRehype]}
@@ -33,3 +34,5 @@ export const MarkdownDisplay = ({ markdown }: MarkdownDisplayProps) => (
 		</Markdown>
 	</ArticleWrapper>
 )
+
+export const MemoizedMarkdownDisplay = memo(MarkdownDisplay)
