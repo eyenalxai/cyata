@@ -1,14 +1,14 @@
-import type { db } from "@/lib/database/client"
 import { selectAllUsers } from "@/lib/database/user"
 import { getErrorMessage } from "@/lib/error-message"
 import { type UsageInsert, usages } from "@/lib/schema"
+import type { Transaction } from "@/lib/type-utils"
 import { AllUsersUsage, type UsersUsage } from "@/lib/zod/api"
 import { parseZodSchema } from "@/lib/zod/parse"
 import { and, eq, gte, lte } from "drizzle-orm"
 import { ResultAsync } from "neverthrow"
 import type { z } from "zod"
 
-export const selectUsagesTotal = (tx: typeof db, userUuid: string) =>
+export const selectUsagesTotal = (tx: Transaction, userUuid: string) =>
 	ResultAsync.fromPromise(tx.select().from(usages).where(eq(usages.userUuid, userUuid)), (e) =>
 		getErrorMessage(e, "Failed to select usages")
 	).map((usages) => Number.parseFloat(usages.reduce((acc, usage) => acc + usage.usage, 0).toFixed(2)))
@@ -19,7 +19,7 @@ type SelectUsagesFromToProps = {
 	to: Date
 }
 
-export const selectUsagesFromTo = (tx: typeof db, { userUuid, from, to }: SelectUsagesFromToProps) =>
+export const selectUsagesFromTo = (tx: Transaction, { userUuid, from, to }: SelectUsagesFromToProps) =>
 	ResultAsync.fromPromise(
 		tx
 			.select()
@@ -33,12 +33,12 @@ export const selectUsagesFromTo = (tx: typeof db, { userUuid, from, to }: Select
 		(e) => getErrorMessage(e, "Failed to select usages")
 	).map((usages) => Number.parseFloat(usages.reduce((acc, usage) => acc + usage.usage, 0).toFixed(2)))
 
-export const insertUsage = (tx: typeof db, usage: UsageInsert) =>
+export const insertUsage = (tx: Transaction, usage: UsageInsert) =>
 	ResultAsync.fromPromise(tx.insert(usages).values(usage).returning(), (e) =>
 		getErrorMessage(e, "Failed to insert usage")
 	).map(([insertedUsage]) => insertedUsage)
 
-export const selectUsages = (tx: typeof db, userUuid: string) => {
+export const selectUsages = (tx: Transaction, userUuid: string) => {
 	const firstDayCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
 	const lastDayCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
 
@@ -66,7 +66,7 @@ export const selectUsages = (tx: typeof db, userUuid: string) => {
 		)
 }
 
-export const selectUsagesForAllUsers = (tx: typeof db) =>
+export const selectUsagesForAllUsers = (tx: Transaction) =>
 	selectAllUsers(tx)
 		.andThen((users) =>
 			ResultAsync.combine(

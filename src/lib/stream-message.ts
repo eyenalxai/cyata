@@ -1,10 +1,10 @@
 import { trimMessagesToFitContextWindow } from "@/lib/ai-message"
 import { addMessageToChat } from "@/lib/database/chat"
-import type { db } from "@/lib/database/client"
 import { insertUsage } from "@/lib/database/usage"
 import { env } from "@/lib/env.mjs"
 import { getErrorMessage } from "@/lib/error-message"
 import { priceMessage, priceMessages } from "@/lib/pricing"
+import type { Transaction } from "@/lib/type-utils"
 import type { AiMessageSchema, AiMessagesSchema } from "@/lib/zod/ai-message"
 import type { OpenAIModel } from "@/lib/zod/model"
 import { createOpenAI } from "@ai-sdk/openai"
@@ -22,7 +22,7 @@ type StreamMessageProps = {
 }
 
 export const streamMessage = (
-	tx: typeof db,
+	tx: Transaction,
 	{ model, systemPrompt, messages, userUuid, chatUuid }: StreamMessageProps
 ) => {
 	const trimmedMessages = trimMessagesToFitContextWindow(messages, model)

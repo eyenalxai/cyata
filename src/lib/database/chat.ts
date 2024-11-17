@@ -1,25 +1,25 @@
 import { updateEmptyChatTitle } from "@/lib/chat/title"
-import type { db } from "@/lib/database/client"
 import { insertMessage } from "@/lib/database/message"
 import { getErrorMessage } from "@/lib/error-message"
 import { type ChatInsert, chats } from "@/lib/schema"
+import type { Transaction } from "@/lib/type-utils"
 import type { AiMessageSchema } from "@/lib/zod/ai-message"
 import type { OpenAIModel } from "@/lib/zod/model"
 import { eq } from "drizzle-orm"
 import { ResultAsync, errAsync, okAsync } from "neverthrow"
 import type { z } from "zod"
 
-export const insertChat = (tx: typeof db, chat: ChatInsert) =>
+export const insertChat = (tx: Transaction, chat: ChatInsert) =>
 	ResultAsync.fromPromise(tx.insert(chats).values(chat).returning(), (e) =>
 		getErrorMessage(e, "Failed to insert chat")
 	).map(([insertedChat]) => insertedChat)
 
-export const deleteChat = (tx: typeof db, uuid: string) =>
+export const deleteChat = (tx: Transaction, uuid: string) =>
 	ResultAsync.fromPromise(tx.delete(chats).where(eq(chats.uuid, uuid)), (e) =>
 		getErrorMessage(e, "Failed to delete chat")
 	).map(() => undefined)
 
-export const selectChat = (tx: typeof db, uuid: string) =>
+export const selectChat = (tx: Transaction, uuid: string) =>
 	ResultAsync.fromPromise(tx.select().from(chats).where(eq(chats.uuid, uuid)), (e) =>
 		getErrorMessage(e, "Failed to select chat")
 	).andThen((chats) => (chats.length > 0 ? okAsync(chats[0]) : errAsync("CHAT_NOT_FOUND" as const)))
@@ -29,12 +29,12 @@ type UpdateChatModelProps = {
 	model: z.infer<typeof OpenAIModel>
 }
 
-export const updateChatModel = (tx: typeof db, { uuid, model }: UpdateChatModelProps) =>
+export const updateChatModel = (tx: Transaction, { uuid, model }: UpdateChatModelProps) =>
 	ResultAsync.fromPromise(tx.update(chats).set({ model }).where(eq(chats.uuid, uuid)).returning(), (e) =>
 		getErrorMessage(e, "Failed to update chat model")
 	).map(([updatedChat]) => updatedChat)
 
-export const selectChatWithMessages = (tx: typeof db, chatUuid: string) =>
+export const selectChatWithMessages = (tx: Transaction, chatUuid: string) =>
 	ResultAsync.fromPromise(
 		tx.query.chats.findFirst({
 			where: eq(chats.uuid, chatUuid),
@@ -47,7 +47,7 @@ export const selectChatWithMessages = (tx: typeof db, chatUuid: string) =>
 		(e) => getErrorMessage(e, "Failed to select chat with messages")
 	).andThen((chat) => (chat !== undefined ? okAsync(chat) : errAsync("CHAT_NOT_FOUND" as const)))
 
-export const selectChatsWithMessages = (tx: typeof db, userUuid: string) =>
+export const selectChatsWithMessages = (tx: Transaction, userUuid: string) =>
 	ResultAsync.fromPromise(
 		tx.query.chats.findMany({
 			where: eq(chats.userUuid, userUuid),
@@ -68,7 +68,7 @@ type AddMessageToChat = {
 	model: z.infer<typeof OpenAIModel>
 }
 
-export const addMessageToChat = (tx: typeof db, { userUuid, chatUuid, message, model }: AddMessageToChat) =>
+export const addMessageToChat = (tx: Transaction, { userUuid, chatUuid, message, model }: AddMessageToChat) =>
 	selectChat(tx, chatUuid)
 		.andThen((chat) => updateChatModel(tx, { uuid: chat.uuid, model }))
 		.andThen((chat) =>
@@ -90,7 +90,7 @@ export const addMessageToChat = (tx: typeof db, { userUuid, chatUuid, message, m
 		})
 		.andThen(() => updateEmptyChatTitle(tx, chatUuid))
 
-export const updateChatTitle = (tx: typeof db, chatUuid: string, title: string) =>
+export const updateChatTitle = (tx: Transaction, chatUuid: string, title: string) =>
 	ResultAsync.fromPromise(tx.update(chats).set({ title }).where(eq(chats.uuid, chatUuid)).returning(), (e) =>
 		getErrorMessage(e, "Failed to update chat title")
 	)

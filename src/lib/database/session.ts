@@ -1,11 +1,11 @@
-import type { db } from "@/lib/database/client"
 import { getErrorMessage } from "@/lib/error-message"
 import { type SessionInsert, sessions } from "@/lib/schema"
 import { getSessionExpiryDate, isSessionExpired } from "@/lib/session"
+import type { Transaction } from "@/lib/type-utils"
 import { eq } from "drizzle-orm"
 import { ResultAsync, errAsync, okAsync } from "neverthrow"
 
-export const insertSession = (tx: typeof db, session: Omit<SessionInsert, "expiresAt">) =>
+export const insertSession = (tx: Transaction, session: Omit<SessionInsert, "expiresAt">) =>
 	ResultAsync.fromPromise(
 		tx
 			.insert(sessions)
@@ -18,7 +18,7 @@ export const insertSession = (tx: typeof db, session: Omit<SessionInsert, "expir
 		(e) => getErrorMessage(e, "Failed to insert session")
 	).map(([insertedSession]) => insertedSession)
 
-export const selectSessionByKey = (tx: typeof db, key: string) =>
+export const selectSessionByKey = (tx: Transaction, key: string) =>
 	ResultAsync.fromPromise(tx.select().from(sessions).where(eq(sessions.key, key)), (e) =>
 		getErrorMessage(e, "Failed to select session by key")
 	)
@@ -28,7 +28,7 @@ export const selectSessionByKey = (tx: typeof db, key: string) =>
 			return okAsync(session)
 		})
 
-export const updateSessionExpiration = (tx: typeof db, session: Omit<SessionInsert, "expiresAt">) =>
+export const updateSessionExpiration = (tx: Transaction, session: Omit<SessionInsert, "expiresAt">) =>
 	ResultAsync.fromPromise(
 		tx
 			.update(sessions)
