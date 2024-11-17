@@ -1,4 +1,4 @@
-import { MemoizedCodeComponent } from "@/components/code-block"
+import { CodeComponent } from "@/components/code-block"
 import { ArticleWrapper } from "@/components/markdown/article-wrapper"
 import { isInline } from "@/lib/utils"
 import { all } from "lowlight"
@@ -25,7 +25,7 @@ export const MarkdownDisplay = ({ markdown }: MarkdownDisplayProps) => (
 
 					const match = /language-(\w+)/.exec(props.className || "")
 					if (!match) return <code {...props} />
-					return <MemoizedCodeComponent key={Math.random()} {...props} language={match ? match[1] : ""} />
+					return <CodeComponent key={Math.random()} {...props} language={match ? match[1] : ""} />
 				}
 			}}
 		>

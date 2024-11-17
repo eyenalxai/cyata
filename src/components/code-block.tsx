@@ -1,9 +1,9 @@
-import {Button} from "@/components/ui/button"
-import {copyToClipboard} from "@/lib/clipboard"
-import {cn} from "@/lib/utils"
-import {Check, Copy} from "lucide-react"
-import {type FC, type HTMLAttributes, memo, type ReactNode, useState} from "react"
-import {toast} from "sonner"
+import { Button } from "@/components/ui/button"
+import { copyToClipboard } from "@/lib/clipboard"
+import { cn } from "@/lib/utils"
+import { Check, Copy } from "lucide-react"
+import { type FC, type HTMLAttributes, type ReactNode, useState } from "react"
+import { toast } from "sonner"
 
 export interface CodeComponentProps extends HTMLAttributes<HTMLElement> {
 	language?: string
@@ -52,5 +52,3 @@ export const CodeComponent: FC<CodeComponentProps> = ({ className, language, ...
 		</div>
 	)
 }
-
-export const MemoizedCodeComponent = memo(CodeComponent)
