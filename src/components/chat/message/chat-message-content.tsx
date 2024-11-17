@@ -1,5 +1,5 @@
 import { ArticleWrapper } from "@/components/markdown/article-wrapper"
-import { MemoizedMarkdownDisplay } from "@/components/markdown/markdown-display'"
+import { MarkdownDisplay } from "@/components/markdown/markdown-display'"
 import type { Message } from "ai"
 
 type ChatMessageContentProps = {
@@ -7,7 +7,7 @@ type ChatMessageContentProps = {
 }
 
 export const ChatMessageContent = ({ message }: ChatMessageContentProps) => {
-	if (message.role !== "user") return <MemoizedMarkdownDisplay markdown={message.content} />
+	if (message.role !== "user") return <MarkdownDisplay markdown={message.content} />
 
 	return <ArticleWrapper preserveNewlines>{message.content}</ArticleWrapper>
 }
