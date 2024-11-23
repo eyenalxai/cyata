@@ -35,4 +35,4 @@ const MarkdownDisplay = ({ markdown }: MarkdownDisplayProps) => (
 	</ArticleWrapper>
 )
 
-export const MemoizedMarkdownDisplay = memo(MarkdownDisplay)
+export const MemoizedMarkdownDisplay = memo(MarkdownDisplay, (prev, next) => prev.markdown === next.markdown)
