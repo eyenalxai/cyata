@@ -85,8 +85,4 @@
 	html {
 		padding-right: 0 !important;
 	}
-
-	::-webkit-scrollbar {
-		width: 0;
-	}
 }
